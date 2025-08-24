@@ -1,0 +1,40 @@
+workflows:
+  flutter-web-deploy:
+    name: Flutter Web Deploy to S3
+    environment:
+      flutter: stable
+      groups:
+        - aws-deploy-group
+    scripts:
+      - name: Install dependencies
+        script: flutter pub get
+
+      - name: Build Flutter web
+        script: flutter build web --release
+
+      - name: Install AWS CLI
+        script: pip install awscli
+
+      - name: Deploy to S3
+        script: |
+          aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+          aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+          aws configure set default.region $AWS_REGION
+          aws s3 sync build/web/ s3://$S3_BUCKET_NAME --delete
+
+      - name: Invalidate CloudFront Cache
+        script: |
+          aws cloudfront create-invalidation \
+            --distribution-id $CLOUDFRONT_DISTRIBUTION_ID \
+            --paths "/*"
+
+    artifacts:
+      - build/web/**
+
+    publishing:
+      email:
+        recipients:
+          - ftourn@octa.dev
+        notify:
+          success: true
+          failure: true
