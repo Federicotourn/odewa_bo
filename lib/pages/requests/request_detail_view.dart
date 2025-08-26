@@ -1,3 +1,4 @@
+import 'package:odewa_bo/controllers/navigation_controller.dart';
 import 'package:odewa_bo/pages/requests/controllers/request_controller.dart';
 import 'package:odewa_bo/pages/requests/models/request_model.dart';
 import 'package:odewa_bo/controllers/logged_user_controller.dart';
@@ -38,7 +39,7 @@ class RequestDetailView extends StatelessWidget {
               elevation: 0,
               leading: IconButton(
                 icon: Icon(Icons.arrow_back, color: Colors.teal.shade800),
-                onPressed: () => Get.back(),
+                onPressed: () => Get.find<NavigationController>().goBack(),
               ),
               flexibleSpace: FlexibleSpaceBar(
                 title: Text(

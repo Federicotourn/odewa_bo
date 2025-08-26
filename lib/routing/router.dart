@@ -1,4 +1,6 @@
 import 'package:odewa_bo/pages/authentication/authentication.dart';
+import 'package:odewa_bo/pages/clients/client_detail_view.dart';
+import 'package:odewa_bo/pages/clients/clients_view.dart';
 import 'package:odewa_bo/pages/companies/companies_view.dart';
 import 'package:odewa_bo/pages/overview/overview.dart';
 import 'package:odewa_bo/pages/requests/request_detail_view.dart';
@@ -21,6 +23,10 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       return getPageRoute(const RequestsView());
     case requestDetailPageRoute:
       return getPageRoute(RequestDetailView());
+    case clientsPageRoute:
+      return getPageRoute(ClientsView());
+    case clientDetailPageRoute:
+      return getPageRoute(ClientDetailView());
     default:
       return getPageRoute(OverviewPage());
   }

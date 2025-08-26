@@ -6,6 +6,8 @@ import 'package:odewa_bo/pages/companies/companies_view.dart';
 import 'package:odewa_bo/pages/requests/request_detail_view.dart';
 import 'package:odewa_bo/pages/requests/requests_view.dart';
 import 'package:odewa_bo/pages/users/users_view.dart';
+import 'package:odewa_bo/pages/clients/clients_view.dart';
+import 'package:odewa_bo/pages/clients/client_detail_view.dart';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -16,9 +18,11 @@ const overViewPageRoute = "/overview";
 const usersPageRoute = "/users";
 const companiesPageRoute = "/companies";
 const requestsPageRoute = "/requests";
+const clientsPageRoute = "/clients";
 const authenticationPageRoute = "/auth";
 const requestDetailPageRoute = "/request-detail";
 const companyDetailPageRoute = "/company-detail";
+const clientDetailPageRoute = "/client-detail";
 const notFoundPageRoute = "/not-found";
 
 // Nombres de visualización
@@ -28,7 +32,7 @@ const clientsPageDisplayName = "Clientes";
 const companiesPageDisplayName = "Empresas";
 const requestsPageDisplayName = "Solicitudes";
 const authenticationDisplayName = "Cerrar sesión";
-const clientDetailPageDisplayName = "Detalle de cliente";
+const clientDetailPageDisplayName = "Detalle de empleado";
 const requestDetailPageDisplayName = "Detalle de solicitud";
 const companyDetailPageDisplayName = "Detalle de empresa";
 
@@ -63,6 +67,16 @@ class AppPages {
       page: () => RequestDetailView(),
       middlewares: [AuthMiddleware()],
     ),
+    GetPage(
+      name: clientsPageRoute,
+      page: () => ClientsView(),
+      middlewares: [AuthMiddleware()],
+    ),
+    GetPage(
+      name: clientDetailPageRoute,
+      page: () => const ClientDetailView(),
+      middlewares: [AuthMiddleware()],
+    ),
     GetPage(name: notFoundPageRoute, page: () => const PageNotFound()),
   ];
 }
@@ -93,6 +107,7 @@ class MenuItem {
 List<MenuItem> sideMenuItems = [
   MenuItem(name: overViewPageDisplayName, route: overViewPageRoute),
   MenuItem(name: usersPageDisplayName, route: usersPageRoute),
+  MenuItem(name: clientsPageDisplayName, route: clientsPageRoute),
   MenuItem(name: companiesPageDisplayName, route: companiesPageRoute),
   MenuItem(name: requestsPageDisplayName, route: requestsPageRoute),
   MenuItem(name: authenticationDisplayName, route: authenticationPageRoute),
