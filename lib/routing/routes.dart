@@ -8,6 +8,7 @@ import 'package:odewa_bo/pages/requests/requests_view.dart';
 import 'package:odewa_bo/pages/users/users_view.dart';
 import 'package:odewa_bo/pages/clients/clients_view.dart';
 import 'package:odewa_bo/pages/clients/client_detail_view.dart';
+import 'package:odewa_bo/pages/overview/overview_new.dart';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -23,6 +24,7 @@ const authenticationPageRoute = "/auth";
 const requestDetailPageRoute = "/request-detail";
 const companyDetailPageRoute = "/company-detail";
 const clientDetailPageRoute = "/client-detail";
+const overviewNewPageRoute = "/overview-new";
 const notFoundPageRoute = "/not-found";
 
 // Nombres de visualización
@@ -75,6 +77,11 @@ class AppPages {
     GetPage(
       name: clientDetailPageRoute,
       page: () => const ClientDetailView(),
+      middlewares: [AuthMiddleware()],
+    ),
+    GetPage(
+      name: overviewNewPageRoute,
+      page: () => OverviewPageNew(),
       middlewares: [AuthMiddleware()],
     ),
     GetPage(name: notFoundPageRoute, page: () => const PageNotFound()),

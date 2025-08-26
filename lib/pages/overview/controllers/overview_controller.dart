@@ -1,8 +1,6 @@
-import 'dart:ui';
-
 import 'package:odewa_bo/pages/overview/models/dashboard_model.dart';
-import 'package:odewa_bo/pages/overview/overview_service.dart';
-import 'package:flutter/material.dart';
+import 'package:odewa_bo/pages/overview/models/kpis_model.dart';
+import 'package:odewa_bo/pages/overview/services/overview_service.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
@@ -10,39 +8,21 @@ class OverviewController extends GetxController {
   final overviewService = Get.find<OverviewService>();
 
   Rx<DashboardData?> dashboardData = Rx<DashboardData?>(null);
+  Rx<KpisData?> kpisData = Rx<KpisData?>(null);
   RxBool isLoading = false.obs;
 
   @override
   void onInit() {
-    getDashboardData();
+    getKpisData();
     super.onInit();
   }
 
-  Color getStatusColor(String status) {
-    switch (status) {
-      case 'INITIALIZED':
-        return Colors.grey;
-      case 'PENDING_REVISION':
-        return Colors.red;
-      case 'CONFIRMED':
-        return Colors.lightBlue;
-      case 'REJECTED':
-        return Colors.red;
-      case 'REQUIRES_CONTACT':
-        return Colors.orange;
-      case 'COMPLETED':
-        return Colors.green;
-      default:
-        return Colors.grey;
-    }
-  }
-
-  Future<void> getDashboardData() async {
+  Future<void> getKpisData() async {
     try {
       isLoading.value = true;
-      dashboardData.value = await overviewService.getDashboardData();
+      kpisData.value = await overviewService.getKpisData();
     } catch (e) {
-      print('Error loading dashboard data: $e');
+      print('Error loading KPIs data: $e');
     } finally {
       isLoading.value = false;
     }
@@ -50,5 +30,13 @@ class OverviewController extends GetxController {
 
   String formatedNumberWithCommas({required String number}) {
     return NumberFormat('###,##0.##', 'es_ES').format(double.parse(number));
+  }
+
+  String formatCurrency(double amount) {
+    return NumberFormat.currency(locale: 'es_ES', symbol: '\$').format(amount);
+  }
+
+  String formatNumber(int number) {
+    return NumberFormat('###,##0', 'es_ES').format(number);
   }
 }

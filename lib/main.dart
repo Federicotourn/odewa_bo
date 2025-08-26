@@ -13,7 +13,7 @@ import 'package:odewa_bo/pages/requests/services/request_service.dart';
 import 'package:odewa_bo/pages/users/services/users_service.dart';
 
 // Legacy services (to be removed)
-import 'package:odewa_bo/pages/overview/overview_service.dart';
+import 'package:odewa_bo/pages/overview/services/overview_service.dart';
 import 'package:odewa_bo/routing/routes.dart';
 import 'package:odewa_bo/services/logged_user_service.dart';
 import 'package:odewa_bo/services/token_validation_service.dart';
@@ -81,7 +81,6 @@ Future<void> initialConfig() async {
   Get.put(CompanyService());
   Get.put(RequestService());
 
-  // Legacy services (to be removed)
   await Get.putAsync(() => OverviewService().init());
 
   // Controllers

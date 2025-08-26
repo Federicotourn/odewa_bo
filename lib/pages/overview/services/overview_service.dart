@@ -1,6 +1,7 @@
 import 'package:odewa_bo/constants/constants.dart';
 import 'package:odewa_bo/constants/urls.dart';
 import 'package:odewa_bo/pages/overview/models/dashboard_model.dart';
+import 'package:odewa_bo/pages/overview/models/kpis_model.dart';
 import 'package:odewa_bo/services/token_validation_service.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -15,13 +16,12 @@ class OverviewService extends GetxService {
     return this;
   }
 
-  Future<DashboardData> getDashboardData() async {
+  Future<KpisData> getKpisData() async {
     try {
-      final Uri url = Uri.parse('${Urls.baseUrl}/dashboard/orders');
+      final Uri url = Uri.parse('${Urls.baseUrl}/requests/kpis/monthly');
       Map<String, String> headers = {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-        'ngrok-skip-browser-warning': 'true',
         'Authorization': 'Bearer ${box.read('token')}',
       };
       var response = await _tokenValidationService.client.get(
@@ -30,15 +30,15 @@ class OverviewService extends GetxService {
       );
 
       if (response.statusCode == Constants.HTTP_200_OK) {
-        DashboardData dashboardData = dashboardDataFromJson(response.body);
-        return dashboardData;
+        KpisData kpisData = kpisDataFromJson(response.body);
+        return kpisData;
       } else {
         print('Error response: ${response.statusCode} - ${response.body}');
-        return dashboardDataExample;
+        return kpisDataExample;
       }
     } catch (e) {
       print('Exception occurred: $e');
-      return dashboardDataExample;
+      return kpisDataExample;
     }
   }
 
@@ -49,5 +49,19 @@ class OverviewService extends GetxService {
     completedOrders: 0,
     recentOrders: [],
     ordersByStatus: [],
+  );
+
+  KpisData kpisDataExample = KpisData(
+    totalRequests: 0,
+    pendingRequests: 0,
+    completedRequests: 0,
+    totalVolume: 0,
+    latestRequests: [],
+    requestsByStatus: RequestsByStatus(
+      pending: 0,
+      approved: 0,
+      rejected: 0,
+      completed: 0,
+    ),
   );
 }
