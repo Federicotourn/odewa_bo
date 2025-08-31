@@ -5,12 +5,12 @@ import 'package:flutter/material.dart';
 
 class SideMenuItem extends StatelessWidget {
   const SideMenuItem({
-    Key? key,
+    super.key,
     required this.itemName,
     required this.onTap,
     this.hasWarning = false,
     this.numWarning = 0,
-  }) : super(key: key);
+  });
 
   final String itemName;
   final VoidCallback onTap;

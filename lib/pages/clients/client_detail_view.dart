@@ -142,7 +142,7 @@ class ClientDetailView extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 5),
           ),
@@ -274,7 +274,7 @@ class ClientDetailView extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 5),
           ),
@@ -298,17 +298,17 @@ class ClientDetailView extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 20),
-          _InfoRow(label: 'ID Completo', value: client.id),
-          _InfoRow(label: 'Nombre', value: client.firstName),
-          _InfoRow(label: 'Apellido', value: client.lastName),
-          _InfoRow(label: 'Documento', value: client.document),
-          _InfoRow(label: 'Email', value: client.email),
-          _InfoRow(
+          infoRow(label: 'ID Completo', value: client.id),
+          infoRow(label: 'Nombre', value: client.firstName),
+          infoRow(label: 'Apellido', value: client.lastName),
+          infoRow(label: 'Documento', value: client.document),
+          infoRow(label: 'Email', value: client.email),
+          infoRow(
             label: 'Estado',
             value: client.isActive ? 'Activo' : 'Inactivo',
           ),
-          _InfoRow(label: 'Creado', value: _formatDateTime(client.createdAt)),
-          _InfoRow(
+          infoRow(label: 'Creado', value: _formatDateTime(client.createdAt)),
+          infoRow(
             label: 'Actualizado',
             value: _formatDateTime(client.updatedAt),
           ),
@@ -325,7 +325,7 @@ class ClientDetailView extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 5),
           ),
@@ -401,7 +401,7 @@ class ClientDetailView extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 5),
           ),
@@ -467,18 +467,18 @@ class ClientDetailView extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 20),
-          _InfoRow(
+          infoRow(
             label: 'Sucursal',
             value: client.branch.isNotEmpty ? client.branch : 'No especificada',
           ),
-          _InfoRow(
+          infoRow(
             label: 'Beneficiario',
             value:
                 client.beneficiary.isNotEmpty
                     ? client.beneficiary
                     : 'No especificado',
           ),
-          _InfoRow(
+          infoRow(
             label: 'Balance Mensual',
             value:
                 client.monthlyBalance != null
@@ -502,7 +502,7 @@ class ClientDetailView extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 5),
           ),
@@ -628,7 +628,7 @@ class ClientDetailView extends StatelessWidget {
     );
   }
 
-  Widget _InfoRow({required String label, required String value}) {
+  Widget infoRow({required String label, required String value}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
@@ -683,9 +683,9 @@ class _InfoCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -739,7 +739,7 @@ class _ActionButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: color.withOpacity(0.3),
+            color: color.withValues(alpha: 0.3),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),

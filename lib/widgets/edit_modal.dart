@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:odewa_bo/constants/app_theme.dart';
 
 class EditField {
   final String label;

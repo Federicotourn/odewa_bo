@@ -313,12 +313,14 @@ class RequestStatus {
   static const String approved = 'approved';
   static const String completed = 'completed';
   static const String rejected = 'rejected';
+  static const String cancelled = 'cancelled';
 
   static const List<String> allStatuses = [
     pending,
     approved,
     completed,
     rejected,
+    cancelled,
   ];
 
   static const Map<String, String> statusLabels = {
@@ -326,6 +328,7 @@ class RequestStatus {
     approved: 'Aprobado',
     completed: 'Completado',
     rejected: 'Rechazado',
+    cancelled: 'Cancelado',
   };
 
   static String getLabel(String status) {
@@ -341,6 +344,8 @@ class RequestStatus {
       case completed:
         return Colors.teal;
       case rejected:
+        return Colors.red;
+      case cancelled:
         return Colors.red;
       default:
         return Colors.grey;

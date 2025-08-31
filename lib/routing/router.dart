@@ -2,7 +2,7 @@ import 'package:odewa_bo/pages/authentication/authentication.dart';
 import 'package:odewa_bo/pages/clients/client_detail_view.dart';
 import 'package:odewa_bo/pages/clients/clients_view.dart';
 import 'package:odewa_bo/pages/companies/companies_view.dart';
-import 'package:odewa_bo/pages/overview/overview_new.dart';
+import 'package:odewa_bo/pages/overview/overview.dart';
 import 'package:odewa_bo/pages/requests/request_detail_view.dart';
 import 'package:odewa_bo/pages/requests/requests_view.dart';
 import 'package:odewa_bo/pages/users/users_view.dart';

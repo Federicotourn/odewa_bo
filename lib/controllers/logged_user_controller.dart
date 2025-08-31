@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:odewa_bo/pages/authentication/models/login_model.dart';
-import 'package:odewa_bo/services/logged_user_service.dart';
+// import 'package:odewa_bo/services/logged_user_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -10,7 +10,7 @@ import 'dart:html' as html;
 class LoggedUserController extends GetxController {
   final Rxn<OdewaUser> user = Rxn<OdewaUser>();
   final RxBool isLoading = true.obs;
-  final LoggedUserService _loggedUserService = Get.find<LoggedUserService>();
+  // final LoggedUserService _loggedUserService = Get.find<LoggedUserService>();
 
   final box = GetStorage('User');
 

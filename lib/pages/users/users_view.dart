@@ -1,5 +1,4 @@
-import 'package:odewa_bo/controllers/logged_user_controller.dart';
-
+// import 'package:odewa_bo/controllers/logged_user_controller.dart';
 import 'package:odewa_bo/pages/users/controllers/users_controller.dart';
 import 'package:odewa_bo/pages/users/models/user_model.dart';
 import 'package:odewa_bo/widgets/confirmation_dialog.dart';
@@ -15,8 +14,8 @@ class UsersView extends StatelessWidget {
     UsersController controller,
     BuildContext context,
   ) {
-    final LoggedUserController loggedUserController =
-        Get.find<LoggedUserController>();
+    // final LoggedUserController loggedUserController =
+    //     Get.find<LoggedUserController>();
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -24,7 +23,7 @@ class UsersView extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.06),
+            color: Colors.black.withValues(alpha: 0.06),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -109,46 +108,46 @@ class UsersView extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    if (loggedUserController.hasPermission('USER_UPDATE'))
-                      _CompactActionButton(
-                        icon: Icons.edit,
-                        label: 'Editar',
-                        color: Colors.blue.shade400,
-                        onPressed: () async {
-                          loading(context);
-                          Get.back();
-                          _showUserModal(context, controller, user: user);
-                        },
-                      ),
-                    if (loggedUserController.hasPermission('USER_UPDATE') &&
-                        loggedUserController.hasPermission('USER_DELETE'))
-                      const SizedBox(width: 12),
-                    if (loggedUserController.hasPermission('USER_DELETE'))
-                      _CompactActionButton(
-                        icon: Icons.delete,
-                        label: 'Eliminar',
-                        color: Colors.red.shade400,
-                        onPressed:
-                            () => _showDeleteConfirmation(
-                              context,
-                              user,
-                              controller,
-                            ),
-                      ),
-                    if (loggedUserController.hasPermission('USER_UPDATE'))
-                      const SizedBox(width: 12),
-                    if (loggedUserController.hasPermission('USER_UPDATE'))
-                      _CompactActionButton(
-                        icon: Icons.lock,
-                        label: 'Cambiar Contraseña',
-                        color: Colors.orange.shade400,
-                        onPressed:
-                            () => _showChangePasswordModal(
-                              context,
-                              user,
-                              controller,
-                            ),
-                      ),
+                    // if (loggedUserController.hasPermission('USER_UPDATE'))
+                    _CompactActionButton(
+                      icon: Icons.edit,
+                      label: 'Editar',
+                      color: Colors.blue.shade400,
+                      onPressed: () async {
+                        loading(context);
+                        Get.back();
+                        _showUserModal(context, controller, user: user);
+                      },
+                    ),
+                    // if (loggedUserController.hasPermission('USER_UPDATE') &&
+                    // loggedUserController.hasPermission('USER_DELETE'))
+                    const SizedBox(width: 12),
+                    // if (loggedUserController.hasPermission('USER_DELETE'))
+                    _CompactActionButton(
+                      icon: Icons.delete,
+                      label: 'Eliminar',
+                      color: Colors.red.shade400,
+                      onPressed:
+                          () => _showDeleteConfirmation(
+                            context,
+                            user,
+                            controller,
+                          ),
+                    ),
+                    // if (loggedUserController.hasPermission('USER_UPDATE'))
+                    const SizedBox(width: 12),
+                    // if (loggedUserController.hasPermission('USER_UPDATE'))
+                    _CompactActionButton(
+                      icon: Icons.lock,
+                      label: 'Cambiar Contraseña',
+                      color: Colors.orange.shade400,
+                      onPressed:
+                          () => _showChangePasswordModal(
+                            context,
+                            user,
+                            controller,
+                          ),
+                    ),
                   ],
                 ),
               ],
@@ -214,7 +213,7 @@ class UsersView extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
+                          color: Colors.white.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: Icon(
@@ -243,7 +242,7 @@ class UsersView extends StatelessWidget {
                                   ? 'Define un nuevo usuario con sus permisos'
                                   : 'Modifica la información del usuario existente',
                               style: TextStyle(
-                                color: Colors.white.withOpacity(0.9),
+                                color: Colors.white.withValues(alpha: 0.9),
                                 fontSize: 14,
                               ),
                             ),
@@ -665,8 +664,8 @@ class UsersView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final UsersController usersController = Get.put(UsersController());
-    final LoggedUserController loggedUserController =
-        Get.find<LoggedUserController>();
+    // final LoggedUserController loggedUserController =
+    //     Get.find<LoggedUserController>();
 
     return Scaffold(
       body: Column(
@@ -705,18 +704,6 @@ class UsersView extends StatelessWidget {
                       centerTitle: true,
                     ),
                     actions: [
-                      if (loggedUserController.hasPermission('USER_CREATE'))
-                        _ModernActionButton(
-                          icon: Icons.add,
-                          label: 'Crear Usuario',
-                          color: Colors.green.shade400,
-                          onPressed: () async {
-                            loading(context);
-                            Get.back();
-                            _showUserModal(context, usersController);
-                          },
-                        ),
-                      const SizedBox(width: 12),
                       _ModernActionButton(
                         icon: Icons.refresh,
                         label: 'Actualizar',
@@ -752,7 +739,9 @@ class UsersView extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(16),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.black.withOpacity(0.05),
+                                      color: Colors.black.withValues(
+                                        alpha: 0.05,
+                                      ),
                                       blurRadius: 10,
                                       offset: const Offset(0, 5),
                                     ),
@@ -780,7 +769,9 @@ class UsersView extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(16),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.black.withOpacity(0.05),
+                                      color: Colors.black.withValues(
+                                        alpha: 0.05,
+                                      ),
                                       blurRadius: 10,
                                       offset: const Offset(0, 5),
                                     ),
@@ -882,7 +873,7 @@ class UsersView extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(16),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.05),
+                                    color: Colors.black.withValues(alpha: 0.05),
                                     blurRadius: 10,
                                     offset: const Offset(0, 5),
                                   ),
@@ -1023,7 +1014,7 @@ class _ModernActionButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: color.withOpacity(0.3),
+            color: color.withValues(alpha: 0.3),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -1071,9 +1062,9 @@ class _InfoCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1127,7 +1118,7 @@ class _CompactActionButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: color.withOpacity(0.2),
+            color: color.withValues(alpha: 0.2),
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),
@@ -1214,7 +1205,7 @@ class _ModernTextField extends StatelessWidget {
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
+                color: Colors.black.withValues(alpha: 0.05),
                 blurRadius: 10,
                 offset: const Offset(0, 2),
               ),
@@ -1311,7 +1302,7 @@ class _ModernElevatedButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.blue.shade400.withOpacity(0.3),
+            color: Colors.blue.shade400.withValues(alpha: 0.3),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),

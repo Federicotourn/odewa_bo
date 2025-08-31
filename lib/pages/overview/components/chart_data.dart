@@ -16,33 +16,24 @@ class PieChartWidget extends StatelessWidget {
   final int appointmentsCount;
 
   const PieChartWidget({
-    Key? key,
+    super.key,
     required this.productsCount,
     required this.customersCount,
     required this.registeredCarsCount,
     required this.bookedTicketsCount,
     required this.appointmentsCount,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
-    final List<ChartData> chartData = [
-      ChartData('Products', productsCount, Colors.blue),
-      ChartData('Customers', customersCount, Colors.green),
-      ChartData('Cars Registered', registeredCarsCount, Colors.orange),
-      ChartData('Tickets', bookedTicketsCount, Colors.red),
-      ChartData('Appointments', appointmentsCount, Colors.purple),
-    ];
-
     return Row(
       children: [
         Expanded(
           child: Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Container(child: Column(children: [Text('Products')])),
+            child: Column(children: [Text('Products')]),
           ),
         ),
-        //
       ],
     );
   }

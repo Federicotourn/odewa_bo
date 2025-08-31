@@ -121,7 +121,7 @@ class OverviewPageNew extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 5),
           ),
@@ -148,7 +148,7 @@ class OverviewPageNew extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 5),
           ),
@@ -243,7 +243,7 @@ class OverviewPageNew extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 5),
           ),
@@ -343,7 +343,7 @@ class OverviewPageNew extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 5),
           ),
@@ -378,10 +378,7 @@ class OverviewPageNew extends StatelessWidget {
               ),
             )
           else
-            ...data.latestRequests
-                .take(5)
-                .map((request) => _buildRequestItem(request))
-                .toList(),
+            ...data.latestRequests.map((request) => _buildRequestItem(request)),
         ],
       ),
     );
@@ -404,7 +401,7 @@ class OverviewPageNew extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: statusColor.withOpacity(0.1),
+              color: statusColor.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(
@@ -447,7 +444,7 @@ class OverviewPageNew extends StatelessWidget {
                         vertical: 2,
                       ),
                       decoration: BoxDecoration(
-                        color: statusColor.withOpacity(0.1),
+                        color: statusColor.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
@@ -485,6 +482,8 @@ class OverviewPageNew extends StatelessWidget {
         return Colors.green.shade600;
       case 'rejected':
         return Colors.red.shade600;
+      case 'cancelled':
+        return Colors.red.shade300;
       case 'completed':
         return Colors.blue.shade600;
       default:
@@ -500,6 +499,8 @@ class OverviewPageNew extends StatelessWidget {
         return 'Aprobada';
       case 'rejected':
         return 'Rechazada';
+      case 'cancelled':
+        return 'Cancelada';
       case 'completed':
         return 'Completada';
       default:
@@ -514,6 +515,8 @@ class OverviewPageNew extends StatelessWidget {
       case 'approved':
         return Icons.check_circle;
       case 'rejected':
+        return Icons.cancel;
+      case 'cancelled':
         return Icons.cancel;
       case 'completed':
         return Icons.done_all;
@@ -556,7 +559,7 @@ class _KpiCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 5),
           ),
@@ -570,7 +573,7 @@ class _KpiCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
+                  color: color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(icon, color: color, size: 24),
@@ -628,7 +631,7 @@ class _ModernActionButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: color.withOpacity(0.3),
+            color: color.withValues(alpha: 0.3),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),

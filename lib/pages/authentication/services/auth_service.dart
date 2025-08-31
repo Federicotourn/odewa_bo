@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:odewa_bo/constants/constants.dart';
 import 'package:odewa_bo/constants/urls.dart';
 import 'package:odewa_bo/controllers/logged_user_controller.dart';
-import 'package:odewa_bo/models/logged_user.dart';
 import 'package:odewa_bo/pages/authentication/models/login_model.dart';
 import 'package:odewa_bo/services/token_validation_service.dart';
 import 'package:flutter/material.dart';

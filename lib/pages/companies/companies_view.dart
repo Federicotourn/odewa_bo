@@ -1,6 +1,6 @@
 import 'package:odewa_bo/pages/companies/controllers/company_controller.dart';
 import 'package:odewa_bo/pages/companies/models/company_model.dart';
-import 'package:odewa_bo/controllers/logged_user_controller.dart';
+// import 'package:odewa_bo/controllers/logged_user_controller.dart';
 import 'package:odewa_bo/widgets/confirmation_dialog.dart';
 import 'package:odewa_bo/widgets/loading.dart';
 import 'package:flutter/material.dart';
@@ -14,8 +14,8 @@ class CompaniesView extends StatelessWidget {
     CompanyController controller,
     BuildContext context,
   ) {
-    final LoggedUserController loggedUserController =
-        Get.find<LoggedUserController>();
+    // final LoggedUserController loggedUserController =
+    //     Get.find<LoggedUserController>();
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -23,7 +23,7 @@ class CompaniesView extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.06),
+            color: Colors.black.withValues(alpha: 0.06),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -137,50 +137,48 @@ class CompaniesView extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    if (loggedUserController.hasPermission('COMPANY_UPDATE'))
-                      _CompactActionButton(
-                        icon: Icons.edit,
-                        label: 'Editar',
-                        color: Colors.blue.shade400,
-                        onPressed: () async {
-                          loading(context);
-                          Get.back();
-                          _showCompanyModal(
+                    // if (loggedUserController.hasPermission('COMPANY_UPDATE'))
+                    _CompactActionButton(
+                      icon: Icons.edit,
+                      label: 'Editar',
+                      color: Colors.blue.shade400,
+                      onPressed: () async {
+                        loading(context);
+                        Get.back();
+                        _showCompanyModal(
+                          context,
+                          controller,
+                          company: company,
+                        );
+                      },
+                    ),
+                    // if (loggedUserController.hasPermission('COMPANY_UPDATE') &&
+                    // loggedUserController.hasPermission('COMPANY_DELETE'))
+                    const SizedBox(width: 12),
+                    // if (loggedUserController.hasPermission('COMPANY_DELETE'))
+                    _CompactActionButton(
+                      icon: Icons.delete,
+                      label: 'Eliminar',
+                      color: Colors.red.shade400,
+                      onPressed:
+                          () => _showDeleteConfirmation(
                             context,
+                            company,
                             controller,
-                            company: company,
-                          );
-                        },
-                      ),
-                    if (loggedUserController.hasPermission('COMPANY_UPDATE') &&
-                        loggedUserController.hasPermission('COMPANY_DELETE'))
-                      const SizedBox(width: 12),
-                    if (loggedUserController.hasPermission('COMPANY_DELETE'))
-                      _CompactActionButton(
-                        icon: Icons.delete,
-                        label: 'Eliminar',
-                        color: Colors.red.shade400,
-                        onPressed:
-                            () => _showDeleteConfirmation(
-                              context,
-                              company,
-                              controller,
-                            ),
-                      ),
-                    if (loggedUserController.hasPermission('COMPANY_UPDATE'))
-                      const SizedBox(width: 12),
-                    if (loggedUserController.hasPermission('COMPANY_UPDATE'))
-                      _CompactActionButton(
-                        icon:
-                            company.isActive ? Icons.block : Icons.check_circle,
-                        label: company.isActive ? 'Desactivar' : 'Activar',
-                        color:
-                            company.isActive
-                                ? Colors.orange.shade400
-                                : Colors.green.shade400,
-                        onPressed:
-                            () => controller.toggleCompanyStatus(company),
-                      ),
+                          ),
+                    ),
+                    // if (loggedUserController.hasPermission('COMPANY_UPDATE'))
+                    const SizedBox(width: 12),
+                    // if (loggedUserController.hasPermission('COMPANY_UPDATE'))
+                    _CompactActionButton(
+                      icon: company.isActive ? Icons.block : Icons.check_circle,
+                      label: company.isActive ? 'Desactivar' : 'Activar',
+                      color:
+                          company.isActive
+                              ? Colors.orange.shade400
+                              : Colors.green.shade400,
+                      onPressed: () => controller.toggleCompanyStatus(company),
+                    ),
                   ],
                 ),
               ],
@@ -244,7 +242,7 @@ class CompaniesView extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
+                          color: Colors.white.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: Icon(
@@ -273,7 +271,7 @@ class CompaniesView extends StatelessWidget {
                                   ? 'Define una nueva empresa con sus datos'
                                   : 'Modifica la información de la empresa existente',
                               style: TextStyle(
-                                color: Colors.white.withOpacity(0.9),
+                                color: Colors.white.withValues(alpha: 0.9),
                                 fontSize: 14,
                               ),
                             ),
@@ -387,7 +385,7 @@ class CompaniesView extends StatelessWidget {
                                 employeeCountController.text.trim();
                             await controller.createCompany();
                             Get.back();
-                            Navigator.of(context).pop();
+                            Navigator.of(Get.context!).pop();
                           } else {
                             // Update existing company
                             loading(context);
@@ -399,7 +397,7 @@ class CompaniesView extends StatelessWidget {
                                 employeeCountController.text.trim();
                             await controller.updateCompany(company.id);
                             Get.back();
-                            Navigator.of(context).pop();
+                            Navigator.of(Get.context!).pop();
                           }
                         },
                       ),
@@ -453,8 +451,8 @@ class CompaniesView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final CompanyController companiesController = Get.put(CompanyController());
-    final LoggedUserController loggedUserController =
-        Get.find<LoggedUserController>();
+    // final LoggedUserController loggedUserController =
+    //     Get.find<LoggedUserController>();
 
     return Scaffold(
       body: Column(
@@ -493,18 +491,6 @@ class CompaniesView extends StatelessWidget {
                       centerTitle: true,
                     ),
                     actions: [
-                      if (loggedUserController.hasPermission('COMPANY_CREATE'))
-                        _ModernActionButton(
-                          icon: Icons.add,
-                          label: 'Crear Empresa',
-                          color: Colors.green.shade400,
-                          onPressed: () async {
-                            loading(context);
-                            Get.back();
-                            _showCompanyModal(context, companiesController);
-                          },
-                        ),
-                      const SizedBox(width: 12),
                       _ModernActionButton(
                         icon: Icons.refresh,
                         label: 'Actualizar',
@@ -540,7 +526,9 @@ class CompaniesView extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(16),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.black.withOpacity(0.05),
+                                      color: Colors.black.withValues(
+                                        alpha: 0.05,
+                                      ),
                                       blurRadius: 10,
                                       offset: const Offset(0, 5),
                                     ),
@@ -568,7 +556,9 @@ class CompaniesView extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(16),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.black.withOpacity(0.05),
+                                      color: Colors.black.withValues(
+                                        alpha: 0.05,
+                                      ),
                                       blurRadius: 10,
                                       offset: const Offset(0, 5),
                                     ),
@@ -671,7 +661,7 @@ class CompaniesView extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(16),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.05),
+                                    color: Colors.black.withValues(alpha: 0.05),
                                     blurRadius: 10,
                                     offset: const Offset(0, 5),
                                   ),
@@ -815,7 +805,7 @@ class _ModernActionButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: color.withOpacity(0.3),
+            color: color.withValues(alpha: 0.3),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -863,9 +853,9 @@ class _InfoCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -919,7 +909,7 @@ class _CompactActionButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: color.withOpacity(0.2),
+            color: color.withValues(alpha: 0.2),
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),
@@ -1006,7 +996,7 @@ class _ModernTextField extends StatelessWidget {
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
+                color: Colors.black.withValues(alpha: 0.05),
                 blurRadius: 10,
                 offset: const Offset(0, 2),
               ),
@@ -1103,7 +1093,7 @@ class _ModernElevatedButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.indigo.shade400.withOpacity(0.3),
+            color: Colors.indigo.shade400.withValues(alpha: 0.3),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),

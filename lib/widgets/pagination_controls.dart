@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 class PaginationControls extends StatelessWidget {
   final int totalElements;
@@ -11,7 +10,7 @@ class PaginationControls extends StatelessWidget {
   final VoidCallback? onNextPage;
 
   const PaginationControls({
-    Key? key,
+    super.key,
     required this.totalElements,
     required this.totalPages,
     required this.currentPage,
@@ -19,7 +18,7 @@ class PaginationControls extends StatelessWidget {
     required this.pageSize,
     this.onPreviousPage,
     this.onNextPage,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

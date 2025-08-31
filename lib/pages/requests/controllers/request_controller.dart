@@ -202,16 +202,17 @@ class RequestController extends GetxController {
     if (result.$1) {
       Get.snackbar(
         'Éxito',
-        result.$3,
+        result.$2,
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.green,
         colorText: Colors.white,
       );
       await loadRequests(showLoading: false);
+      selectedRequest.value = requests.firstWhere((r) => r.id == id);
     } else {
       Get.snackbar(
         'Error',
-        result.$3,
+        result.$2,
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red,
         colorText: Colors.white,

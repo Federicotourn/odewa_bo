@@ -201,8 +201,8 @@ class CompanyController extends GetxController {
 
   void fillFormForEdit(Company company) {
     nameController.text = company.name;
-    billingDateController.text = company.billingDate ?? '';
-    employeeCountController.text = company.employeeCount?.toString() ?? '';
+    billingDateController.text = company.billingDate;
+    employeeCountController.text = company.employeeCount.toString();
   }
 
   bool _validateForm() {

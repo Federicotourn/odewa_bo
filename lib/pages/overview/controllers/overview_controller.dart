@@ -1,7 +1,9 @@
+import 'package:flutter/material.dart';
 import 'package:odewa_bo/pages/overview/models/dashboard_model.dart';
 import 'package:odewa_bo/pages/overview/models/kpis_model.dart';
 import 'package:odewa_bo/pages/overview/services/overview_service.dart';
 import 'package:get/get.dart';
+// ignore: depend_on_referenced_packages
 import 'package:intl/intl.dart';
 
 class OverviewController extends GetxController {
@@ -22,7 +24,7 @@ class OverviewController extends GetxController {
       isLoading.value = true;
       kpisData.value = await overviewService.getKpisData();
     } catch (e) {
-      print('Error loading KPIs data: $e');
+      debugPrint('Error loading KPIs data: $e');
     } finally {
       isLoading.value = false;
     }

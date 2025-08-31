@@ -1,7 +1,7 @@
 import 'package:odewa_bo/controllers/navigation_controller.dart';
 import 'package:odewa_bo/pages/requests/controllers/request_controller.dart';
 import 'package:odewa_bo/pages/requests/models/request_model.dart';
-import 'package:odewa_bo/controllers/logged_user_controller.dart';
+// import 'package:odewa_bo/controllers/logged_user_controller.dart';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -12,8 +12,8 @@ class RequestDetailView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final RequestController requestController = Get.put(RequestController());
-    final LoggedUserController loggedUserController =
-        Get.find<LoggedUserController>();
+    // final LoggedUserController loggedUserController =
+    //     Get.find<LoggedUserController>();
 
     return Scaffold(
       body: Container(
@@ -119,7 +119,7 @@ class RequestDetailView extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 5),
           ),
@@ -134,7 +134,7 @@ class RequestDetailView extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: RequestStatus.getColor(
                     request.status,
-                  ).withOpacity(0.1),
+                  ).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Icon(
@@ -167,7 +167,7 @@ class RequestDetailView extends StatelessWidget {
                           decoration: BoxDecoration(
                             color: RequestStatus.getColor(
                               request.status,
-                            ).withOpacity(0.1),
+                            ).withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Text(
@@ -255,7 +255,7 @@ class RequestDetailView extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 5),
           ),
@@ -279,21 +279,21 @@ class RequestDetailView extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 20),
-          _InfoRow(label: 'ID', value: request.id),
-          _InfoRow(
+          infoRow(label: 'ID', value: request.id),
+          infoRow(
             label: 'Estado',
             value: RequestStatus.getLabel(request.status),
           ),
-          _InfoRow(label: 'Monto', value: '\$${request.amount}'),
-          _InfoRow(label: 'Fecha', value: request.date),
-          _InfoRow(label: 'Cliente ID', value: request.clientId),
-          _InfoRow(label: 'Creada', value: _formatDateTime(request.createdAt)),
-          _InfoRow(
+          infoRow(label: 'Monto', value: '\$${request.amount}'),
+          infoRow(label: 'Fecha', value: request.date),
+          infoRow(label: 'Cliente ID', value: request.clientId),
+          infoRow(label: 'Creada', value: _formatDateTime(request.createdAt)),
+          infoRow(
             label: 'Actualizada',
             value: _formatDateTime(request.updatedAt),
           ),
           if (request.deletedAt != null)
-            _InfoRow(
+            infoRow(
               label: 'Eliminada',
               value: _formatDateTime(request.deletedAt as DateTime),
             ),
@@ -310,7 +310,7 @@ class RequestDetailView extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 5),
           ),
@@ -365,30 +365,30 @@ class RequestDetailView extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 20),
-          _InfoRow(label: 'ID', value: client.id),
-          _InfoRow(
+          infoRow(label: 'ID', value: client.id),
+          infoRow(
             label: 'Teléfono',
             value: client.phone.isEmpty ? 'No especificado' : client.phone,
           ),
-          _InfoRow(
+          infoRow(
             label: 'Dirección',
             value: client.address.isEmpty ? 'No especificada' : client.address,
           ),
-          _InfoRow(
+          infoRow(
             label: 'Ciudad',
             value: client.city.isEmpty ? 'No especificada' : client.city,
           ),
-          _InfoRow(label: 'Banco', value: client.bank),
-          _InfoRow(label: 'Moneda', value: client.currency),
-          _InfoRow(label: 'Número de Cuenta', value: client.accountNumber),
-          _InfoRow(label: 'Sucursal', value: client.branch),
-          _InfoRow(label: 'Beneficiario', value: client.beneficiary),
-          _InfoRow(
+          infoRow(label: 'Banco', value: client.bank),
+          infoRow(label: 'Moneda', value: client.currency),
+          infoRow(label: 'Número de Cuenta', value: client.accountNumber),
+          infoRow(label: 'Sucursal', value: client.branch),
+          infoRow(label: 'Beneficiario', value: client.beneficiary),
+          infoRow(
             label: 'Balance Mensual',
             value: '\$${client.monthlyBalance}',
           ),
-          _InfoRow(label: 'Creado', value: _formatDateTime(client.createdAt)),
-          _InfoRow(
+          infoRow(label: 'Creado', value: _formatDateTime(client.createdAt)),
+          infoRow(
             label: 'Actualizado',
             value: _formatDateTime(client.updatedAt),
           ),
@@ -412,7 +412,7 @@ class RequestDetailView extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 5),
           ),
@@ -490,33 +490,35 @@ class RequestDetailView extends StatelessWidget {
           const SizedBox(height: 20),
 
           // Flujo de estados
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.blue.shade50,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.blue.shade200),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Icon(Icons.account_tree, color: Colors.blue.shade600),
-                    const SizedBox(width: 8),
-                    Text(
-                      'Flujo de Estados',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.blue.shade700,
+          Obx(
+            () => Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.blue.shade50,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.blue.shade200),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.account_tree, color: Colors.blue.shade600),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Flujo de Estados',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.blue.shade700,
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                _buildStatusFlow(),
-              ],
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  _buildStatusFlow(),
+                ],
+              ),
             ),
           ),
         ],
@@ -525,40 +527,42 @@ class RequestDetailView extends StatelessWidget {
   }
 
   Widget _buildStatusFlow() {
+    final requestController = Get.find<RequestController>();
+    final status = requestController.selectedRequest.value!.status;
     return Row(
       children: [
         Expanded(
-          child: _StatusFlowStep(
+          child: statusFlowStep(
             status: 'pending',
             label: 'Pendiente',
-            isActive: true,
+            isActive: status == 'pending',
             canTransition: true,
           ),
         ),
-        _StatusFlowArrow(),
+        statusFlowArrow(),
         Expanded(
-          child: _StatusFlowStep(
+          child: statusFlowStep(
             status: 'approved',
             label: 'Aprobado',
-            isActive: false,
+            isActive: status == 'approved',
             canTransition: true,
           ),
         ),
-        _StatusFlowArrow(),
+        statusFlowArrow(),
         Expanded(
-          child: _StatusFlowStep(
+          child: statusFlowStep(
             status: 'completed',
             label: 'Completado',
-            isActive: false,
+            isActive: status == 'completed',
             canTransition: false,
           ),
         ),
         const SizedBox(width: 16),
         Expanded(
-          child: _StatusFlowStep(
+          child: statusFlowStep(
             status: 'rejected',
             label: 'Rechazado',
-            isActive: false,
+            isActive: status == 'rejected',
             canTransition: false,
             isRejection: true,
           ),
@@ -567,7 +571,7 @@ class RequestDetailView extends StatelessWidget {
     );
   }
 
-  Widget _StatusFlowStep({
+  Widget statusFlowStep({
     required String status,
     required String label,
     required bool isActive,
@@ -616,21 +620,21 @@ class RequestDetailView extends StatelessWidget {
     );
   }
 
-  Widget _StatusFlowArrow() {
+  Widget statusFlowArrow() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8),
       child: Icon(Icons.arrow_forward, color: Colors.grey.shade400, size: 20),
     );
   }
 
-  Widget _InfoRow({required String label, required String value}) {
+  Widget infoRow({required String label, required String value}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-            width: 120,
+            width: 150,
             child: Text(
               '$label:',
               style: TextStyle(
@@ -680,7 +684,7 @@ class _StatusChangeButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: RequestStatus.getColor(newStatus).withOpacity(0.3),
+            color: RequestStatus.getColor(newStatus).withValues(alpha: 0.3),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -731,9 +735,9 @@ class _InfoCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

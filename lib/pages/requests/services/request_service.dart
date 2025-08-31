@@ -187,10 +187,7 @@ class RequestService extends GetxService {
     }
   }
 
-  Future<(bool, OdewaRequest?, String)> updateRequestStatus(
-    String id,
-    String status,
-  ) async {
+  Future<(bool, String)> updateRequestStatus(String id, String status) async {
     try {
       final uri = Uri.parse('${Urls.backofficeRequests}/$id/status');
 
@@ -203,16 +200,13 @@ class RequestService extends GetxService {
       );
 
       if (response.statusCode == Constants.HTTP_200_OK) {
-        final updatedRequest = OdewaRequest.fromJson(
-          json.decode(response.body),
-        );
-        return (true, updatedRequest, 'Estado actualizado exitosamente');
+        return (true, 'Estado actualizado exitosamente');
       } else {
         final error = Constants.handleError(response.body, response.statusCode);
-        return (false, null, error.$2);
+        return (false, error.$2);
       }
     } catch (e) {
-      return (false, null, 'Error al actualizar estado: $e');
+      return (false, 'Error al actualizar estado: $e');
     }
   }
 

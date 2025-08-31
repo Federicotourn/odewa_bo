@@ -1,13 +1,13 @@
 // ignore_for_file: use_build_context_synchronously, avoid_print, avoid_web_libraries_in_flutter
+import 'package:odewa_bo/constants/app_theme.dart';
 import 'package:odewa_bo/pages/authentication/controllers/auth_controller.dart';
 import 'package:odewa_bo/controllers/logged_user_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class AuthenticationPage extends StatefulWidget {
-  const AuthenticationPage({Key? key}) : super(key: key);
+  const AuthenticationPage({super.key});
 
   @override
   State<AuthenticationPage> createState() => _AuthenticationPageState();
@@ -22,7 +22,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppTheme.primaryLight.withValues(alpha: 0.3),
       body: Center(
         child: Container(
           constraints: const BoxConstraints(maxWidth: 400),
@@ -32,7 +32,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
             children: [
               FittedBox(
                 fit: BoxFit.contain,
-                child: SvgPicture.asset(
+                child: Image.asset(
                   "assets/logotipo_recortado.png",
                   width: Get.width * 0.5,
                 ),
@@ -42,7 +42,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                 controller: authController.emailController,
                 decoration: InputDecoration(
                   labelText: "Email",
-                  hintText: "abc@cambilex.com",
+                  hintText: "abc@odewa.com",
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),
@@ -132,7 +132,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.indigo,
+                    backgroundColor: AppTheme.primary,
                     foregroundColor: Colors.white,
                     minimumSize: const Size(double.infinity, 50),
                     shape: RoundedRectangleBorder(

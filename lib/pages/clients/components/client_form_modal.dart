@@ -6,8 +6,7 @@ class ClientFormModal extends StatefulWidget {
   final Function(Client) onSubmit;
   final Client? client;
 
-  const ClientFormModal({Key? key, required this.onSubmit, this.client})
-    : super(key: key);
+  const ClientFormModal({super.key, required this.onSubmit, this.client});
 
   @override
   State<ClientFormModal> createState() => _ClientFormModalState();
@@ -106,7 +105,7 @@ class _ClientFormModalState extends State<ClientFormModal> {
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
+                      color: Colors.white.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Icon(
@@ -135,7 +134,7 @@ class _ClientFormModalState extends State<ClientFormModal> {
                               ? 'Define un nuevo empleado con sus datos'
                               : 'Modifica la información del empleado existente',
                           style: TextStyle(
-                            color: Colors.white.withOpacity(0.9),
+                            color: Colors.white.withValues(alpha: 0.9),
                             fontSize: 14,
                           ),
                         ),
@@ -349,7 +348,7 @@ class _ModernTextField extends StatelessWidget {
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
+                color: Colors.black.withValues(alpha: 0.05),
                 blurRadius: 10,
                 offset: const Offset(0, 2),
               ),
@@ -444,7 +443,7 @@ class _ModernElevatedButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.blue.shade400.withOpacity(0.3),
+            color: Colors.blue.shade400.withValues(alpha: 0.3),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),

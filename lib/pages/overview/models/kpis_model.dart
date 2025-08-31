@@ -88,12 +88,14 @@ class RequestsByStatus {
   int approved;
   int rejected;
   int completed;
+  int cancelled;
 
   RequestsByStatus({
     required this.pending,
     required this.approved,
     required this.rejected,
     required this.completed,
+    required this.cancelled,
   });
 
   factory RequestsByStatus.fromJson(Map<String, dynamic> json) =>
@@ -102,6 +104,7 @@ class RequestsByStatus {
         approved: json["approved"],
         rejected: json["rejected"],
         completed: json["completed"],
+        cancelled: json["cancelled"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -109,6 +112,7 @@ class RequestsByStatus {
     "approved": approved,
     "rejected": rejected,
     "completed": completed,
+    "cancelled": cancelled,
   };
 
   // Helper methods for easier access
@@ -136,6 +140,12 @@ class RequestsByStatus {
       label: 'Completadas',
       count: completed,
       color: const Color(0xFF2196F3), // Blue
+    ),
+    StatusData(
+      status: 'cancelled',
+      label: 'Canceladas',
+      count: cancelled,
+      color: const Color.fromARGB(255, 242, 97, 86), // Red
     ),
   ];
 

@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_print
 
+import 'package:odewa_bo/constants/app_theme.dart';
 import 'package:odewa_bo/constants/constants.dart';
 import 'package:odewa_bo/constants/controllers.dart';
 import 'package:odewa_bo/controllers/logged_user_controller.dart';
@@ -32,7 +33,7 @@ class SideMenu extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Colors.indigo.shade600, Colors.indigo.shade800],
+            colors: [AppTheme.primary, AppTheme.primaryLight],
           ),
           borderRadius: BorderRadius.only(
             topRight: Radius.circular(20),

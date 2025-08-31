@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:odewa_bo/constants/constants.dart';
 import 'package:odewa_bo/constants/urls.dart';
 import 'package:odewa_bo/pages/overview/models/dashboard_model.dart';
@@ -33,11 +34,11 @@ class OverviewService extends GetxService {
         KpisData kpisData = kpisDataFromJson(response.body);
         return kpisData;
       } else {
-        print('Error response: ${response.statusCode} - ${response.body}');
+        debugPrint('Error response: ${response.statusCode} - ${response.body}');
         return kpisDataExample;
       }
     } catch (e) {
-      print('Exception occurred: $e');
+      debugPrint('Exception occurred: $e');
       return kpisDataExample;
     }
   }
@@ -62,6 +63,7 @@ class OverviewService extends GetxService {
       approved: 0,
       rejected: 0,
       completed: 0,
+      cancelled: 0,
     ),
   );
 }

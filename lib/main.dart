@@ -4,15 +4,12 @@ import 'package:odewa_bo/constants/app_theme.dart';
 import 'package:odewa_bo/controllers/logged_user_controller.dart';
 import 'package:odewa_bo/controllers/menu_controller.dart' as app;
 import 'package:odewa_bo/controllers/navigation_controller.dart';
-import 'package:odewa_bo/layout.dart';
 import 'package:odewa_bo/pages/404/error_page.dart';
-import 'package:odewa_bo/pages/authentication/authentication.dart';
 import 'package:odewa_bo/pages/authentication/services/auth_service.dart';
 import 'package:odewa_bo/pages/companies/services/company_service.dart';
 import 'package:odewa_bo/pages/requests/services/request_service.dart';
 import 'package:odewa_bo/pages/users/services/users_service.dart';
 
-// Legacy services (to be removed)
 import 'package:odewa_bo/pages/overview/services/overview_service.dart';
 import 'package:odewa_bo/routing/routes.dart';
 import 'package:odewa_bo/services/logged_user_service.dart';

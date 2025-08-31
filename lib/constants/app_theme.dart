@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 class AppTheme {
   AppTheme._();
 
-  static const Color primary = Color(0xFF003dc4);
-  static const Color primaryLight = Color(0xFF356fe5);
+  static const Color primary = Color(0xFF9661ed);
+  static const Color primaryLight = Color.fromARGB(255, 173, 135, 233);
   static const Color primaryBottom = Color(0xFF003dc4);
   static const Color primaryBottomLight = Color(0xFF50A0FF);
   static const Color onyx = Color(0xFF1C1E21);

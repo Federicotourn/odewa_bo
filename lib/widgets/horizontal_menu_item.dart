@@ -7,12 +7,12 @@ import 'custom_text.dart';
 
 class HorizontalMenuItem extends StatelessWidget {
   const HorizontalMenuItem({
-    Key? key,
+    super.key,
     required this.itemName,
     required this.onTap,
     this.hasWarning = false,
     this.numWarning = 0,
-  }) : super(key: key);
+  });
 
   final String itemName;
   final VoidCallback onTap;
@@ -34,7 +34,7 @@ class HorizontalMenuItem extends StatelessWidget {
         () => Container(
           color:
               menuController.isHovering(itemName)
-                  ? AppTheme.lightGray.withOpacity(.1)
+                  ? AppTheme.lightGray.withValues(alpha: .1)
                   : Colors.transparent,
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,

@@ -1,5 +1,4 @@
 import 'package:odewa_bo/constants/app_theme.dart';
-import 'package:odewa_bo/pages/authentication/models/login_model.dart' as role;
 import 'package:odewa_bo/pages/users/models/user_model.dart';
 import 'package:odewa_bo/pages/users/services/users_service.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +21,7 @@ class UsersController extends GetxController {
 
   List<User> get paginatedUsers {
     final startIndex = (currentPage.value - 1) * itemsPerPage.value;
-    final endIndex = startIndex + itemsPerPage.value;
+    // final endIndex = startIndex + itemsPerPage.value;
     return allUsers.skip(startIndex).take(itemsPerPage.value).toList();
   }
 
