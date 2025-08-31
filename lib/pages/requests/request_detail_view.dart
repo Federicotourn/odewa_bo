@@ -368,24 +368,66 @@ class RequestDetailView extends StatelessWidget {
           infoRow(label: 'ID', value: client.id),
           infoRow(
             label: 'Teléfono',
-            value: client.phone.isEmpty ? 'No especificado' : client.phone,
+            value:
+                client.phone != null && client.phone!.isNotEmpty
+                    ? client.phone!
+                    : 'No especificado',
           ),
           infoRow(
             label: 'Dirección',
-            value: client.address.isEmpty ? 'No especificada' : client.address,
+            value:
+                client.address != null && client.address!.isNotEmpty
+                    ? client.address!
+                    : 'No especificada',
           ),
           infoRow(
             label: 'Ciudad',
-            value: client.city.isEmpty ? 'No especificada' : client.city,
+            value:
+                client.city != null && client.city!.isNotEmpty
+                    ? client.city!
+                    : 'No especificada',
           ),
-          infoRow(label: 'Banco', value: client.bank),
-          infoRow(label: 'Moneda', value: client.currency),
-          infoRow(label: 'Número de Cuenta', value: client.accountNumber),
-          infoRow(label: 'Sucursal', value: client.branch),
-          infoRow(label: 'Beneficiario', value: client.beneficiary),
+          infoRow(
+            label: 'Banco',
+            value:
+                client.bank != null && client.bank!.isNotEmpty
+                    ? client.bank!
+                    : 'No especificado',
+          ),
+          infoRow(
+            label: 'Moneda',
+            value:
+                client.currency != null && client.currency!.isNotEmpty
+                    ? client.currency!
+                    : 'No especificada',
+          ),
+          infoRow(
+            label: 'Número de Cuenta',
+            value:
+                client.accountNumber != null && client.accountNumber!.isNotEmpty
+                    ? client.accountNumber!
+                    : 'No especificado',
+          ),
+          infoRow(
+            label: 'Sucursal',
+            value:
+                client.branch != null && client.branch!.isNotEmpty
+                    ? client.branch!
+                    : 'No especificada',
+          ),
+          infoRow(
+            label: 'Beneficiario',
+            value:
+                client.beneficiary != null && client.beneficiary!.isNotEmpty
+                    ? client.beneficiary!
+                    : 'No especificado',
+          ),
           infoRow(
             label: 'Balance Mensual',
-            value: '\$${client.monthlyBalance}',
+            value:
+                client.monthlyBalance != null
+                    ? '\$${client.monthlyBalance}'
+                    : 'No especificado',
           ),
           infoRow(label: 'Creado', value: _formatDateTime(client.createdAt)),
           infoRow(

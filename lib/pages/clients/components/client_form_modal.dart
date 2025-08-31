@@ -19,6 +19,8 @@ class _ClientFormModalState extends State<ClientFormModal> {
   final TextEditingController _documentController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _monthlyBalanceController =
+      TextEditingController();
 
   @override
   void initState() {
@@ -28,7 +30,9 @@ class _ClientFormModalState extends State<ClientFormModal> {
       _lastNameController.text = widget.client!.lastName;
       _documentController.text = widget.client!.document;
       _emailController.text = widget.client!.email;
-      _phoneController.text = widget.client!.phone;
+      _phoneController.text = widget.client!.phone ?? '';
+      _monthlyBalanceController.text =
+          widget.client!.monthlyBalance?.toString() ?? '';
     }
   }
 
@@ -39,6 +43,7 @@ class _ClientFormModalState extends State<ClientFormModal> {
     _documentController.dispose();
     _emailController.dispose();
     _phoneController.dispose();
+    _monthlyBalanceController.dispose();
     super.dispose();
   }
 
@@ -50,18 +55,21 @@ class _ClientFormModalState extends State<ClientFormModal> {
         lastName: _lastNameController.text,
         document: _documentController.text,
         email: _emailController.text,
-        phone: _phoneController.text.isEmpty ? '' : _phoneController.text,
+        phone: _phoneController.text.isEmpty ? null : _phoneController.text,
         isActive: widget.client?.isActive ?? true,
         createdAt: widget.client?.createdAt ?? DateTime.now(),
         updatedAt: widget.client?.updatedAt ?? DateTime.now(),
         address: widget.client?.address,
         city: widget.client?.city,
-        bank: widget.client?.bank ?? '',
-        currency: widget.client?.currency ?? '',
-        accountNumber: widget.client?.accountNumber ?? '',
-        branch: widget.client?.branch ?? '',
-        beneficiary: widget.client?.beneficiary ?? '',
-        monthlyBalance: widget.client?.monthlyBalance,
+        bank: widget.client?.bank,
+        currency: widget.client?.currency,
+        accountNumber: widget.client?.accountNumber,
+        branch: widget.client?.branch,
+        beneficiary: widget.client?.beneficiary,
+        monthlyBalance:
+            _monthlyBalanceController.text.isEmpty
+                ? null
+                : int.tryParse(_monthlyBalanceController.text),
       );
       widget.onSubmit(client);
       Navigator.of(context).pop();
@@ -206,6 +214,18 @@ class _ClientFormModalState extends State<ClientFormModal> {
                         icon: Icons.phone,
                         isRequired: false,
                       ),
+
+                      const SizedBox(height: 20),
+
+                      // Campo de balance mensual
+                      _ModernTextField(
+                        label: 'Balance Mensual',
+                        hint: 'Ej: 50000',
+                        controller: _monthlyBalanceController,
+                        icon: Icons.monetization_on,
+                        isRequired: false,
+                        keyboardType: TextInputType.number,
+                      ),
                     ],
                   ),
                 ),
@@ -283,6 +303,29 @@ class _ClientFormModalState extends State<ClientFormModal> {
                         return;
                       }
 
+                      // Validar balance mensual si no está vacío
+                      if (_monthlyBalanceController.text.trim().isNotEmpty &&
+                          int.tryParse(_monthlyBalanceController.text.trim()) ==
+                              null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Row(
+                              children: [
+                                Icon(Icons.warning, color: Colors.white),
+                                const SizedBox(width: 8),
+                                const Text('Ingresa un balance mensual válido'),
+                              ],
+                            ),
+                            backgroundColor: Colors.orange,
+                            behavior: SnackBarBehavior.floating,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                        );
+                        return;
+                      }
+
                       _submitForm();
                     },
                   ),
@@ -304,6 +347,7 @@ class _ModernTextField extends StatelessWidget {
   final TextEditingController controller;
   final IconData icon;
   final bool isRequired;
+  final TextInputType? keyboardType;
 
   const _ModernTextField({
     required this.label,
@@ -311,6 +355,7 @@ class _ModernTextField extends StatelessWidget {
     required this.controller,
     required this.icon,
     this.isRequired = false,
+    this.keyboardType,
   });
 
   @override
@@ -356,6 +401,7 @@ class _ModernTextField extends StatelessWidget {
           ),
           child: TextField(
             controller: controller,
+            keyboardType: keyboardType,
             decoration: InputDecoration(
               hintText: hint,
               hintStyle: TextStyle(color: Colors.grey.shade400),

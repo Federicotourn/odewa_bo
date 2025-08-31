@@ -174,17 +174,17 @@ class RequestClient {
   String lastName;
   String email;
   String document;
-  String phone;
-  String address;
-  String city;
-  String bank;
-  String currency;
-  String accountNumber;
-  String branch;
-  String beneficiary;
-  String password;
-  String salt;
-  int monthlyBalance;
+  String? phone;
+  String? address;
+  String? city;
+  String? bank;
+  String? currency;
+  String? accountNumber;
+  String? branch;
+  String? beneficiary;
+  String? password;
+  String? salt;
+  int? monthlyBalance;
 
   RequestClient({
     required this.id,
@@ -199,17 +199,17 @@ class RequestClient {
     required this.lastName,
     required this.email,
     required this.document,
-    required this.phone,
-    required this.address,
-    required this.city,
-    required this.bank,
-    required this.currency,
-    required this.accountNumber,
-    required this.branch,
-    required this.beneficiary,
-    required this.password,
-    required this.salt,
-    required this.monthlyBalance,
+    this.phone,
+    this.address,
+    this.city,
+    this.bank,
+    this.currency,
+    this.accountNumber,
+    this.branch,
+    this.beneficiary,
+    this.password,
+    this.salt,
+    this.monthlyBalance,
   });
 
   String get fullName => '$firstName $lastName';

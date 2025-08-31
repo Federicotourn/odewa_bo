@@ -37,14 +37,14 @@ class Client {
   String lastName;
   String email;
   String document;
-  String phone;
+  String? phone;
   String? address;
   String? city;
-  String bank;
-  String currency;
-  String accountNumber;
-  String branch;
-  String beneficiary;
+  String? bank;
+  String? currency;
+  String? accountNumber;
+  String? branch;
+  String? beneficiary;
   int? monthlyBalance;
 
   Client({
@@ -56,15 +56,15 @@ class Client {
     required this.lastName,
     required this.email,
     required this.document,
-    required this.phone,
-    required this.address,
-    required this.city,
-    required this.bank,
-    required this.currency,
-    required this.accountNumber,
-    required this.branch,
-    required this.beneficiary,
-    required this.monthlyBalance,
+    this.phone,
+    this.address,
+    this.city,
+    this.bank,
+    this.currency,
+    this.accountNumber,
+    this.branch,
+    this.beneficiary,
+    this.monthlyBalance,
   });
 
   factory Client.fromJson(Map<String, dynamic> json) => Client(

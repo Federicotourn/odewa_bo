@@ -110,6 +110,15 @@ class ClientDetailView extends StatelessWidget {
 
                       const SizedBox(height: 24),
 
+                      // Balance mensual
+                      _buildMonthlyBalanceSection(
+                        clientController.selectedClient.value!,
+                        clientController,
+                        context,
+                      ),
+
+                      const SizedBox(height: 24),
+
                       // Información de contacto
                       _buildContactInfo(clientController.selectedClient.value!),
 
@@ -356,8 +365,8 @@ class ClientDetailView extends StatelessWidget {
                   icon: Icons.phone,
                   label: 'Teléfono',
                   value:
-                      client.phone.isNotEmpty
-                          ? client.phone
+                      client.phone != null && client.phone!.isNotEmpty
+                          ? client.phone!
                           : 'No especificado',
                   color: Colors.green.shade600,
                 ),
@@ -436,7 +445,9 @@ class ClientDetailView extends StatelessWidget {
                   icon: Icons.account_balance,
                   label: 'Banco',
                   value:
-                      client.bank.isNotEmpty ? client.bank : 'No especificado',
+                      client.bank != null && client.bank!.isNotEmpty
+                          ? client.bank!
+                          : 'No especificado',
                   color: Colors.indigo.shade600,
                 ),
               ),
@@ -446,8 +457,8 @@ class ClientDetailView extends StatelessWidget {
                   icon: Icons.monetization_on,
                   label: 'Moneda',
                   value:
-                      client.currency.isNotEmpty
-                          ? client.currency
+                      client.currency != null && client.currency!.isNotEmpty
+                          ? client.currency!
                           : 'No especificada',
                   color: Colors.amber.shade600,
                 ),
@@ -458,8 +469,9 @@ class ClientDetailView extends StatelessWidget {
                   icon: Icons.credit_card,
                   label: 'Cuenta',
                   value:
-                      client.accountNumber.isNotEmpty
-                          ? client.accountNumber
+                      client.accountNumber != null &&
+                              client.accountNumber!.isNotEmpty
+                          ? client.accountNumber!
                           : 'No especificada',
                   color: Colors.teal.shade600,
                 ),
@@ -469,20 +481,16 @@ class ClientDetailView extends StatelessWidget {
           const SizedBox(height: 20),
           infoRow(
             label: 'Sucursal',
-            value: client.branch.isNotEmpty ? client.branch : 'No especificada',
+            value:
+                client.branch != null && client.branch!.isNotEmpty
+                    ? client.branch!
+                    : 'No especificada',
           ),
           infoRow(
             label: 'Beneficiario',
             value:
-                client.beneficiary.isNotEmpty
-                    ? client.beneficiary
-                    : 'No especificado',
-          ),
-          infoRow(
-            label: 'Balance Mensual',
-            value:
-                client.monthlyBalance != null
-                    ? '\$${client.monthlyBalance}'
+                client.beneficiary != null && client.beneficiary!.isNotEmpty
+                    ? client.beneficiary!
                     : 'No especificado',
           ),
         ],
@@ -662,6 +670,315 @@ class ClientDetailView extends StatelessWidget {
 
   String _formatDateTime(DateTime date) {
     return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year} ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
+  }
+
+  Widget _buildMonthlyBalanceSection(
+    Client client,
+    ClientController controller,
+    BuildContext context,
+  ) {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.account_balance_wallet,
+                color: Colors.green.shade600,
+                size: 24,
+              ),
+              const SizedBox(width: 12),
+              Text(
+                'Balance Mensual',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.green.shade800,
+                ),
+              ),
+              const Spacer(),
+              _ActionButton(
+                icon: Icons.edit,
+                label: 'Editar Balance',
+                color: Colors.green.shade400,
+                onPressed:
+                    () => _showBalanceEditDialog(context, client, controller),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [Colors.green.shade50, Colors.green.shade100],
+              ),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.green.shade200),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.monetization_on,
+                  color: Colors.green.shade600,
+                  size: 48,
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  client.monthlyBalance != null
+                      ? '\$${client.monthlyBalance!.toString().replaceAllMapped(RegExp(r'(\d)(?=(\d{3})+(?!\d))'), (match) => '${match[1]}.')}'
+                      : 'No especificado',
+                  style: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green.shade800,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Balance mensual del empleado',
+                  style: TextStyle(fontSize: 16, color: Colors.green.shade600),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showBalanceEditDialog(
+    BuildContext context,
+    Client client,
+    ClientController controller,
+  ) {
+    final TextEditingController balanceController = TextEditingController(
+      text: client.monthlyBalance?.toString() ?? '',
+    );
+
+    showDialog(
+      context: context,
+      builder:
+          (context) => Dialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(24),
+            ),
+            child: Container(
+              width: Get.width * 0.4,
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(24),
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [Colors.white, Colors.green.shade50],
+                ),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Header
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [Colors.green.shade400, Colors.green.shade600],
+                      ),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.edit, color: Colors.white, size: 24),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            'Editar Balance Mensual',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Campo de input
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.monetization_on,
+                            size: 20,
+                            color: Colors.green.shade600,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Balance Mensual',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.grey.shade700,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.05),
+                              blurRadius: 10,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: TextField(
+                          controller: balanceController,
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            hintText: 'Ej: 50000',
+                            hintStyle: TextStyle(color: Colors.grey.shade400),
+                            prefixText: '\$ ',
+                            prefixStyle: TextStyle(
+                              color: Colors.green.shade600,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              borderSide: BorderSide(
+                                color: Colors.grey.shade300,
+                              ),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              borderSide: BorderSide(
+                                color: Colors.grey.shade300,
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              borderSide: BorderSide(
+                                color: Colors.green.shade400,
+                                width: 2,
+                              ),
+                            ),
+                            filled: true,
+                            fillColor: Colors.white,
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 16,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  // Botones
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: Text(
+                          'Cancelar',
+                          style: TextStyle(color: Colors.grey.shade600),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      ElevatedButton(
+                        onPressed: () async {
+                          final newBalance =
+                              balanceController.text.trim().isEmpty
+                                  ? null
+                                  : int.tryParse(balanceController.text.trim());
+
+                          if (balanceController.text.trim().isNotEmpty &&
+                              newBalance == null) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: const Text(
+                                  'Ingresa un balance válido',
+                                ),
+                                backgroundColor: Colors.orange,
+                              ),
+                            );
+                            return;
+                          }
+
+                          // Crear cliente actualizado
+                          final updatedClient = Client(
+                            id: client.id,
+                            createdAt: client.createdAt,
+                            updatedAt: DateTime.now(),
+                            isActive: client.isActive,
+                            firstName: client.firstName,
+                            lastName: client.lastName,
+                            email: client.email,
+                            document: client.document,
+                            phone: client.phone,
+                            address: client.address,
+                            city: client.city,
+                            bank: client.bank,
+                            currency: client.currency,
+                            accountNumber: client.accountNumber,
+                            branch: client.branch,
+                            beneficiary: client.beneficiary,
+                            monthlyBalance: newBalance,
+                          );
+
+                          await controller.updateClient(updatedClient);
+                          controller.selectedClient.value = updatedClient;
+                          Navigator.pop(context);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green.shade400,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 24,
+                            vertical: 12,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                        child: const Text('Guardar'),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+    );
   }
 }
 

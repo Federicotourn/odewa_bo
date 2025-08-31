@@ -65,23 +65,23 @@ class ClientService extends GetxService {
     }
   }
 
-  Future<Client> updateClient(Client client) async {
+  Future<bool> updateClient(Client client) async {
     try {
       final uri = Uri.parse('${Urls.backofficeClients}/${client.id}');
 
-      final response = await _tokenValidationService.client.put(
+      final response = await _tokenValidationService.client.patch(
         uri,
         headers: _headers,
         body: json.encode(client.toJson()),
       );
 
       if (response.statusCode == Constants.HTTP_200_OK) {
-        return Client.fromJson(json.decode(response.body));
+        return true;
       } else {
-        throw Exception('Failed to update client');
+        return false;
       }
     } catch (e) {
-      throw Exception('Error updating client: $e');
+      return false;
     }
   }
 

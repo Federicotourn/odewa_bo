@@ -87,15 +87,26 @@ class ClientController extends GetxController {
   Future<void> updateClient(Client client) async {
     try {
       isLoading.value = true;
-      await _clientService.updateClient(client);
-      Get.snackbar(
-        'Success',
-        'Client updated successfully',
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-      );
-      fetchClients(); // Refresh the list
+      final result = await _clientService.updateClient(client);
+      if (result) {
+        await fetchClients();
+        selectedClient.value = client;
+        Get.snackbar(
+          'Éxito',
+          'Cliente actualizado correctamente',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+      } else {
+        Get.snackbar(
+          'Error',
+          'Error al actualizar cliente',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
     } catch (e) {
       Get.snackbar(
         'Error',

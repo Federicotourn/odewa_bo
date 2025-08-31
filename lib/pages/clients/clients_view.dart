@@ -141,8 +141,8 @@ class ClientsView extends StatelessWidget {
                         icon: Icons.phone,
                         label: 'Teléfono',
                         value:
-                            client.phone.isNotEmpty
-                                ? client.phone
+                            client.phone != null && client.phone!.isNotEmpty
+                                ? client.phone!
                                 : 'No registrado',
                         color: Colors.green.shade400,
                       ),
@@ -153,8 +153,8 @@ class ClientsView extends StatelessWidget {
                         icon: Icons.account_balance,
                         label: 'Banco',
                         value:
-                            client.bank.isNotEmpty
-                                ? client.bank
+                            client.bank != null && client.bank!.isNotEmpty
+                                ? client.bank!
                                 : 'No registrado',
                         color: Colors.indigo.shade400,
                       ),
