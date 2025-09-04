@@ -52,7 +52,7 @@ class ClientService extends GetxService {
       final response = await _tokenValidationService.client.post(
         uri,
         headers: _headers,
-        body: json.encode(client.toJson()),
+        body: json.encode(client.toJsonForCreate()),
       );
 
       if (response.statusCode == Constants.HTTP_201_CREATED) {

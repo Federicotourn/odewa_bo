@@ -46,7 +46,7 @@ class ClientController extends GetxController {
     }
   }
 
-  Future<void> createClient(Client client) async {
+  Future<bool> createClient(Client client) async {
     try {
       isLoading.value = true;
       await _clientService.createClient(client);
@@ -58,6 +58,7 @@ class ClientController extends GetxController {
         colorText: Colors.white,
       );
       fetchClients(); // Refresh the list
+      return true;
     } catch (e) {
       Get.snackbar(
         'Error',
@@ -66,6 +67,7 @@ class ClientController extends GetxController {
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
+      return false;
     } finally {
       isLoading.value = false;
     }
@@ -84,7 +86,7 @@ class ClientController extends GetxController {
     fetchClients();
   }
 
-  Future<void> updateClient(Client client) async {
+  Future<bool> updateClient(Client client) async {
     try {
       isLoading.value = true;
       final result = await _clientService.updateClient(client);
@@ -98,6 +100,7 @@ class ClientController extends GetxController {
           backgroundColor: Colors.green,
           colorText: Colors.white,
         );
+        return true;
       } else {
         Get.snackbar(
           'Error',
@@ -106,6 +109,7 @@ class ClientController extends GetxController {
           backgroundColor: Colors.red,
           colorText: Colors.white,
         );
+        return false;
       }
     } catch (e) {
       Get.snackbar(
@@ -117,6 +121,7 @@ class ClientController extends GetxController {
       );
     } finally {
       isLoading.value = false;
+      return false;
     }
   }
 

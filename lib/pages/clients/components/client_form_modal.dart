@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../models/client_model.dart';
+import '../controllers/client_controller.dart';
 
 class ClientFormModal extends StatefulWidget {
-  final Function(Client) onSubmit;
   final Client? client;
 
-  const ClientFormModal({super.key, required this.onSubmit, this.client});
+  const ClientFormModal({super.key, this.client});
 
   @override
   State<ClientFormModal> createState() => _ClientFormModalState();
@@ -21,6 +21,7 @@ class _ClientFormModalState extends State<ClientFormModal> {
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _monthlyBalanceController =
       TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   @override
   void initState() {
@@ -33,6 +34,7 @@ class _ClientFormModalState extends State<ClientFormModal> {
       _phoneController.text = widget.client!.phone ?? '';
       _monthlyBalanceController.text =
           widget.client!.monthlyBalance?.toString() ?? '';
+      _passwordController.text = widget.client!.password ?? '';
     }
   }
 
@@ -44,13 +46,15 @@ class _ClientFormModalState extends State<ClientFormModal> {
     _emailController.dispose();
     _phoneController.dispose();
     _monthlyBalanceController.dispose();
+    _passwordController.dispose();
     super.dispose();
   }
 
-  void _submitForm() {
+  void _submitForm() async {
     if (_formKey.currentState!.validate()) {
-      final client = Client(
-        id: widget.client?.id ?? '',
+      // Crear el objeto cliente
+      final newClient = Client(
+        id: widget.client?.id ?? '', // Solo se usa al editar
         firstName: _firstNameController.text,
         lastName: _lastNameController.text,
         document: _documentController.text,
@@ -70,9 +74,26 @@ class _ClientFormModalState extends State<ClientFormModal> {
             _monthlyBalanceController.text.isEmpty
                 ? null
                 : int.tryParse(_monthlyBalanceController.text),
+        password:
+            _passwordController.text.isEmpty ? null : _passwordController.text,
       );
-      widget.onSubmit(client);
-      Navigator.of(context).pop();
+
+      // Obtener el controlador
+      final controller = Get.find<ClientController>();
+
+      bool success = false;
+      if (widget.client != null) {
+        // Actualizar cliente existente
+        success = await controller.updateClient(newClient);
+      } else {
+        // Crear nuevo cliente
+        success = await controller.createClient(newClient);
+      }
+
+      if (success) {
+        Navigator.pop(context);
+      }
+      // Los mensajes de éxito/error ya se manejan en el controlador
     }
   }
 
@@ -226,6 +247,19 @@ class _ClientFormModalState extends State<ClientFormModal> {
                         isRequired: false,
                         keyboardType: TextInputType.number,
                       ),
+
+                      const SizedBox(height: 20),
+
+                      // Campo de contraseña (solo para crear)
+                      if (widget.client == null)
+                        _ModernTextField(
+                          label: 'Contraseña',
+                          hint: 'Ej: miContraseña123',
+                          controller: _passwordController,
+                          icon: Icons.lock,
+                          isRequired: true,
+                          isPassword: true,
+                        ),
                     ],
                   ),
                 ),
@@ -261,7 +295,9 @@ class _ClientFormModalState extends State<ClientFormModal> {
                       if (_firstNameController.text.trim().isEmpty ||
                           _lastNameController.text.trim().isEmpty ||
                           _documentController.text.trim().isEmpty ||
-                          _emailController.text.trim().isEmpty) {
+                          _emailController.text.trim().isEmpty ||
+                          (widget.client == null &&
+                              _passwordController.text.trim().isEmpty)) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Row(
@@ -326,6 +362,30 @@ class _ClientFormModalState extends State<ClientFormModal> {
                         return;
                       }
 
+                      // Validar contraseña si se está creando un nuevo cliente
+                      if (widget.client == null &&
+                          _passwordController.text.trim().length < 6) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Row(
+                              children: [
+                                Icon(Icons.warning, color: Colors.white),
+                                const SizedBox(width: 8),
+                                const Text(
+                                  'La contraseña debe tener al menos 6 caracteres',
+                                ),
+                              ],
+                            ),
+                            backgroundColor: Colors.orange,
+                            behavior: SnackBarBehavior.floating,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                        );
+                        return;
+                      }
+
                       _submitForm();
                     },
                   ),
@@ -341,13 +401,14 @@ class _ClientFormModalState extends State<ClientFormModal> {
 
 // COMPONENTES MODERNOS PARA EL MODAL
 
-class _ModernTextField extends StatelessWidget {
+class _ModernTextField extends StatefulWidget {
   final String label;
   final String hint;
   final TextEditingController controller;
   final IconData icon;
   final bool isRequired;
   final TextInputType? keyboardType;
+  final bool isPassword;
 
   const _ModernTextField({
     required this.label,
@@ -356,7 +417,15 @@ class _ModernTextField extends StatelessWidget {
     required this.icon,
     this.isRequired = false,
     this.keyboardType,
+    this.isPassword = false,
   });
+
+  @override
+  State<_ModernTextField> createState() => _ModernTextFieldState();
+}
+
+class _ModernTextFieldState extends State<_ModernTextField> {
+  bool _obscureText = true;
 
   @override
   Widget build(BuildContext context) {
@@ -365,17 +434,17 @@ class _ModernTextField extends StatelessWidget {
       children: [
         Row(
           children: [
-            Icon(icon, size: 20, color: Colors.blue.shade600),
+            Icon(widget.icon, size: 20, color: Colors.blue.shade600),
             const SizedBox(width: 8),
             Text(
-              label,
+              widget.label,
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
                 color: Colors.grey.shade700,
               ),
             ),
-            if (isRequired) ...[
+            if (widget.isRequired) ...[
               const SizedBox(width: 4),
               Text(
                 '*',
@@ -400,10 +469,11 @@ class _ModernTextField extends StatelessWidget {
             ],
           ),
           child: TextField(
-            controller: controller,
-            keyboardType: keyboardType,
+            controller: widget.controller,
+            keyboardType: widget.keyboardType,
+            obscureText: widget.isPassword ? _obscureText : false,
             decoration: InputDecoration(
-              hintText: hint,
+              hintText: widget.hint,
               hintStyle: TextStyle(color: Colors.grey.shade400),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(16),
@@ -423,6 +493,22 @@ class _ModernTextField extends StatelessWidget {
                 horizontal: 20,
                 vertical: 16,
               ),
+              suffixIcon:
+                  widget.isPassword
+                      ? IconButton(
+                        icon: Icon(
+                          _obscureText
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                          color: Colors.grey.shade600,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _obscureText = !_obscureText;
+                          });
+                        },
+                      )
+                      : null,
             ),
           ),
         ),

@@ -46,6 +46,7 @@ class Client {
   String? branch;
   String? beneficiary;
   int? monthlyBalance;
+  String? password;
 
   Client({
     required this.id,
@@ -65,6 +66,7 @@ class Client {
     this.branch,
     this.beneficiary,
     this.monthlyBalance,
+    this.password,
   });
 
   factory Client.fromJson(Map<String, dynamic> json) => Client(
@@ -85,6 +87,7 @@ class Client {
     branch: json["branch"],
     beneficiary: json["beneficiary"],
     monthlyBalance: json["monthlyBalance"],
+    password: json["password"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -105,6 +108,26 @@ class Client {
     "branch": branch,
     "beneficiary": beneficiary,
     "monthlyBalance": monthlyBalance,
+    "password": password,
+  };
+
+  // Método específico para crear clientes (sin id, createdAt, updatedAt)
+  Map<String, dynamic> toJsonForCreate() => {
+    "isActive": isActive,
+    "firstName": firstName,
+    "lastName": lastName,
+    "email": email,
+    "document": document,
+    "phone": phone,
+    "address": address,
+    "city": city,
+    "bank": bank,
+    "currency": currency,
+    "accountNumber": accountNumber,
+    "branch": branch,
+    "beneficiary": beneficiary,
+    "monthlyBalance": monthlyBalance,
+    "password": password,
   };
 }
 

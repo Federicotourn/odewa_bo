@@ -196,17 +196,7 @@ class ClientsView extends StatelessWidget {
   }) {
     showDialog(
       context: context,
-      builder:
-          (context) => ClientFormModal(
-            client: client,
-            onSubmit: (Client newClient) {
-              if (client != null) {
-                controller.updateClient(newClient);
-              } else {
-                controller.createClient(newClient);
-              }
-            },
-          ),
+      builder: (context) => ClientFormModal(client: client),
     );
   }
 

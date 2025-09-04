@@ -584,17 +584,7 @@ class ClientDetailView extends StatelessWidget {
   }) {
     showDialog(
       context: context,
-      builder:
-          (context) => ClientFormModal(
-            client: client,
-            onSubmit: (Client newClient) {
-              if (client != null) {
-                controller.updateClient(newClient);
-              } else {
-                controller.createClient(newClient);
-              }
-            },
-          ),
+      builder: (context) => ClientFormModal(client: client),
     );
   }
 
@@ -955,9 +945,26 @@ class ClientDetailView extends StatelessWidget {
                             monthlyBalance: newBalance,
                           );
 
-                          await controller.updateClient(updatedClient);
-                          controller.selectedClient.value = updatedClient;
-                          Navigator.pop(context);
+                          bool success = await controller.updateClient(
+                            updatedClient,
+                          );
+                          if (success) {
+                            controller.selectedClient.value = updatedClient;
+                            Navigator.pop(context);
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: const Text(
+                                  'Error al actualizar el cliente',
+                                ),
+                                backgroundColor: Colors.red,
+                                behavior: SnackBarBehavior.floating,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                            );
+                          }
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.green.shade400,
