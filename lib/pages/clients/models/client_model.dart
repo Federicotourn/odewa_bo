@@ -3,6 +3,7 @@
 //     final clientsResponse = clientsResponseFromJson(jsonString);
 
 import 'dart:convert';
+import '../../companies/models/company_model.dart';
 
 ClientsResponse clientsResponseFromJson(String str) =>
     ClientsResponse.fromJson(json.decode(str));
@@ -47,6 +48,7 @@ class Client {
   String? beneficiary;
   int? monthlyBalance;
   String? password;
+  Company? company;
 
   Client({
     required this.id,
@@ -67,6 +69,7 @@ class Client {
     this.beneficiary,
     this.monthlyBalance,
     this.password,
+    this.company,
   });
 
   factory Client.fromJson(Map<String, dynamic> json) => Client(
@@ -88,6 +91,7 @@ class Client {
     beneficiary: json["beneficiary"],
     monthlyBalance: json["monthlyBalance"],
     password: json["password"],
+    company: json["company"] != null ? Company.fromJson(json["company"]) : null,
   );
 
   Map<String, dynamic> toJson() => {
@@ -109,6 +113,7 @@ class Client {
     "beneficiary": beneficiary,
     "monthlyBalance": monthlyBalance,
     "password": password,
+    "company": company?.toJson(),
   };
 
   // Método específico para crear clientes (sin id, createdAt, updatedAt)
@@ -128,6 +133,7 @@ class Client {
     "beneficiary": beneficiary,
     "monthlyBalance": monthlyBalance,
     "password": password,
+    "companyId": company?.id,
   };
 }
 

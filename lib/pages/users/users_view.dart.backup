@@ -1,7 +1,6 @@
 // import 'package:odewa_bo/controllers/logged_user_controller.dart';
 import 'package:odewa_bo/pages/users/controllers/users_controller.dart';
 import 'package:odewa_bo/pages/users/models/user_model.dart';
-import 'package:odewa_bo/pages/users/components/company_selection_components.dart';
 import 'package:odewa_bo/widgets/confirmation_dialog.dart';
 import 'package:odewa_bo/widgets/loading.dart';
 import 'package:flutter/material.dart';
@@ -104,10 +103,9 @@ class UsersView extends StatelessWidget {
                       child: _InfoCard(
                         icon: Icons.business,
                         label: 'Empresas',
-                        value:
-                            user.companies != null && user.companies!.isNotEmpty
-                                ? '${user.companies!.length} empresa${user.companies!.length > 1 ? 's' : ''}'
-                                : 'Sin empresas',
+                        value: user.companies != null && user.companies!.isNotEmpty
+                            ? '${user.companies!.length} empresa${user.companies!.length > 1 ? 's' : ''}'
+                            : 'Sin empresas',
                         color: Colors.green.shade400,
                       ),
                     ),
@@ -139,27 +137,26 @@ class UsersView extends StatelessWidget {
                         Wrap(
                           spacing: 8,
                           runSpacing: 4,
-                          children:
-                              user.companies!.map((company) {
-                                return Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 8,
-                                    vertical: 4,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.blue.shade100,
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Text(
-                                    company.name,
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.blue.shade700,
-                                    ),
-                                  ),
-                                );
-                              }).toList(),
+                          children: user.companies!.map((company) {
+                            return Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.blue.shade100,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Text(
+                                company.name,
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.blue.shade700,
+                                ),
+                              ),
+                            );
+                          }).toList(),
                         ),
                       ],
                     ),
@@ -442,8 +439,7 @@ class UsersView extends StatelessWidget {
                                   'firstName': nameController.text.trim(),
                                   'lastName': lastNameController.text.trim(),
                                   'password': passwordController.text,
-                                  'companyIds':
-                                      controller.selectedCompanyIds.toList(),
+                                  'companyIds': controller.selectedCompanyIds.toList(),
                                 });
                             Get.back();
                             if (success) {
@@ -489,8 +485,7 @@ class UsersView extends StatelessWidget {
                             // Update existing user
                             loading(context);
                             // Get selected companies
-                            final selectedCompanies =
-                                controller.getSelectedCompanies();
+                            final selectedCompanies = controller.getSelectedCompanies();
                             final updatedUser = user.copyWith(
                               email: emailController.text.trim(),
                               firstName: nameController.text.trim(),
@@ -1077,246 +1072,134 @@ class UsersView extends StatelessWidget {
       });
     }
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
+    return GetBuilder<UsersController>(
+      builder: (controller) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(Icons.business, size: 20, color: Colors.blue.shade600),
-            const SizedBox(width: 8),
-            Text(
-              'Empresas',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: Colors.grey.shade700,
-              ),
-            ),
-            const SizedBox(width: 4),
-            Text(
-              '*',
-              style: TextStyle(
-                color: Colors.red.shade400,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        Text(
-          'Selecciona las empresas a las que pertenece este usuario (mínimo 1):',
-          style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
-        ),
-        const SizedBox(height: 12),
-
-        // Company selection content
-        Obx(() {
-          if (controller.isLoadingCompanies.value) {
-            return Container(
-              height: 200,
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey.shade300),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: const Center(
-                child: Padding(
-                  padding: EdgeInsets.all(20),
-                  child: CircularProgressIndicator(),
-                ),
-              ),
-            );
-          }
-
-          if (controller.companies.isEmpty) {
-            return Container(
-              height: 200,
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey.shade300),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: const Center(
-                child: Padding(
-                  padding: EdgeInsets.all(20),
-                  child: Text('No hay empresas disponibles'),
-                ),
-              ),
-            );
-          }
-
-          return _buildDropdownView(controller);
-        }),
-
-        const SizedBox(height: 8),
-        Obx(() {
-          final selectedCount = controller.selectedCompanyIds.length;
-          return Text(
-            selectedCount == 0
-                ? 'Selecciona al menos una empresa'
-                : '$selectedCount empresa${selectedCount > 1 ? 's' : ''} seleccionada${selectedCount > 1 ? 's' : ''}',
-            style: TextStyle(
-              fontSize: 12,
-              color:
-                  selectedCount == 0
-                      ? Colors.red.shade600
-                      : Colors.green.shade600,
-              fontWeight: FontWeight.w500,
-            ),
-          );
-        }),
-      ],
-    );
-  }
-
-  Widget _buildDropdownView(UsersController controller) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey.shade300),
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Column(
-          children: [
-            // Header with select all/deselect all buttons
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: BoxDecoration(
-                color: Colors.grey.shade50,
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(16),
-                  topRight: Radius.circular(16),
-                ),
-                border: Border(bottom: BorderSide(color: Colors.grey.shade200)),
-              ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      'Vista Dropdown',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.grey.shade700,
-                      ),
-                    ),
+            Row(
+              children: [
+                Icon(Icons.business, size: 20, color: Colors.blue.shade600),
+                const SizedBox(width: 8),
+                Text(
+                  'Empresas',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey.shade700,
                   ),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      ActionButton(
-                        button: 'Todas',
-                        label: 'Todas',
-                        onPressed: controller.selectAllCompanies,
-                        color: Colors.blue.shade600,
-                        isSmall: true,
-                      ),
-                      const SizedBox(width: 8),
-                      ActionButton(
-                        button: 'Ninguna',
-                        label: 'Ninguna',
-                        onPressed: controller.deselectAllCompanies,
-                        color: Colors.grey.shade600,
-                        isSmall: true,
-                      ),
-                    ],
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  '*',
+                  style: TextStyle(
+                    color: Colors.red.shade400,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Selecciona las empresas a las que pertenece este usuario (mínimo 1):',
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey.shade600,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.05),
+                    blurRadius: 10,
+                    offset: const Offset(0, 2),
                   ),
                 ],
               ),
-            ),
-            // Dropdown content
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                children:
-                    controller.companies.map((company) {
-                      final isSelected = controller.isCompanySelected(
-                        company.id,
-                      );
-
-                      return Container(
-                        margin: const EdgeInsets.only(bottom: 8),
-                        child: InkWell(
-                          onTap:
-                              () =>
-                                  controller.toggleCompanySelection(company.id),
-                          borderRadius: BorderRadius.circular(12),
-                          child: Container(
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color:
-                                  isSelected
-                                      ? Colors.blue.shade50
-                                      : Colors.grey.shade50,
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(
-                                color:
-                                    isSelected
-                                        ? Colors.blue.shade300
-                                        : Colors.grey.shade300,
-                              ),
+              child: Container(
+                constraints: const BoxConstraints(maxHeight: 200),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey.shade300),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: controller.isLoadingCompanies.value
+                    ? const Center(
+                        child: Padding(
+                          padding: EdgeInsets.all(20),
+                          child: CircularProgressIndicator(),
+                        ),
+                      )
+                    : controller.companies.isEmpty
+                        ? const Center(
+                            child: Padding(
+                              padding: EdgeInsets.all(20),
+                              child: Text('No hay empresas disponibles'),
                             ),
-                            child: Row(
-                              children: [
-                                Icon(
-                                  isSelected
-                                      ? Icons.check_circle
-                                      : Icons.radio_button_unchecked,
-                                  color:
-                                      isSelected
-                                          ? Colors.blue.shade600
-                                          : Colors.grey.shade400,
-                                  size: 20,
-                                ),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        company.name,
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight:
-                                              isSelected
-                                                  ? FontWeight.w600
-                                                  : FontWeight.normal,
-                                          color:
-                                              isSelected
-                                                  ? Colors.blue.shade700
-                                                  : Colors.grey.shade700,
-                                        ),
-                                      ),
-                                      Text(
-                                        '${company.employeeCount} empleados',
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.grey.shade500,
-                                        ),
-                                      ),
-                                    ],
+                          )
+                        : ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: controller.companies.length,
+                            itemBuilder: (context, index) {
+                              final company = controller.companies[index];
+                              final isSelected = controller.isCompanySelected(company.id);
+                              
+                              return CheckboxListTile(
+                                title: Text(
+                                  company.name,
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: isSelected 
+                                        ? FontWeight.w600 
+                                        : FontWeight.normal,
+                                    color: isSelected 
+                                        ? Colors.blue.shade700 
+                                        : Colors.grey.shade700,
                                   ),
                                 ),
-                              ],
-                            ),
+                                subtitle: Text(
+                                  '${company.employeeCount} empleados',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey.shade500,
+                                  ),
+                                ),
+                                value: isSelected,
+                                onChanged: (bool? value) {
+                                  controller.toggleCompanySelection(company.id);
+                                },
+                                activeColor: Colors.blue.shade600,
+                                checkColor: Colors.white,
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 4,
+                                ),
+                              );
+                            },
                           ),
-                        ),
-                      );
-                    }).toList(),
               ),
             ),
+            const SizedBox(height: 8),
+            Obx(() {
+              final selectedCount = controller.selectedCompanyIds.length;
+              return Text(
+                selectedCount == 0
+                    ? 'Selecciona al menos una empresa'
+                    : '$selectedCount empresa${selectedCount > 1 ? 's' : ''} seleccionada${selectedCount > 1 ? 's' : ''}',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: selectedCount == 0 
+                      ? Colors.red.shade600 
+                      : Colors.green.shade600,
+                  fontWeight: FontWeight.w500,
+                ),
+              );
+            }),
           ],
-        ),
-      ),
+        );
+      },
     );
   }
 }
@@ -1340,33 +1223,33 @@ class _ModernActionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
             color: color.withValues(alpha: 0.3),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
-      child: ElevatedButton(
+      child: ElevatedButton.icon(
         onPressed: onPressed,
+        icon: Icon(icon, color: Colors.white, size: 20),
+        label: Text(
+          label,
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
         style: ElevatedButton.styleFrom(
           backgroundColor: color,
           foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(20),
           ),
           elevation: 0,
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, size: 18, color: Colors.white),
-            const SizedBox(width: 8),
-            Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
-          ],
         ),
       ),
     );
@@ -1444,41 +1327,38 @@ class _CompactActionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: color.withValues(alpha: 0.3),
+            color: color.withValues(alpha: 0.2),
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),
         ],
       ),
-      child: ElevatedButton(
+      child: ElevatedButton.icon(
         onPressed: onPressed,
+        icon: Icon(icon, color: Colors.white, size: 16),
+        label: Text(
+          label,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 11,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
         style: ElevatedButton.styleFrom(
           backgroundColor: color,
           foregroundColor: Colors.white,
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(16),
           ),
           elevation: 0,
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, size: 16, color: Colors.white),
-            const SizedBox(width: 6),
-            Text(
-              label,
-              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
-            ),
-          ],
         ),
       ),
     );
   }
-}
 
 // COMPONENTES MODERNOS PARA EL MODAL
 
@@ -1548,6 +1428,7 @@ class _ModernTextField extends StatelessWidget {
             obscureText: isPassword,
             decoration: InputDecoration(
               hintText: hint,
+              hintStyle: TextStyle(color: Colors.grey.shade400),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(16),
                 borderSide: BorderSide(color: Colors.grey.shade300),
@@ -1563,7 +1444,7 @@ class _ModernTextField extends StatelessWidget {
               filled: true,
               fillColor: enabled ? Colors.white : Colors.grey.shade100,
               contentPadding: const EdgeInsets.symmetric(
-                horizontal: 16,
+                horizontal: 20,
                 vertical: 16,
               ),
             ),
@@ -1590,31 +1471,24 @@ class _ModernOutlinedButton extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withValues(alpha: 0.2),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        border: Border.all(color: Colors.grey.shade400),
       ),
-      child: OutlinedButton(
+      child: OutlinedButton.icon(
         onPressed: onPressed,
+        icon: Icon(icon, color: Colors.grey.shade600, size: 20),
+        label: Text(
+          label,
+          style: TextStyle(
+            color: Colors.grey.shade600,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
         style: OutlinedButton.styleFrom(
-          foregroundColor: Colors.grey.shade700,
-          side: BorderSide(color: Colors.grey.shade300),
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, size: 18, color: Colors.grey.shade700),
-            const SizedBox(width: 8),
-            Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
-          ],
+          side: BorderSide.none,
         ),
       ),
     );
@@ -1639,30 +1513,30 @@ class _ModernElevatedButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.blue.withValues(alpha: 0.3),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+            color: Colors.blue.shade400.withValues(alpha: 0.3),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
-      child: ElevatedButton(
+      child: ElevatedButton.icon(
         onPressed: onPressed,
+        icon: Icon(icon, color: Colors.white, size: 20),
+        label: Text(
+          label,
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.blue.shade400,
           foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
           elevation: 0,
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, size: 18, color: Colors.white),
-            const SizedBox(width: 8),
-            Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
-          ],
         ),
       ),
     );

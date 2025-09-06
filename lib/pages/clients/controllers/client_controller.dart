@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../models/client_model.dart';
 import '../services/client_service.dart';
+import '../../companies/models/company_model.dart';
+import '../../companies/services/company_service.dart';
 
 class ClientController extends GetxController {
   final ClientService _clientService = ClientService();
+  final CompanyService _companyService = Get.find<CompanyService>();
 
   final RxList<Client> clients = <Client>[].obs;
   final RxBool isLoading = false.obs;
@@ -15,10 +18,16 @@ class ClientController extends GetxController {
   final int limit = 10;
   final Rx<Client?> selectedClient = Rx<Client?>(null);
 
+  // Companies for dropdown
+  final RxList<Company> companies = <Company>[].obs;
+  final RxBool isLoadingCompanies = false.obs;
+  final RxString selectedCompanyId = ''.obs;
+
   @override
   void onInit() {
     super.onInit();
     fetchClients();
+    fetchCompanies();
   }
 
   Future<void> fetchClients() async {
@@ -43,6 +52,38 @@ class ClientController extends GetxController {
       );
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  Future<void> fetchCompanies() async {
+    try {
+      isLoadingCompanies.value = true;
+      final result = await _companyService.getAllCompanies(
+        page: 1,
+        limit: 100, // Get all companies for dropdown
+      );
+
+      if (result.$1) {
+        companies.value = result.$2!.data;
+      } else {
+        Get.snackbar(
+          'Error',
+          'Failed to load companies',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to load companies',
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoadingCompanies.value = false;
     }
   }
 
@@ -174,5 +215,24 @@ class ClientController extends GetxController {
 
   void selectClientForDetail(Client client) {
     selectedClient.value = client;
+  }
+
+  void setSelectedCompanyId(String companyId) {
+    selectedCompanyId.value = companyId;
+  }
+
+  void clearSelectedCompany() {
+    selectedCompanyId.value = '';
+  }
+
+  Company? getSelectedCompany() {
+    if (selectedCompanyId.value.isEmpty) return null;
+    try {
+      return companies.firstWhere(
+        (company) => company.id == selectedCompanyId.value,
+      );
+    } catch (e) {
+      return null;
+    }
   }
 }

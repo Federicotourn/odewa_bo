@@ -3,6 +3,7 @@
 //     final userResponse = userResponseFromJson(jsonString);
 
 import 'dart:convert';
+import '../../companies/models/company_model.dart';
 
 UserResponse userResponseFromJson(String str) =>
     UserResponse.fromJson(json.decode(str));
@@ -49,8 +50,11 @@ class User {
   String firstName;
   String lastName;
   String email;
-  // String role;
+  String? salt;
   dynamic document;
+  String? position;
+  List<int>? roles;
+  List<Company>? companies;
 
   User({
     required this.id,
@@ -64,7 +68,11 @@ class User {
     required this.firstName,
     required this.lastName,
     required this.email,
+    this.salt,
     required this.document,
+    this.position,
+    this.roles,
+    this.companies,
   });
 
   factory User.fromJson(Map<String, dynamic> json) => User(
@@ -79,7 +87,16 @@ class User {
     firstName: json["firstName"],
     lastName: json["lastName"],
     email: json["email"],
+    salt: json["salt"],
     document: json["document"],
+    position: json["position"],
+    roles: json["roles"] != null ? List<int>.from(json["roles"]) : null,
+    companies:
+        json["companies"] != null
+            ? List<Company>.from(
+              json["companies"].map((x) => Company.fromJson(x)),
+            )
+            : null,
   );
 
   Map<String, dynamic> toJson() => {
@@ -94,7 +111,11 @@ class User {
     "firstName": firstName,
     "lastName": lastName,
     "email": email,
+    "salt": salt,
     "document": document,
+    "position": position,
+    "roles": roles,
+    "companies": companies?.map((x) => x.toJson()).toList(),
   };
 
   // Método copyWith para facilitar la actualización
@@ -110,7 +131,11 @@ class User {
     String? firstName,
     String? lastName,
     String? email,
+    String? salt,
     dynamic document,
+    String? position,
+    List<int>? roles,
+    List<Company>? companies,
   }) {
     return User(
       id: id ?? this.id,
@@ -124,7 +149,11 @@ class User {
       firstName: firstName ?? this.firstName,
       lastName: lastName ?? this.lastName,
       email: email ?? this.email,
+      salt: salt ?? this.salt,
       document: document ?? this.document,
+      position: position ?? this.position,
+      roles: roles ?? this.roles,
+      companies: companies ?? this.companies,
     );
   }
 

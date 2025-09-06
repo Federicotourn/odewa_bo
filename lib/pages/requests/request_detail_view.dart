@@ -1,6 +1,7 @@
 import 'package:odewa_bo/controllers/navigation_controller.dart';
 import 'package:odewa_bo/pages/requests/controllers/request_controller.dart';
 import 'package:odewa_bo/pages/requests/models/request_model.dart';
+import 'package:odewa_bo/pages/companies/models/company_model.dart';
 // import 'package:odewa_bo/controllers/logged_user_controller.dart';
 
 import 'package:flutter/material.dart';
@@ -91,6 +92,28 @@ class RequestDetailView extends StatelessWidget {
                           requestController.selectedRequest.value!.client!,
                         ),
                         const SizedBox(height: 24),
+
+                        // Información de la empresa del cliente
+                        if (requestController
+                                .selectedRequest
+                                .value!
+                                .client!
+                                .company !=
+                            null)
+                          _buildCompanyInfo(
+                            requestController
+                                .selectedRequest
+                                .value!
+                                .client!
+                                .company!,
+                          ),
+                        if (requestController
+                                .selectedRequest
+                                .value!
+                                .client!
+                                .company !=
+                            null)
+                          const SizedBox(height: 24),
                       ],
 
                       // Sección de cambio de estado
@@ -433,6 +456,86 @@ class RequestDetailView extends StatelessWidget {
           infoRow(
             label: 'Actualizado',
             value: _formatDateTime(client.updatedAt),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCompanyInfo(Company company) {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.business, color: Colors.indigo.shade600, size: 24),
+              const SizedBox(width: 12),
+              Text(
+                'Información de la Empresa del Cliente',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.indigo.shade800,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          Row(
+            children: [
+              Expanded(
+                child: _InfoCard(
+                  icon: Icons.business,
+                  label: 'Nombre de la Empresa',
+                  value: company.name,
+                  color: Colors.indigo.shade600,
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: _InfoCard(
+                  icon: Icons.people,
+                  label: 'Empleados',
+                  value: '${company.employeeCount}',
+                  color: Colors.green.shade600,
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: _InfoCard(
+                  icon: Icons.toggle_on,
+                  label: 'Estado',
+                  value: company.isActive ? 'Activa' : 'Inactiva',
+                  color:
+                      company.isActive
+                          ? Colors.green.shade600
+                          : Colors.red.shade600,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          infoRow(label: 'ID de la Empresa', value: company.id),
+          infoRow(
+            label: 'Fecha de Creación',
+            value: _formatDateTime(company.createdAt),
+          ),
+          infoRow(
+            label: 'Última Actualización',
+            value: _formatDateTime(company.updatedAt),
           ),
         ],
       ),

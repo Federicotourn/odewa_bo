@@ -19,7 +19,6 @@ class CompanyController extends GetxController {
 
   // Form controllers
   final nameController = TextEditingController();
-  final billingDateController = TextEditingController();
   final employeeCountController = TextEditingController();
 
   @override
@@ -31,14 +30,12 @@ class CompanyController extends GetxController {
   @override
   void onClose() {
     nameController.dispose();
-    billingDateController.dispose();
     employeeCountController.dispose();
     super.onClose();
   }
 
   void clearForm() {
     nameController.clear();
-    billingDateController.clear();
     employeeCountController.clear();
   }
 
@@ -97,7 +94,6 @@ class CompanyController extends GetxController {
 
     final request = CreateCompanyRequest(
       name: nameController.text.trim(),
-      billingDate: billingDateController.text.trim(),
       employeeCount: int.parse(employeeCountController.text.trim()),
     );
 
@@ -137,10 +133,6 @@ class CompanyController extends GetxController {
           nameController.text.trim().isEmpty
               ? null
               : nameController.text.trim(),
-      billingDate:
-          billingDateController.text.trim().isEmpty
-              ? null
-              : billingDateController.text.trim(),
       employeeCount:
           employeeCountController.text.trim().isEmpty
               ? null
@@ -201,7 +193,6 @@ class CompanyController extends GetxController {
 
   void fillFormForEdit(Company company) {
     nameController.text = company.name;
-    billingDateController.text = company.billingDate;
     employeeCountController.text = company.employeeCount.toString();
   }
 
@@ -210,17 +201,6 @@ class CompanyController extends GetxController {
       Get.snackbar(
         'Error',
         'El nombre de la empresa es requerido',
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
-      return false;
-    }
-
-    if (billingDateController.text.trim().isEmpty) {
-      Get.snackbar(
-        'Error',
-        'La fecha de facturación es requerida',
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red,
         colorText: Colors.white,

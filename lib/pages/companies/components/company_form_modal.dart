@@ -110,14 +110,6 @@ class CompanyFormModal extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           _buildTextField(
-            controller: controller.billingDateController,
-            label: 'Fecha de Facturación',
-            hint: 'YYYY-MM-DD (opcional)',
-            icon: Icons.calendar_today_outlined,
-            keyboardType: TextInputType.datetime,
-          ),
-          const SizedBox(height: 20),
-          _buildTextField(
             controller: controller.employeeCountController,
             label: 'Número de Empleados',
             hint: 'Ingrese el número de empleados (opcional)',

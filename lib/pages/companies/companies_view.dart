@@ -113,15 +113,6 @@ class CompaniesView extends StatelessWidget {
                   children: [
                     Expanded(
                       child: _InfoCard(
-                        icon: Icons.calendar_today,
-                        label: 'Fecha de Facturación',
-                        value: company.billingDate,
-                        color: Colors.blue.shade400,
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: _InfoCard(
                         icon: Icons.people,
                         label: 'Empleados',
                         value: '${company.employeeCount}',
@@ -195,9 +186,6 @@ class CompaniesView extends StatelessWidget {
     Company? company,
   }) {
     final nameController = TextEditingController(text: company?.name ?? '');
-    final billingDateController = TextEditingController(
-      text: company?.billingDate ?? '',
-    );
     final employeeCountController = TextEditingController(
       text: company?.employeeCount.toString() ?? '',
     );
@@ -211,6 +199,7 @@ class CompaniesView extends StatelessWidget {
           ),
           child: Container(
             width: Get.width * 0.5,
+            height: Get.height * 0.4,
             constraints: BoxConstraints(maxHeight: Get.height * 0.8),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(24),
@@ -300,17 +289,6 @@ class CompaniesView extends StatelessWidget {
 
                         const SizedBox(height: 20),
 
-                        // Campo de fecha de facturación
-                        _ModernTextField(
-                          label: 'Fecha de Facturación',
-                          hint: 'YYYY-MM-DD',
-                          controller: billingDateController,
-                          icon: Icons.calendar_today,
-                          isRequired: true,
-                        ),
-
-                        const SizedBox(height: 20),
-
                         // Campo de número de empleados
                         _ModernTextField(
                           label: 'Número de Empleados',
@@ -351,7 +329,6 @@ class CompaniesView extends StatelessWidget {
                         icon: company == null ? Icons.add : Icons.save,
                         onPressed: () async {
                           if (nameController.text.trim().isEmpty ||
-                              billingDateController.text.trim().isEmpty ||
                               employeeCountController.text.trim().isEmpty) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
@@ -379,8 +356,6 @@ class CompaniesView extends StatelessWidget {
                             loading(context);
                             controller.nameController.text =
                                 nameController.text.trim();
-                            controller.billingDateController.text =
-                                billingDateController.text.trim();
                             controller.employeeCountController.text =
                                 employeeCountController.text.trim();
                             await controller.createCompany();
@@ -391,8 +366,6 @@ class CompaniesView extends StatelessWidget {
                             loading(context);
                             controller.nameController.text =
                                 nameController.text.trim();
-                            controller.billingDateController.text =
-                                billingDateController.text.trim();
                             controller.employeeCountController.text =
                                 employeeCountController.text.trim();
                             await controller.updateCompany(company.id);
@@ -948,8 +921,6 @@ class _ModernTextField extends StatelessWidget {
   final TextEditingController controller;
   final IconData icon;
   final bool isRequired;
-  final bool enabled;
-  final bool isPassword;
 
   const _ModernTextField({
     required this.label,
@@ -957,8 +928,6 @@ class _ModernTextField extends StatelessWidget {
     required this.controller,
     required this.icon,
     this.isRequired = false,
-    this.enabled = true,
-    this.isPassword = false,
   });
 
   @override
@@ -1004,8 +973,6 @@ class _ModernTextField extends StatelessWidget {
           ),
           child: TextField(
             controller: controller,
-            enabled: enabled,
-            obscureText: isPassword,
             decoration: InputDecoration(
               hintText: hint,
               hintStyle: TextStyle(color: Colors.grey.shade400),
@@ -1022,7 +989,7 @@ class _ModernTextField extends StatelessWidget {
                 borderSide: BorderSide(color: Colors.indigo.shade400, width: 2),
               ),
               filled: true,
-              fillColor: enabled ? Colors.white : Colors.grey.shade100,
+              fillColor: Colors.white,
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 20,
                 vertical: 16,

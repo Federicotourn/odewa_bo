@@ -105,6 +105,11 @@ class ClientDetailView extends StatelessWidget {
 
                       const SizedBox(height: 24),
 
+                      // Información de la empresa
+                      _buildCompanyInfo(clientController.selectedClient.value!),
+
+                      const SizedBox(height: 24),
+
                       // Información bancaria
                       _buildBankingInfo(clientController.selectedClient.value!),
 
@@ -321,6 +326,121 @@ class ClientDetailView extends StatelessWidget {
             label: 'Actualizado',
             value: _formatDateTime(client.updatedAt),
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCompanyInfo(Client client) {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.business, color: Colors.indigo.shade600, size: 24),
+              const SizedBox(width: 12),
+              Text(
+                'Información de la Empresa',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.indigo.shade800,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          if (client.company != null) ...[
+            Row(
+              children: [
+                Expanded(
+                  child: _InfoCard(
+                    icon: Icons.business,
+                    label: 'Nombre de la Empresa',
+                    value: client.company!.name,
+                    color: Colors.indigo.shade600,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: _InfoCard(
+                    icon: Icons.people,
+                    label: 'Empleados',
+                    value: '${client.company!.employeeCount}',
+                    color: Colors.green.shade600,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: _InfoCard(
+                    icon: Icons.toggle_on,
+                    label: 'Estado',
+                    value: client.company!.isActive ? 'Activa' : 'Inactiva',
+                    color:
+                        client.company!.isActive
+                            ? Colors.green.shade600
+                            : Colors.red.shade600,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            infoRow(label: 'ID de la Empresa', value: client.company!.id),
+            infoRow(
+              label: 'Fecha de Creación',
+              value: _formatDateTime(client.company!.createdAt),
+            ),
+            infoRow(
+              label: 'Última Actualización',
+              value: _formatDateTime(client.company!.updatedAt),
+            ),
+          ] else ...[
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade50,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.grey.shade200),
+              ),
+              child: Column(
+                children: [
+                  Icon(
+                    Icons.business_outlined,
+                    color: Colors.grey.shade400,
+                    size: 48,
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    'Sin empresa asignada',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Este empleado no está asociado a ninguna empresa',
+                    style: TextStyle(fontSize: 14, color: Colors.grey.shade500),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ],
       ),
     );
@@ -943,6 +1063,7 @@ class ClientDetailView extends StatelessWidget {
                             branch: client.branch,
                             beneficiary: client.beneficiary,
                             monthlyBalance: newBalance,
+                            company: client.company,
                           );
 
                           bool success = await controller.updateClient(

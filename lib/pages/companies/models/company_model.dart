@@ -66,7 +66,6 @@ class Company {
   dynamic deletedById;
   bool isActive;
   String name;
-  String billingDate;
   int employeeCount;
 
   Company({
@@ -79,7 +78,6 @@ class Company {
     required this.deletedById,
     required this.isActive,
     required this.name,
-    required this.billingDate,
     required this.employeeCount,
   });
 
@@ -93,7 +91,6 @@ class Company {
     deletedById: json["deletedById"],
     isActive: json["isActive"],
     name: json["name"],
-    billingDate: json["billingDate"],
     employeeCount: json["employeeCount"],
   );
 
@@ -107,7 +104,6 @@ class Company {
     "deletedById": deletedById,
     "isActive": isActive,
     "name": name,
-    "billingDate": billingDate,
     "employeeCount": employeeCount,
   };
 
@@ -122,7 +118,6 @@ class Company {
     dynamic deletedById,
     bool? isActive,
     String? name,
-    String? billingDate,
     int? employeeCount,
   }) {
     return Company(
@@ -135,7 +130,6 @@ class Company {
       deletedById: deletedById ?? this.deletedById,
       isActive: isActive ?? this.isActive,
       name: name ?? this.name,
-      billingDate: billingDate ?? this.billingDate,
       employeeCount: employeeCount ?? this.employeeCount,
     );
   }
@@ -143,33 +137,25 @@ class Company {
 
 class CreateCompanyRequest {
   String name;
-  String billingDate;
   int employeeCount;
 
-  CreateCompanyRequest({
-    required this.name,
-    required this.billingDate,
-    required this.employeeCount,
-  });
+  CreateCompanyRequest({required this.name, required this.employeeCount});
 
   Map<String, dynamic> toJson() => {
     "name": name,
-    "billingDate": billingDate,
     "employeeCount": employeeCount,
   };
 }
 
 class UpdateCompanyRequest {
   String? name;
-  String? billingDate;
   int? employeeCount;
 
-  UpdateCompanyRequest({this.name, this.billingDate, this.employeeCount});
+  UpdateCompanyRequest({this.name, this.employeeCount});
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {};
     if (name != null) data["name"] = name;
-    if (billingDate != null) data["billingDate"] = billingDate;
     if (employeeCount != null) data["employeeCount"] = employeeCount;
     return data;
   }

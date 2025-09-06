@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../models/client_model.dart';
 import '../controllers/client_controller.dart';
+import '../../companies/models/company_model.dart';
 
 class ClientFormModal extends StatefulWidget {
   final Client? client;
@@ -23,6 +24,9 @@ class _ClientFormModalState extends State<ClientFormModal> {
       TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
+  // Company selection
+  String? _selectedCompanyId;
+
   @override
   void initState() {
     super.initState();
@@ -35,6 +39,7 @@ class _ClientFormModalState extends State<ClientFormModal> {
       _monthlyBalanceController.text =
           widget.client!.monthlyBalance?.toString() ?? '';
       _passwordController.text = widget.client!.password ?? '';
+      _selectedCompanyId = widget.client!.company?.id;
     }
   }
 
@@ -76,6 +81,21 @@ class _ClientFormModalState extends State<ClientFormModal> {
                 : int.tryParse(_monthlyBalanceController.text),
         password:
             _passwordController.text.isEmpty ? null : _passwordController.text,
+        company:
+            _selectedCompanyId != null && _selectedCompanyId!.isNotEmpty
+                ? Company(
+                  id: _selectedCompanyId!,
+                  createdAt: DateTime.now(),
+                  updatedAt: DateTime.now(),
+                  deletedAt: null,
+                  createdById: null,
+                  updatedById: null,
+                  deletedById: null,
+                  isActive: true,
+                  name: '', // Will be filled by the server
+                  employeeCount: 0, // Will be filled by the server
+                )
+                : null,
       );
 
       // Obtener el controlador
@@ -238,6 +258,11 @@ class _ClientFormModalState extends State<ClientFormModal> {
 
                       const SizedBox(height: 20),
 
+                      // Campo de empresa
+                      _buildCompanyDropdown(),
+
+                      const SizedBox(height: 20),
+
                       // Campo de balance mensual
                       _ModernTextField(
                         label: 'Balance Mensual',
@@ -296,6 +321,8 @@ class _ClientFormModalState extends State<ClientFormModal> {
                           _lastNameController.text.trim().isEmpty ||
                           _documentController.text.trim().isEmpty ||
                           _emailController.text.trim().isEmpty ||
+                          _selectedCompanyId == null ||
+                          _selectedCompanyId!.isEmpty ||
                           (widget.client == null &&
                               _passwordController.text.trim().isEmpty)) {
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -395,6 +422,105 @@ class _ClientFormModalState extends State<ClientFormModal> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildCompanyDropdown() {
+    return GetBuilder<ClientController>(
+      builder: (controller) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.business, size: 20, color: Colors.blue.shade600),
+                const SizedBox(width: 8),
+                Text(
+                  'Empresa',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey.shade700,
+                  ),
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  '*',
+                  style: TextStyle(
+                    color: Colors.red.shade400,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.05),
+                    blurRadius: 10,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: DropdownButtonFormField<String>(
+                value: _selectedCompanyId,
+                decoration: InputDecoration(
+                  hintText: 'Selecciona una empresa',
+                  hintStyle: TextStyle(color: Colors.grey.shade400),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: BorderSide(color: Colors.grey.shade300),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: BorderSide(color: Colors.grey.shade300),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: BorderSide(
+                      color: Colors.blue.shade400,
+                      width: 2,
+                    ),
+                  ),
+                  filled: true,
+                  fillColor: Colors.white,
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 16,
+                  ),
+                ),
+                items:
+                    controller.companies.map((Company company) {
+                      return DropdownMenuItem<String>(
+                        value: company.id,
+                        child: Text(
+                          company.name,
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.grey.shade700,
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    _selectedCompanyId = newValue;
+                  });
+                },
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Por favor selecciona una empresa';
+                  }
+                  return null;
+                },
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

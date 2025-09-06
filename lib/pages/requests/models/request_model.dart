@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import '../../companies/models/company_model.dart';
 
 List<OdewaRequest> requestsFromJson(String str) => List<OdewaRequest>.from(
   json.decode(str)["data"].map((x) => OdewaRequest.fromJson(x)),
@@ -185,6 +186,8 @@ class RequestClient {
   String? password;
   String? salt;
   int? monthlyBalance;
+  String? companyId;
+  Company? company;
 
   RequestClient({
     required this.id,
@@ -210,6 +213,8 @@ class RequestClient {
     this.password,
     this.salt,
     this.monthlyBalance,
+    this.companyId,
+    this.company,
   });
 
   String get fullName => '$firstName $lastName';
@@ -238,6 +243,8 @@ class RequestClient {
     password: json["password"],
     salt: json["salt"],
     monthlyBalance: json["monthlyBalance"],
+    companyId: json["companyId"],
+    company: json["company"] != null ? Company.fromJson(json["company"]) : null,
   );
 
   Map<String, dynamic> toJson() => {
@@ -264,6 +271,8 @@ class RequestClient {
     "password": password,
     "salt": salt,
     "monthlyBalance": monthlyBalance,
+    "companyId": companyId,
+    "company": company?.toJson(),
   };
 }
 
