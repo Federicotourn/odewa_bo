@@ -10,36 +10,35 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: 🧾 Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Flutter
+      - name: 📦 Set up Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: "3.35.3"
 
-      - name: Install dependencies
+      - name: 📥 Install dependencies
         run: flutter pub get
 
-      - name: Build Flutter web
+      - name: 🛠️ Build Flutter web
         run: flutter build web --release
 
-      - name: Recreate SSH key from secret
+      - name: 🔑 Recreate SSH key from secret
         run: |
           echo "${{ secrets.EC2_SSH_KEY }}" > odewa-key.pem
           chmod 400 odewa-key.pem
 
-      - name: Create live and tmp directories on EC2
-        run: |
+      - name: 🧹 Clean old files on EC2
+        run:
           ssh -o StrictHostKeyChecking=no -i odewa-key.pem ubuntu@${{ secrets.EC2_HOST }} "\
-          mkdir -p /home/ubuntu/web-tmp /home/ubuntu/web-live"
+          sudo rm -rf /var/www/html/*"
 
-      - name: Upload build to EC2 temp dir
-        run: |
-          scp -o StrictHostKeyChecking=no -i odewa-key.pem -r build/web/* ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/web-tmp/
+      - name: 📤 Upload build to EC2 (/var/www/html)
+        run: scp -o StrictHostKeyChecking=no -i odewa-key.pem -r build/web/* ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/web-tmp/
 
-      - name: Deploy to Nginx (move to live dir)
-        run: |
+      - name: 🚀 Move to final location & Restart Nginx
+        run:
           ssh -o StrictHostKeyChecking=no -i odewa-key.pem ubuntu@${{ secrets.EC2_HOST }} "\
-          rm -rf /home/ubuntu/web-live/* && \
-          mv /home/ubuntu/web-tmp/* /home/ubuntu/web-live/"
+          sudo cp -r /home/ubuntu/web-tmp/* /var/www/html/ && \
+          sudo systemctl restart nginx"
