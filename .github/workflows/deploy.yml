@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -21,14 +21,16 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Build Flutter Web
-        run: flutter build web
+      - name: Build Flutter web
+        run: flutter build web --release
 
-      - name: Copy files to EC2 via SSH
-        uses: appleboy/scp-action@v0.1.4
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ubuntu
-          key: ${{ secrets.EC2_SSH_KEY }}
-          source: build/web/*
-          target: /home/ubuntu/odewa_bo/build/web/
+      - name: Deploy to EC2
+        run: |
+          echo "🧹 Cleaning old files on EC2..."
+          ssh -o StrictHostKeyChecking=no -i odewa-key.pem ubuntu@18.232.128.22 "sudo rm -rf /var/www/html/*"
+
+          echo "🚀 Copying new build files..."
+          scp -o StrictHostKeyChecking=no -i odewa-key.pem -r build/web/* ubuntu@18.232.128.22:/var/www/html/
+
+          echo "🔁 Restarting nginx..."
+          ssh -o StrictHostKeyChecking=no -i odewa-key.pem ubuntu@18.232.128.22 "sudo systemctl restart nginx"
