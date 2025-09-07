@@ -29,15 +29,17 @@ jobs:
           echo "${{ secrets.EC2_SSH_KEY }}" > odewa-key.pem
           chmod 400 odewa-key.pem
 
-      - name: Create temporary directory on EC2
-        run: ssh -o StrictHostKeyChecking=no -i odewa-key.pem ubuntu@${{ secrets.EC2_HOST }} "mkdir -p /home/ubuntu/web-tmp"
+      - name: Create live and tmp directories on EC2
+        run: |
+          ssh -o StrictHostKeyChecking=no -i odewa-key.pem ubuntu@${{ secrets.EC2_HOST }} "\
+          mkdir -p /home/ubuntu/web-tmp /home/ubuntu/web-live"
 
       - name: Upload build to EC2 temp dir
-        run: scp -o StrictHostKeyChecking=no -i odewa-key.pem -r build/web/* ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/web-tmp/
+        run: |
+          scp -o StrictHostKeyChecking=no -i odewa-key.pem -r build/web/* ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/web-tmp/
 
-      - name: Deploy to Nginx and restart
-        run:
+      - name: Deploy to Nginx (move to live dir)
+        run: |
           ssh -o StrictHostKeyChecking=no -i odewa-key.pem ubuntu@${{ secrets.EC2_HOST }} "\
-          sudo rm -rf /var/www/html/* && \
-          sudo cp -r /home/ubuntu/web-tmp/* /var/www/html/ && \
-          sudo systemctl restart nginx"
+          rm -rf /home/ubuntu/web-live/* && \
+          mv /home/ubuntu/web-tmp/* /home/ubuntu/web-live/"
