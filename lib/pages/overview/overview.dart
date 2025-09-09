@@ -79,6 +79,11 @@ class OverviewPageNew extends StatelessWidget {
 
                       const SizedBox(height: 32),
 
+                      // Statistics Module
+                      _buildStatisticsModule(controller.kpisData.value!),
+
+                      const SizedBox(height: 32),
+
                       // Charts Section
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -86,12 +91,16 @@ class OverviewPageNew extends StatelessWidget {
                           // Pie Chart
                           Expanded(
                             flex: 1,
-                            child: _buildStatusChart(
-                              controller.kpisData.value!,
+                            child: Column(
+                              children: [
+                                _buildStatusChart(controller.kpisData.value!),
+                                const SizedBox(height: 24),
+                                Container(),
+                              ],
                             ),
                           ),
 
-                          const SizedBox(width: 24),
+                          const SizedBox(width: 20),
 
                           // Latest Requests
                           Expanded(
@@ -227,6 +236,98 @@ class OverviewPageNew extends StatelessWidget {
                 icon: Icons.check_circle,
                 color: Colors.teal.shade400,
                 subtitle: 'Finalizadas',
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildStatisticsModule(KpisData data) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Estadísticas de Usuarios',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.purple.shade800,
+          ),
+        ),
+        const SizedBox(height: 16),
+        Row(
+          children: [
+            Expanded(
+              child: _StatisticsCard(
+                title: 'Cantidad de empleados',
+                value: controller.formatNumber(data.clientKPIs.totalClients),
+                icon: Icons.people,
+                color: Colors.purple.shade400,
+                subtitle: 'Total registrados',
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: _StatisticsCard(
+                title: 'Sueldo Promedio',
+                value: controller.formatCurrency(
+                  data.clientKPIs.averageMonthlyBalance,
+                ),
+                icon: Icons.account_balance_wallet,
+                color: Colors.indigo.shade400,
+                subtitle: 'Balance mensual',
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: _StatisticsCard(
+                title: 'Descargas estimadas',
+                value: controller.formatNumber(
+                  data.clientKPIs.estimatedDownloads,
+                ),
+                icon: Icons.download,
+                color: Colors.cyan.shade400,
+                subtitle: 'Aplicaciones',
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        Row(
+          children: [
+            Expanded(
+              child: _StatisticsCard(
+                title: 'Usuarios activos por mes',
+                value: controller.formatNumber(
+                  data.clientKPIs.estimatedActiveClients,
+                ),
+                icon: Icons.trending_up,
+                color: Colors.green.shade400,
+                subtitle: 'Activos mensualmente',
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: _StatisticsCard(
+                title: 'Monto solicitado por persona',
+                value: controller.formatCurrency(
+                  data.clientKPIs.averageRequestAmount,
+                ),
+                icon: Icons.person_pin,
+                color: Colors.orange.shade400,
+                subtitle: 'Promedio por usuario',
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: _StatisticsCard(
+                title: 'Liquidez necesaria',
+                value: controller.formatCurrency(data.clientKPIs.amountToCover),
+                icon: Icons.account_balance,
+                color: Colors.red.shade400,
+                subtitle: 'Fondos requeridos',
               ),
             ),
           ],
@@ -580,6 +681,82 @@ class _KpiCard extends StatelessWidget {
               ),
               const Spacer(),
               Icon(Icons.trending_up, color: Colors.green.shade400, size: 16),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: Colors.grey.shade800,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: Colors.grey.shade700,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            subtitle,
+            style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _StatisticsCard extends StatelessWidget {
+  final String title;
+  final String value;
+  final IconData icon;
+  final Color color;
+  final String subtitle;
+
+  const _StatisticsCard({
+    required this.title,
+    required this.value,
+    required this.icon,
+    required this.color,
+    required this.subtitle,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(icon, color: color, size: 24),
+              ),
+              const Spacer(),
+              Icon(Icons.analytics, color: color, size: 16),
             ],
           ),
           const SizedBox(height: 16),

@@ -293,8 +293,8 @@ class UsersView extends StatelessWidget {
                           children: [
                             Text(
                               user == null
-                                  ? 'Crear Nuevo Usuario'
-                                  : 'Editar Usuario',
+                                  ? 'Crear Nuevo Administrador'
+                                  : 'Editar Administrador',
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 24,
@@ -303,8 +303,8 @@ class UsersView extends StatelessWidget {
                             ),
                             Text(
                               user == null
-                                  ? 'Define un nuevo usuario con sus permisos'
-                                  : 'Modifica la información del usuario existente',
+                                  ? 'Define un nuevo administrador con sus permisos'
+                                  : 'Modifica la información del administrador existente',
                               style: TextStyle(
                                 color: Colors.white.withValues(alpha: 0.9),
                                 fontSize: 14,
@@ -402,8 +402,8 @@ class UsersView extends StatelessWidget {
                       _ModernElevatedButton(
                         label:
                             user == null
-                                ? 'Crear Usuario'
-                                : 'Actualizar Usuario',
+                                ? 'Crear Administrador'
+                                : 'Actualizar Administrador',
                         icon: user == null ? Icons.add : Icons.save,
                         onPressed: () async {
                           if (nameController.text.trim().isEmpty ||
@@ -562,7 +562,7 @@ class UsersView extends StatelessWidget {
       context: context,
       builder:
           (context) => ConfirmationDialog(
-            title: 'Eliminar Usuario',
+            title: 'Eliminar Administrador',
             message: '¿Estás seguro que deseas eliminar a ${user.fullName}?',
             onConfirm: () async {
               loading(context);
@@ -770,7 +770,7 @@ class UsersView extends StatelessWidget {
                     automaticallyImplyLeading: false,
                     flexibleSpace: FlexibleSpaceBar(
                       title: Text(
-                        '👥 Usuarios del Sistema',
+                        '👥 Administradores del Sistema',
                         style: TextStyle(
                           color: Colors.blue.shade800,
                           fontWeight: FontWeight.bold,
@@ -791,7 +791,7 @@ class UsersView extends StatelessWidget {
                       const SizedBox(width: 12),
                       _ModernActionButton(
                         icon: Icons.add,
-                        label: 'Agregar Usuario',
+                        label: 'Agregar Administrador',
                         color: Colors.green.shade400,
                         onPressed: () {
                           _showUserModal(context, usersController);
@@ -829,7 +829,7 @@ class UsersView extends StatelessWidget {
                                     children: [
                                       CircularProgressIndicator(),
                                       SizedBox(height: 16),
-                                      Text('Cargando usuarios...'),
+                                      Text('Cargando administradores...'),
                                     ],
                                   ),
                                 ),
@@ -864,7 +864,7 @@ class UsersView extends StatelessWidget {
                                       ),
                                       const SizedBox(height: 16),
                                       Text(
-                                        'No hay usuarios registrados',
+                                        'No hay administradores registrados',
                                         style: TextStyle(
                                           fontSize: 18,
                                           color: Colors.grey.shade600,
@@ -872,7 +872,7 @@ class UsersView extends StatelessWidget {
                                       ),
                                       const SizedBox(height: 8),
                                       Text(
-                                        'Crea el primer usuario para comenzar',
+                                        'Crea el primer administrador para comenzar',
                                         style: TextStyle(
                                           fontSize: 14,
                                           color: Colors.grey.shade500,
@@ -896,7 +896,7 @@ class UsersView extends StatelessWidget {
                                     ),
                                     const SizedBox(width: 12),
                                     Text(
-                                      'Usuarios Registrados',
+                                      'Administradores Registrados',
                                       style: TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
@@ -914,7 +914,7 @@ class UsersView extends StatelessWidget {
                                         borderRadius: BorderRadius.circular(20),
                                       ),
                                       child: Text(
-                                        '${users.length} usuarios',
+                                        '${users.length} administradores',
                                         style: TextStyle(
                                           color: Colors.blue.shade700,
                                           fontWeight: FontWeight.w600,

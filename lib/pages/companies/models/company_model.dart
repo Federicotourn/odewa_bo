@@ -67,6 +67,7 @@ class Company {
   bool isActive;
   String name;
   int employeeCount;
+  double? averageMonthlyBalance;
 
   Company({
     required this.id,
@@ -79,6 +80,7 @@ class Company {
     required this.isActive,
     required this.name,
     required this.employeeCount,
+    this.averageMonthlyBalance,
   });
 
   factory Company.fromJson(Map<String, dynamic> json) => Company(
@@ -92,6 +94,7 @@ class Company {
     isActive: json["isActive"],
     name: json["name"],
     employeeCount: json["employeeCount"],
+    averageMonthlyBalance: json["averageMonthlyBalance"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -105,6 +108,7 @@ class Company {
     "isActive": isActive,
     "name": name,
     "employeeCount": employeeCount,
+    "averageMonthlyBalance": averageMonthlyBalance,
   };
 
   // Método copyWith para facilitar la actualización
@@ -119,6 +123,7 @@ class Company {
     bool? isActive,
     String? name,
     int? employeeCount,
+    double? averageMonthlyBalance,
   }) {
     return Company(
       id: id ?? this.id,
@@ -131,6 +136,8 @@ class Company {
       isActive: isActive ?? this.isActive,
       name: name ?? this.name,
       employeeCount: employeeCount ?? this.employeeCount,
+      averageMonthlyBalance:
+          averageMonthlyBalance ?? this.averageMonthlyBalance,
     );
   }
 }

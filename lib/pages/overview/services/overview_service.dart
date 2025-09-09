@@ -65,5 +65,13 @@ class OverviewService extends GetxService {
       completed: 0,
       cancelled: 0,
     ),
+    clientKPIs: ClientKPIs(
+      totalClients: 0,
+      averageMonthlyBalance: 0,
+      estimatedDownloads: 0,
+      estimatedActiveClients: 0,
+      averageRequestAmount: 0,
+      amountToCover: 0,
+    ),
   );
 }

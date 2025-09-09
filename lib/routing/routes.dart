@@ -29,8 +29,8 @@ const notFoundPageRoute = "/not-found";
 
 // Nombres de visualización
 const overViewPageDisplayName = "Dashboard";
-const usersPageDisplayName = "Usuarios";
-const clientsPageDisplayName = "Clientes";
+const usersPageDisplayName = "Administradores";
+const clientsPageDisplayName = "Usuarios";
 const companiesPageDisplayName = "Empresas";
 const requestsPageDisplayName = "Solicitudes";
 const authenticationDisplayName = "Cerrar sesión";

@@ -16,6 +16,7 @@ class KpisData {
   double totalVolume;
   List<LatestRequest> latestRequests;
   RequestsByStatus requestsByStatus;
+  ClientKPIs clientKPIs;
 
   KpisData({
     required this.totalRequests,
@@ -24,6 +25,7 @@ class KpisData {
     required this.totalVolume,
     required this.latestRequests,
     required this.requestsByStatus,
+    required this.clientKPIs,
   });
 
   factory KpisData.fromJson(Map<String, dynamic> json) => KpisData(
@@ -35,6 +37,7 @@ class KpisData {
       json["latestRequests"].map((x) => LatestRequest.fromJson(x)),
     ),
     requestsByStatus: RequestsByStatus.fromJson(json["requestsByStatus"]),
+    clientKPIs: ClientKPIs.fromJson(json["clientKPIs"]),
   );
 
   Map<String, dynamic> toJson() => {
@@ -44,6 +47,43 @@ class KpisData {
     "totalVolume": totalVolume,
     "latestRequests": List<dynamic>.from(latestRequests.map((x) => x.toJson())),
     "requestsByStatus": requestsByStatus.toJson(),
+    "clientKPIs": clientKPIs.toJson(),
+  };
+}
+
+class ClientKPIs {
+  int totalClients;
+  double averageMonthlyBalance;
+  int estimatedDownloads;
+  int estimatedActiveClients;
+  double averageRequestAmount;
+  double amountToCover;
+
+  ClientKPIs({
+    required this.totalClients,
+    required this.averageMonthlyBalance,
+    required this.estimatedDownloads,
+    required this.estimatedActiveClients,
+    required this.averageRequestAmount,
+    required this.amountToCover,
+  });
+
+  factory ClientKPIs.fromJson(Map<String, dynamic> json) => ClientKPIs(
+    totalClients: json["totalClients"],
+    averageMonthlyBalance: json["averageMonthlyBalance"],
+    estimatedDownloads: json["estimatedDownloads"],
+    estimatedActiveClients: json["estimatedActiveClients"],
+    averageRequestAmount: json["averageRequestAmount"],
+    amountToCover: json["amountToCover"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "totalClients": totalClients,
+    "averageMonthlyBalance": averageMonthlyBalance,
+    "estimatedDownloads": estimatedDownloads,
+    "estimatedActiveClients": estimatedActiveClients,
+    "averageRequestAmount": averageRequestAmount,
+    "amountToCover": amountToCover,
   };
 }
 

@@ -43,7 +43,7 @@ class ClientsView extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Header con información del empleado
+                // Header con información del usuario
                 Row(
                   children: [
                     Container(
@@ -109,7 +109,7 @@ class ClientsView extends StatelessWidget {
 
                 const SizedBox(height: 16),
 
-                // Información adicional del empleado
+                // Información adicional del usuario
                 Row(
                   children: [
                     Expanded(
@@ -231,7 +231,7 @@ class ClientsView extends StatelessWidget {
                     automaticallyImplyLeading: false,
                     flexibleSpace: FlexibleSpaceBar(
                       title: Text(
-                        '👥 Empleados del Sistema',
+                        '👥 Usuarios del Sistema',
                         style: TextStyle(
                           color: Colors.blue.shade800,
                           fontWeight: FontWeight.bold,
@@ -252,7 +252,7 @@ class ClientsView extends StatelessWidget {
                       const SizedBox(width: 12),
                       _ModernActionButton(
                         icon: Icons.add,
-                        label: 'Crear Empleado',
+                        label: 'Crear Usuario',
                         color: Colors.green.shade400,
                         onPressed: () async {
                           loading(context);
@@ -269,7 +269,7 @@ class ClientsView extends StatelessWidget {
                       padding: const EdgeInsets.all(24),
                       child: Column(
                         children: [
-                          // Lista de empleados
+                          // Lista de usuarios
                           Obx(() {
                             if (clientController.isLoading.value) {
                               return Container(
@@ -293,7 +293,7 @@ class ClientsView extends StatelessWidget {
                                     children: [
                                       CircularProgressIndicator(),
                                       SizedBox(height: 16),
-                                      Text('Cargando empleados...'),
+                                      Text('Cargando usuarios...'),
                                     ],
                                   ),
                                 ),
@@ -328,7 +328,7 @@ class ClientsView extends StatelessWidget {
                                       ),
                                       const SizedBox(height: 16),
                                       Text(
-                                        'No hay empleados registrados',
+                                        'No hay usuarios registrados',
                                         style: TextStyle(
                                           fontSize: 18,
                                           color: Colors.grey.shade600,
@@ -336,7 +336,7 @@ class ClientsView extends StatelessWidget {
                                       ),
                                       const SizedBox(height: 8),
                                       Text(
-                                        'Crea el primer empleado para comenzar',
+                                        'Crea el primer usuario para comenzar',
                                         style: TextStyle(
                                           fontSize: 14,
                                           color: Colors.grey.shade500,
@@ -360,7 +360,7 @@ class ClientsView extends StatelessWidget {
                                     ),
                                     const SizedBox(width: 12),
                                     Text(
-                                      'Empleados Registrados',
+                                      'Usuarios Registrados',
                                       style: TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
@@ -378,7 +378,7 @@ class ClientsView extends StatelessWidget {
                                         borderRadius: BorderRadius.circular(20),
                                       ),
                                       child: Text(
-                                        '${clients.length} empleados',
+                                        '${clients.length} usuarios',
                                         style: TextStyle(
                                           color: Colors.blue.shade700,
                                           fontWeight: FontWeight.w600,

@@ -119,6 +119,15 @@ class CompaniesView extends StatelessWidget {
                         color: Colors.green.shade400,
                       ),
                     ),
+                    const SizedBox(width: 20),
+                    Expanded(
+                      child: _InfoCard(
+                        icon: Icons.account_balance_wallet,
+                        label: 'Promedio de balance mensual',
+                        value: '${company.averageMonthlyBalance}',
+                        color: Colors.blue.shade400,
+                      ),
+                    ),
                   ],
                 ),
 

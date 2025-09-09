@@ -94,6 +94,7 @@ class _ClientFormModalState extends State<ClientFormModal> {
                   isActive: true,
                   name: '', // Will be filled by the server
                   employeeCount: 0, // Will be filled by the server
+                  averageMonthlyBalance: 0, // Will be filled by the server
                 )
                 : null,
       );
@@ -170,8 +171,8 @@ class _ClientFormModalState extends State<ClientFormModal> {
                       children: [
                         Text(
                           widget.client == null
-                              ? 'Crear Nuevo Empleado'
-                              : 'Editar Empleado',
+                              ? 'Crear Nuevo Usuario'
+                              : 'Editar Usuario',
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 24,
@@ -180,8 +181,8 @@ class _ClientFormModalState extends State<ClientFormModal> {
                         ),
                         Text(
                           widget.client == null
-                              ? 'Define un nuevo empleado con sus datos'
-                              : 'Modifica la información del empleado existente',
+                              ? 'Define un nuevo usuario con sus datos'
+                              : 'Modifica la información del usuario existente',
                           style: TextStyle(
                             color: Colors.white.withValues(alpha: 0.9),
                             fontSize: 14,
@@ -313,8 +314,8 @@ class _ClientFormModalState extends State<ClientFormModal> {
                   _ModernElevatedButton(
                     label:
                         widget.client == null
-                            ? 'Crear Empleado'
-                            : 'Actualizar Empleado',
+                            ? 'Crear Usuario'
+                            : 'Actualizar Usuario',
                     icon: widget.client == null ? Icons.add : Icons.save,
                     onPressed: () async {
                       if (_firstNameController.text.trim().isEmpty ||
