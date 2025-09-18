@@ -326,6 +326,27 @@ class ClientDetailView extends StatelessWidget {
             label: 'Actualizado',
             value: _formatDateTime(client.updatedAt),
           ),
+          infoRow(
+            label: 'Balance Mensual',
+            value:
+                client.monthlyBalance != null
+                    ? '\$${client.monthlyBalance}'
+                    : 'No especificado',
+          ),
+          infoRow(
+            label: 'Balance Adelantado',
+            value:
+                client.monthlyAdvancedAmount != null
+                    ? '\$${client.monthlyAdvancedAmount}'
+                    : 'No especificado',
+          ),
+          infoRow(
+            label: 'Balance Disponible',
+            value:
+                client.availableBalance != null
+                    ? '\$${client.availableBalance}'
+                    : 'No especificado',
+          ),
         ],
       ),
     );
@@ -599,13 +620,13 @@ class ClientDetailView extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 20),
-          infoRow(
-            label: 'Sucursal',
-            value:
-                client.branch != null && client.branch!.isNotEmpty
-                    ? client.branch!
-                    : 'No especificada',
-          ),
+          // infoRow(
+          //   label: 'Sucursal',
+          //   value:
+          //       client.branch != null && client.branch!.isNotEmpty
+          //           ? client.branch!
+          //           : 'No especificada',
+          // ),
           infoRow(
             label: 'Beneficiario',
             value:
@@ -763,6 +784,7 @@ class ClientDetailView extends StatelessWidget {
               ),
             ),
           ),
+          const SizedBox(width: 20),
           Expanded(
             child: Text(
               value,

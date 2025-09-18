@@ -1,5 +1,6 @@
 import 'package:odewa_bo/pages/overview/controllers/overview_controller.dart';
 import 'package:odewa_bo/pages/overview/models/kpis_model.dart';
+import 'package:odewa_bo/widgets/dashboard_filters.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -64,53 +65,37 @@ class OverviewPageNew extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(24),
                 child: Obx(() {
-                  if (controller.isLoading.value) {
-                    return _buildLoadingState();
-                  }
-
-                  if (controller.kpisData.value == null) {
-                    return _buildErrorState();
-                  }
-
                   return Column(
                     children: [
-                      // KPI Cards
-                      _buildKpiCards(controller.kpisData.value!),
-
-                      const SizedBox(height: 32),
-
-                      // Statistics Module
-                      _buildStatisticsModule(controller.kpisData.value!),
-
-                      const SizedBox(height: 32),
-
-                      // Charts Section
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Pie Chart
-                          Expanded(
-                            flex: 1,
-                            child: Column(
-                              children: [
-                                _buildStatusChart(controller.kpisData.value!),
-                                const SizedBox(height: 24),
-                                Container(),
-                              ],
-                            ),
-                          ),
-
-                          const SizedBox(width: 20),
-
-                          // Latest Requests
-                          Expanded(
-                            flex: 2,
-                            child: _buildLatestRequests(
-                              controller.kpisData.value!,
-                            ),
-                          ),
-                        ],
+                      // Widget de filtros
+                      DashboardFilters(
+                        startDate: controller.startDate.value,
+                        endDate: controller.endDate.value,
+                        selectedCompanyIds: controller.selectedCompanyIds,
+                        onFiltersChanged: (startDate, endDate, companyIds) {
+                          controller.updateFilters(
+                            newStartDate: startDate,
+                            newEndDate: endDate,
+                            newCompanyIds: companyIds,
+                          );
+                        },
                       ),
+
+                      const SizedBox(height: 24),
+
+                      // Indicador de filtros activos
+                      if (controller.hasActiveFilters)
+                        _buildActiveFiltersIndicator(),
+
+                      const SizedBox(height: 24),
+
+                      // Contenido principal del dashboard
+                      if (controller.isLoading.value)
+                        _buildLoadingState()
+                      else if (controller.kpisData.value == null)
+                        _buildErrorState()
+                      else
+                        _buildDashboardContent(controller.kpisData.value!),
                     ],
                   );
                 }),
@@ -119,6 +104,82 @@ class OverviewPageNew extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildActiveFiltersIndicator() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.teal.shade50,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.teal.shade200),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.filter_alt, color: Colors.teal.shade600, size: 20),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              'Filtros activos: ${controller.activeFiltersDescription}',
+              style: TextStyle(
+                color: Colors.teal.shade800,
+                fontWeight: FontWeight.w600,
+                fontSize: 14,
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: () => controller.clearFilters(),
+            child: Text(
+              'Limpiar',
+              style: TextStyle(
+                color: Colors.teal.shade600,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDashboardContent(KpisData data) {
+    return Column(
+      children: [
+        // KPI Cards
+        _buildKpiCards(data),
+
+        const SizedBox(height: 32),
+
+        // Statistics Module
+        _buildStatisticsModule(data),
+
+        const SizedBox(height: 32),
+
+        // Charts Section
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Pie Chart
+            Expanded(
+              flex: 1,
+              child: Column(
+                children: [
+                  _buildStatusChart(data),
+                  const SizedBox(height: 24),
+                  Container(),
+                ],
+              ),
+            ),
+
+            const SizedBox(width: 20),
+
+            // Latest Requests
+            Expanded(flex: 2, child: _buildLatestRequests(data)),
+          ],
+        ),
+      ],
     );
   }
 

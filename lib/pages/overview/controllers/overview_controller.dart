@@ -13,6 +13,11 @@ class OverviewController extends GetxController {
   Rx<KpisData?> kpisData = Rx<KpisData?>(null);
   RxBool isLoading = false.obs;
 
+  // Filtros
+  Rx<DateTime?> startDate = Rx<DateTime?>(null);
+  Rx<DateTime?> endDate = Rx<DateTime?>(null);
+  RxList<String> selectedCompanyIds = <String>[].obs;
+
   @override
   void onInit() {
     getKpisData();
@@ -22,12 +27,57 @@ class OverviewController extends GetxController {
   Future<void> getKpisData() async {
     try {
       isLoading.value = true;
-      kpisData.value = await overviewService.getKpisData();
+      kpisData.value = await overviewService.getKpisData(
+        startDate: startDate.value,
+        endDate: endDate.value,
+        companyIds: selectedCompanyIds,
+      );
     } catch (e) {
       debugPrint('Error loading KPIs data: $e');
     } finally {
       isLoading.value = false;
     }
+  }
+
+  void updateFilters({
+    DateTime? newStartDate,
+    DateTime? newEndDate,
+    List<String>? newCompanyIds,
+  }) {
+    if (newStartDate != null) startDate.value = newStartDate;
+    if (newEndDate != null) endDate.value = newEndDate;
+    if (newCompanyIds != null) selectedCompanyIds.value = newCompanyIds;
+
+    // Recargar datos con los nuevos filtros
+    getKpisData();
+  }
+
+  void clearFilters() {
+    startDate.value = null;
+    endDate.value = null;
+    selectedCompanyIds.clear();
+    getKpisData();
+  }
+
+  bool get hasActiveFilters {
+    return (startDate.value != null && endDate.value != null) ||
+        selectedCompanyIds.isNotEmpty;
+  }
+
+  String get activeFiltersDescription {
+    List<String> descriptions = [];
+
+    if (startDate.value != null && endDate.value != null) {
+      descriptions.add(
+        '${DateFormat('dd/MM/yyyy').format(startDate.value!)} - ${DateFormat('dd/MM/yyyy').format(endDate.value!)}',
+      );
+    }
+
+    if (selectedCompanyIds.isNotEmpty) {
+      descriptions.add('${selectedCompanyIds.length} empresa(s)');
+    }
+
+    return descriptions.isEmpty ? 'Sin filtros' : descriptions.join(' • ');
   }
 
   String formatedNumberWithCommas({required String number}) {

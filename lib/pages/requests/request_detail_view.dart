@@ -431,13 +431,13 @@ class RequestDetailView extends StatelessWidget {
                     ? client.accountNumber!
                     : 'No especificado',
           ),
-          infoRow(
-            label: 'Sucursal',
-            value:
-                client.branch != null && client.branch!.isNotEmpty
-                    ? client.branch!
-                    : 'No especificada',
-          ),
+          // infoRow(
+          //   label: 'Sucursal',
+          //   value:
+          //       client.branch != null && client.branch!.isNotEmpty
+          //           ? client.branch!
+          //           : 'No especificada',
+          // ),
           infoRow(
             label: 'Beneficiario',
             value:

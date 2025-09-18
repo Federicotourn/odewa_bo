@@ -49,6 +49,8 @@ class Client {
   int? monthlyBalance;
   String? password;
   Company? company;
+  double? monthlyAdvancedAmount;
+  double? availableBalance;
 
   Client({
     required this.id,
@@ -70,6 +72,8 @@ class Client {
     this.monthlyBalance,
     this.password,
     this.company,
+    this.monthlyAdvancedAmount,
+    this.availableBalance,
   });
 
   factory Client.fromJson(Map<String, dynamic> json) => Client(
@@ -92,6 +96,8 @@ class Client {
     monthlyBalance: json["monthlyBalance"],
     password: json["password"],
     company: json["company"] != null ? Company.fromJson(json["company"]) : null,
+    monthlyAdvancedAmount: json["monthlyAdvancedAmount"],
+    availableBalance: json["availableBalance"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -114,6 +120,8 @@ class Client {
     "monthlyBalance": monthlyBalance,
     "password": password,
     "company": company?.toJson(),
+    "monthlyAdvancedAmount": monthlyAdvancedAmount,
+    "availableBalance": availableBalance,
   };
 
   // Método específico para crear clientes (sin id, createdAt, updatedAt)
@@ -134,6 +142,8 @@ class Client {
     "monthlyBalance": monthlyBalance,
     "password": password,
     "companyId": company?.id,
+    "monthlyAdvancedAmount": monthlyAdvancedAmount,
+    "availableBalance": availableBalance,
   };
 }
 

@@ -22,6 +22,10 @@ class RequestController extends GetxController {
   var statusFilter =
       'all'.obs; // all, pending, approved, rejected, processing, completed
 
+  // Date filters
+  var startDate = Rxn<DateTime>();
+  var endDate = Rxn<DateTime>();
+
   // Form controllers
   final amountController = TextEditingController();
   final dateController = TextEditingController();
@@ -53,6 +57,8 @@ class RequestController extends GetxController {
     final result = await _requestService.getAllRequests(
       page: currentPage.value,
       limit: limit.value,
+      startDate: startDate.value,
+      endDate: endDate.value,
     );
 
     if (result.$1) {
@@ -329,6 +335,53 @@ class RequestController extends GetxController {
 
   void updateStatusFilter(String filter) {
     statusFilter.value = filter;
+  }
+
+  void updateDateFilters(DateTime? start, DateTime? end) {
+    startDate.value = start;
+    endDate.value = end;
+    loadRequests();
+  }
+
+  void clearDateFilters() {
+    startDate.value = null;
+    endDate.value = null;
+    loadRequests();
+  }
+
+  void clearAllFilters() {
+    searchQuery.value = '';
+    statusFilter.value = 'all';
+    startDate.value = null;
+    endDate.value = null;
+    loadRequests();
+  }
+
+  bool get hasActiveFilters {
+    return searchQuery.value.isNotEmpty ||
+        statusFilter.value != 'all' ||
+        startDate.value != null ||
+        endDate.value != null;
+  }
+
+  String get activeFiltersDescription {
+    List<String> descriptions = [];
+
+    if (searchQuery.value.isNotEmpty) {
+      descriptions.add('Búsqueda: "${searchQuery.value}"');
+    }
+
+    if (statusFilter.value != 'all') {
+      descriptions.add('Estado: ${statusFilter.value}');
+    }
+
+    if (startDate.value != null && endDate.value != null) {
+      descriptions.add(
+        '${startDate.value!.day}/${startDate.value!.month}/${startDate.value!.year} - ${endDate.value!.day}/${endDate.value!.month}/${endDate.value!.year}',
+      );
+    }
+
+    return descriptions.isEmpty ? 'Sin filtros' : descriptions.join(' • ');
   }
 
   // Método para seleccionar una solicitud para ver detalles

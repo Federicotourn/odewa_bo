@@ -150,12 +150,13 @@ class ClientsView extends StatelessWidget {
                     const SizedBox(width: 16),
                     Expanded(
                       child: _InfoCard(
-                        icon: Icons.account_balance,
-                        label: 'Banco',
+                        icon: Icons.business,
+                        label: 'Empresa',
                         value:
-                            client.bank != null && client.bank!.isNotEmpty
-                                ? client.bank!
-                                : 'No registrado',
+                            client.company != null &&
+                                    client.company!.name.isNotEmpty
+                                ? client.company!.name
+                                : 'No especificada',
                         color: Colors.indigo.shade400,
                       ),
                     ),

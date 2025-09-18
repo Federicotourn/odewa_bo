@@ -17,14 +17,29 @@ class OverviewService extends GetxService {
     return this;
   }
 
-  Future<KpisData> getKpisData() async {
+  Future<KpisData> getKpisData({
+    DateTime? startDate,
+    DateTime? endDate,
+    List<String>? companyIds,
+  }) async {
     try {
-      final Uri url = Uri.parse('${Urls.baseUrl}/requests/kpis/monthly');
+      // Construir la URL con parámetros de filtro
+      final Uri url = Uri.parse(
+        '${Urls.baseUrl}/requests/kpis/monthly',
+      ).replace(
+        queryParameters: _buildQueryParameters(
+          startDate: startDate,
+          endDate: endDate,
+          companyIds: companyIds,
+        ),
+      );
+
       Map<String, String> headers = {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ${box.read('token')}',
       };
+
       var response = await _tokenValidationService.client.get(
         url,
         headers: headers,
@@ -41,6 +56,28 @@ class OverviewService extends GetxService {
       debugPrint('Exception occurred: $e');
       return kpisDataExample;
     }
+  }
+
+  Map<String, String> _buildQueryParameters({
+    DateTime? startDate,
+    DateTime? endDate,
+    List<String>? companyIds,
+  }) {
+    final Map<String, String> params = {};
+
+    if (startDate != null) {
+      params['start_date'] = startDate.toIso8601String().split('T')[0];
+    }
+
+    if (endDate != null) {
+      params['end_date'] = endDate.toIso8601String().split('T')[0];
+    }
+
+    if (companyIds != null && companyIds.isNotEmpty) {
+      params['company_ids'] = companyIds.join(',');
+    }
+
+    return params;
   }
 
   DashboardData dashboardDataExample = DashboardData(

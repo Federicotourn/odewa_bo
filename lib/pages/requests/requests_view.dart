@@ -136,6 +136,91 @@ class RequestsView extends StatelessWidget {
 
                 const SizedBox(height: 16),
 
+                Row(
+                  children: [
+                    // Información del cliente
+                    if (request.client != null) ...[
+                      Expanded(
+                        child: Container(
+                          height: 75,
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: Colors.amber.shade50,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: Colors.amber.shade200),
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.person,
+                                color: Colors.amber.shade600,
+                                size: 20,
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Cliente: ${request.client!.fullName}',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.amber.shade800,
+                                      ),
+                                    ),
+                                    Text(
+                                      'Documento: ${request.client!.document}',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.amber.shade600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Container(
+                        height: 75,
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.amber.shade50,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Colors.amber.shade200),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.person,
+                              color: Colors.amber.shade600,
+                              size: 20,
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                'Empresa: ${request.client!.company!.name}',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.amber.shade800,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 16),
+
                 // Información de la solicitud
                 Row(
                   children: [
@@ -160,51 +245,6 @@ class RequestsView extends StatelessWidget {
                 ),
 
                 const SizedBox(height: 16),
-
-                // Información del cliente
-                if (request.client != null) ...[
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.amber.shade50,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.amber.shade200),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.person,
-                          color: Colors.amber.shade600,
-                          size: 20,
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Cliente: ${request.client!.fullName}',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.amber.shade800,
-                                ),
-                              ),
-                              Text(
-                                'Documento: ${request.client!.document}',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.amber.shade600,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                ],
 
                 // Acciones
                 Row(
@@ -262,269 +302,6 @@ class RequestsView extends StatelessWidget {
       ),
     );
   }
-
-  // void _showRequestModal(
-  //   BuildContext context,
-  //   RequestController controller, {
-  //   OdewaRequest? request,
-  // }) {
-  //   final amountController = TextEditingController(text: request?.amount ?? '');
-  //   final dateController = TextEditingController(text: request?.date ?? '');
-  //   final clientIdController = TextEditingController(
-  //     text: request?.clientId ?? '',
-  //   );
-
-  //   showDialog(
-  //     context: context,
-  //     builder: (context) {
-  //       return Dialog(
-  //         shape: RoundedRectangleBorder(
-  //           borderRadius: BorderRadius.circular(24),
-  //         ),
-  //         child: Container(
-  //           width: Get.width * 0.5,
-  //           constraints: BoxConstraints(maxHeight: Get.height * 0.8),
-  //           decoration: BoxDecoration(
-  //             borderRadius: BorderRadius.circular(24),
-  //             gradient: LinearGradient(
-  //               begin: Alignment.topLeft,
-  //               end: Alignment.bottomRight,
-  //               colors: [Colors.white, Colors.grey.shade50],
-  //             ),
-  //           ),
-  //           child: Column(
-  //             mainAxisSize: MainAxisSize.min,
-  //             children: [
-  //               // Header moderno con gradiente
-  //               Container(
-  //                 padding: const EdgeInsets.all(24),
-  //                 decoration: BoxDecoration(
-  //                   borderRadius: const BorderRadius.only(
-  //                     topLeft: Radius.circular(24),
-  //                     topRight: Radius.circular(24),
-  //                   ),
-  //                   gradient: LinearGradient(
-  //                     begin: Alignment.topLeft,
-  //                     end: Alignment.bottomRight,
-  //                     colors: [Colors.teal.shade400, Colors.cyan.shade400],
-  //                   ),
-  //                 ),
-  //                 child: Row(
-  //                   children: [
-  //                     Container(
-  //                       padding: const EdgeInsets.all(12),
-  //                       decoration: BoxDecoration(
-  //                         color: Colors.white.withValues(alpha: 0.2),
-  //                         borderRadius: BorderRadius.circular(16),
-  //                       ),
-  //                       child: Icon(
-  //                         request == null ? Icons.add : Icons.edit,
-  //                         color: Colors.white,
-  //                         size: 28,
-  //                       ),
-  //                     ),
-  //                     const SizedBox(width: 16),
-  //                     Expanded(
-  //                       child: Column(
-  //                         crossAxisAlignment: CrossAxisAlignment.start,
-  //                         children: [
-  //                           Text(
-  //                             request == null
-  //                                 ? 'Crear Nueva Solicitud'
-  //                                 : 'Editar Solicitud',
-  //                             style: const TextStyle(
-  //                               color: Colors.white,
-  //                               fontSize: 24,
-  //                               fontWeight: FontWeight.bold,
-  //                             ),
-  //                           ),
-  //                           Text(
-  //                             request == null
-  //                                 ? 'Define una nueva solicitud con sus datos'
-  //                                 : 'Modifica la información de la solicitud existente',
-  //                             style: TextStyle(
-  //                               color: Colors.white.withValues(alpha: 0.9),
-  //                               fontSize: 14,
-  //                             ),
-  //                           ),
-  //                         ],
-  //                       ),
-  //                     ),
-  //                   ],
-  //                 ),
-  //               ),
-
-  //               // Contenido del modal
-  //               Expanded(
-  //                 child: SingleChildScrollView(
-  //                   padding: const EdgeInsets.all(24),
-  //                   child: Column(
-  //                     crossAxisAlignment: CrossAxisAlignment.start,
-  //                     children: [
-  //                       // Campo de monto
-  //                       _ModernTextField(
-  //                         label: 'Monto',
-  //                         hint: 'Ej: 500.00',
-  //                         controller: amountController,
-  //                         icon: Icons.attach_money,
-  //                         isRequired: true,
-  //                       ),
-
-  //                       const SizedBox(height: 20),
-
-  //                       // Campo de fecha
-  //                       _ModernTextField(
-  //                         label: 'Fecha',
-  //                         hint: 'YYYY-MM-DD',
-  //                         controller: dateController,
-  //                         icon: Icons.calendar_today,
-  //                         isRequired: true,
-  //                       ),
-
-  //                       const SizedBox(height: 20),
-
-  //                       // Campo de ID del cliente
-  //                       _ModernTextField(
-  //                         label: 'ID del Cliente',
-  //                         hint: 'UUID del cliente',
-  //                         controller: clientIdController,
-  //                         icon: Icons.person,
-  //                         isRequired: true,
-  //                       ),
-  //                     ],
-  //                   ),
-  //                 ),
-  //               ),
-
-  //               // Footer con acciones
-  //               Container(
-  //                 padding: const EdgeInsets.all(24),
-  //                 decoration: BoxDecoration(
-  //                   color: Colors.grey.shade50,
-  //                   borderRadius: const BorderRadius.only(
-  //                     bottomLeft: Radius.circular(24),
-  //                     bottomRight: Radius.circular(24),
-  //                   ),
-  //                 ),
-  //                 child: Row(
-  //                   mainAxisAlignment: MainAxisAlignment.end,
-  //                   children: [
-  //                     _ModernOutlinedButton(
-  //                       label: 'Cancelar',
-  //                       icon: Icons.close,
-  //                       onPressed: () => Navigator.pop(context),
-  //                     ),
-  //                     const SizedBox(width: 16),
-  //                     _ModernElevatedButton(
-  //                       label:
-  //                           request == null
-  //                               ? 'Crear Solicitud'
-  //                               : 'Actualizar Solicitud',
-  //                       icon: request == null ? Icons.add : Icons.save,
-  //                       onPressed: () async {
-  //                         if (amountController.text.trim().isEmpty ||
-  //                             dateController.text.trim().isEmpty ||
-  //                             clientIdController.text.trim().isEmpty) {
-  //                           ScaffoldMessenger.of(context).showSnackBar(
-  //                             SnackBar(
-  //                               content: Row(
-  //                                 children: [
-  //                                   Icon(Icons.warning, color: Colors.white),
-  //                                   const SizedBox(width: 8),
-  //                                   const Text(
-  //                                     'Completa todos los campos obligatorios',
-  //                                   ),
-  //                                 ],
-  //                               ),
-  //                               backgroundColor: Colors.orange,
-  //                               behavior: SnackBarBehavior.floating,
-  //                               shape: RoundedRectangleBorder(
-  //                                 borderRadius: BorderRadius.circular(12),
-  //                               ),
-  //                             ),
-  //                           );
-  //                           return;
-  //                         }
-
-  //                         if (request == null) {
-  //                           // Create new request
-  //                           loading(context);
-  //                           controller.amountController.text =
-  //                               amountController.text.trim();
-  //                           controller.dateController.text =
-  //                               dateController.text.trim();
-  //                           controller.clientIdController.text =
-  //                               clientIdController.text.trim();
-  //                           await controller.createRequest();
-  //                           Get.back();
-  //                           Navigator.of(context).pop();
-  //                         } else {
-  //                           // Update existing request
-  //                           loading(context);
-  //                           controller.amountController.text =
-  //                               amountController.text.trim();
-  //                           controller.dateController.text =
-  //                               dateController.text.trim();
-  //                           controller.clientIdController.text =
-  //                               clientIdController.text.trim();
-  //                           await controller.updateRequest(request.id);
-  //                           Get.back();
-  //                           Navigator.of(context).pop();
-  //                         }
-  //                       },
-  //                     ),
-  //                   ],
-  //                 ),
-  //               ),
-  //             ],
-  //           ),
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
-
-  // void _showStatusModal(
-  //   BuildContext context,
-  //   RequestController controller,
-  //   OdewaRequest request,
-  // ) {
-  //   showDialog(
-  //     context: context,
-  //     builder:
-  //         (context) => AlertDialog(
-  //           title: Text('Cambiar Estado de Solicitud'),
-  //           content: Column(
-  //             mainAxisSize: MainAxisSize.min,
-  //             children: [
-  //               Text(
-  //                 'Estado actual: ${RequestStatus.getLabel(request.status)}',
-  //               ),
-  //               const SizedBox(height: 20),
-  //               ...RequestStatus.allStatuses.map(
-  //                 (status) => ListTile(
-  //                   leading: Icon(
-  //                     Icons.circle,
-  //                     color: RequestStatus.getColor(status),
-  //                   ),
-  //                   title: Text(RequestStatus.getLabel(status)),
-  //                   onTap: () {
-  //                     controller.updateRequestStatus(request.id, status);
-  //                     Navigator.pop(context);
-  //                   },
-  //                 ),
-  //               ),
-  //             ],
-  //           ),
-  //           actions: [
-  //             TextButton(
-  //               onPressed: () => Navigator.pop(context),
-  //               child: const Text('Cancelar'),
-  //             ),
-  //           ],
-  //         ),
-  //   );
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -614,18 +391,110 @@ class RequestsView extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  'Filtros',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.teal.shade800,
-                                  ),
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.filter_list,
+                                      color: Colors.teal.shade600,
+                                      size: 24,
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Text(
+                                      'Filtros',
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.teal.shade800,
+                                      ),
+                                    ),
+                                    const Spacer(),
+                                    Obx(() {
+                                      if (requestsController.hasActiveFilters) {
+                                        return Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 8,
+                                            vertical: 4,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: Colors.teal.shade100,
+                                            borderRadius: BorderRadius.circular(
+                                              12,
+                                            ),
+                                          ),
+                                          child: Text(
+                                            'Filtros activos',
+                                            style: TextStyle(
+                                              color: Colors.teal.shade700,
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        );
+                                      }
+                                      return const SizedBox.shrink();
+                                    }),
+                                  ],
                                 ),
                                 const SizedBox(height: 16),
+
+                                // Indicador de filtros activos
+                                Obx(() {
+                                  if (requestsController.hasActiveFilters) {
+                                    return Container(
+                                      margin: const EdgeInsets.only(bottom: 16),
+                                      padding: const EdgeInsets.all(12),
+                                      decoration: BoxDecoration(
+                                        color: Colors.teal.shade50,
+                                        borderRadius: BorderRadius.circular(8),
+                                        border: Border.all(
+                                          color: Colors.teal.shade200,
+                                        ),
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          Icon(
+                                            Icons.info_outline,
+                                            color: Colors.teal.shade600,
+                                            size: 16,
+                                          ),
+                                          const SizedBox(width: 8),
+                                          Expanded(
+                                            child: Text(
+                                              requestsController
+                                                  .activeFiltersDescription,
+                                              style: TextStyle(
+                                                color: Colors.teal.shade800,
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ),
+                                          TextButton(
+                                            onPressed:
+                                                () =>
+                                                    requestsController
+                                                        .clearAllFilters(),
+                                            child: Text(
+                                              'Limpiar',
+                                              style: TextStyle(
+                                                color: Colors.teal.shade600,
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  }
+                                  return const SizedBox.shrink();
+                                }),
+
+                                // Filtros
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
+                                    // Búsqueda
                                     TextField(
                                       onChanged:
                                           requestsController.updateSearchQuery,
@@ -644,38 +513,57 @@ class RequestsView extends StatelessWidget {
                                       ),
                                     ),
                                     const SizedBox(height: 16),
-                                    DropdownButtonFormField<String>(
-                                      value:
-                                          requestsController.statusFilter.value,
-                                      decoration: InputDecoration(
-                                        labelText: 'Estado',
-                                        border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            12,
-                                          ),
-                                        ),
-                                      ),
-                                      items: [
-                                        DropdownMenuItem(
-                                          value: 'all',
-                                          child: Text('Todos'),
-                                        ),
-                                        ...RequestStatus.allStatuses.map(
-                                          (status) => DropdownMenuItem(
-                                            value: status,
-                                            child: Text(
-                                              RequestStatus.getLabel(status),
+
+                                    // Filtros en fila
+                                    Row(
+                                      children: [
+                                        // Estado
+                                        Expanded(
+                                          child: DropdownButtonFormField<
+                                            String
+                                          >(
+                                            value:
+                                                requestsController
+                                                    .statusFilter
+                                                    .value,
+                                            decoration: InputDecoration(
+                                              labelText: 'Estado',
+                                              border: OutlineInputBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                              ),
                                             ),
+                                            items: [
+                                              DropdownMenuItem(
+                                                value: 'all',
+                                                child: Text('Todos'),
+                                              ),
+                                              ...RequestStatus.allStatuses.map(
+                                                (status) => DropdownMenuItem(
+                                                  value: status,
+                                                  child: Text(
+                                                    RequestStatus.getLabel(
+                                                      status,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                            onChanged: (value) {
+                                              if (value != null) {
+                                                requestsController
+                                                    .updateStatusFilter(value);
+                                              }
+                                            },
                                           ),
+                                        ),
+                                        const SizedBox(width: 16),
+
+                                        // Rango de fechas
+                                        Expanded(
+                                          child: _buildDateRangeFilter(),
                                         ),
                                       ],
-                                      onChanged: (value) {
-                                        if (value != null) {
-                                          requestsController.updateStatusFilter(
-                                            value,
-                                          );
-                                        }
-                                      },
                                     ),
                                   ],
                                 ),
@@ -950,6 +838,85 @@ class RequestsView extends StatelessWidget {
         ],
       );
     });
+  }
+
+  Widget _buildDateRangeFilter() {
+    return Obx(() {
+      final controller = Get.find<RequestController>();
+      final startDate = controller.startDate.value;
+      final endDate = controller.endDate.value;
+
+      return InkWell(
+        onTap: () => _selectDateRange(controller),
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey.shade300),
+            borderRadius: BorderRadius.circular(12),
+            color: Colors.grey.shade50,
+          ),
+          child: Row(
+            children: [
+              Icon(Icons.calendar_today, color: Colors.teal.shade600, size: 20),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  startDate != null && endDate != null
+                      ? '${startDate.day}/${startDate.month}/${startDate.year} - ${endDate.day}/${endDate.month}/${endDate.year}'
+                      : 'Seleccionar rango de fechas',
+                  style: TextStyle(
+                    color:
+                        startDate != null && endDate != null
+                            ? Colors.grey.shade800
+                            : Colors.grey.shade500,
+                    fontSize: 14,
+                  ),
+                ),
+              ),
+              if (startDate != null && endDate != null)
+                IconButton(
+                  onPressed: () => controller.clearDateFilters(),
+                  icon: Icon(Icons.clear, color: Colors.red.shade600, size: 18),
+                  tooltip: 'Limpiar fechas',
+                ),
+            ],
+          ),
+        ),
+      );
+    });
+  }
+
+  Future<void> _selectDateRange(RequestController controller) async {
+    final DateTimeRange? picked = await showDateRangePicker(
+      context: Get.context!,
+      firstDate: DateTime(2020),
+      lastDate: DateTime.now(),
+      initialDateRange:
+          controller.startDate.value != null && controller.endDate.value != null
+              ? DateTimeRange(
+                start: controller.startDate.value!,
+                end: controller.endDate.value!,
+              )
+              : null,
+      locale: const Locale('es', 'ES'),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.light(
+              primary: Colors.teal.shade600,
+              onPrimary: Colors.white,
+              surface: Colors.white,
+              onSurface: Colors.black,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (picked != null) {
+      controller.updateDateFilters(picked.start, picked.end);
+    }
   }
 }
 

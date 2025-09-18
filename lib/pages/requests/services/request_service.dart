@@ -20,10 +20,18 @@ class RequestService extends GetxService {
   Future<(bool, RequestResponse?, String)> getAllRequests({
     int page = 1,
     int limit = 10,
+    DateTime? startDate,
+    DateTime? endDate,
   }) async {
     try {
-      final uri = Uri.parse(
-        '${Urls.backofficeRequests}?page=$page&limit=$limit',
+      // Construir la URL con parámetros de filtro
+      final uri = Uri.parse(Urls.backofficeRequests).replace(
+        queryParameters: _buildQueryParameters(
+          page: page,
+          limit: limit,
+          startDate: startDate,
+          endDate: endDate,
+        ),
       );
 
       final response = await _tokenValidationService.client.get(
@@ -43,6 +51,28 @@ class RequestService extends GetxService {
     } catch (e) {
       return (false, null, 'Error al obtener solicitudes: $e');
     }
+  }
+
+  Map<String, String> _buildQueryParameters({
+    required int page,
+    required int limit,
+    DateTime? startDate,
+    DateTime? endDate,
+  }) {
+    final Map<String, String> params = {
+      'page': page.toString(),
+      'limit': limit.toString(),
+    };
+
+    if (startDate != null) {
+      params['start_date'] = startDate.toIso8601String().split('T')[0];
+    }
+
+    if (endDate != null) {
+      params['end_date'] = endDate.toIso8601String().split('T')[0];
+    }
+
+    return params;
   }
 
   Future<(bool, List<OdewaRequest>?, String)>
