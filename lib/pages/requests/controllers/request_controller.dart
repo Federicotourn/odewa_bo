@@ -391,4 +391,45 @@ class RequestController extends GetxController {
 
   // Getter para obtener el total de páginas
   int get totalPagesValue => totalPages.value;
+
+  Future<void> exportRequests() async {
+    try {
+      isLoading.value = true;
+
+      final result = await _requestService.exportRequestsToExcel(
+        startDate: startDate.value,
+        endDate: endDate.value,
+        search: searchQuery.value.isNotEmpty ? searchQuery.value : null,
+        status: statusFilter.value != 'all' ? statusFilter.value : null,
+      );
+
+      if (result.$1) {
+        Get.snackbar(
+          'Éxito',
+          'Archivo Excel exportado exitosamente',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+      } else {
+        Get.snackbar(
+          'Error',
+          result.$2,
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Error al exportar solicitudes: $e',
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
 }

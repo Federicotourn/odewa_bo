@@ -367,6 +367,29 @@ class RequestsView extends StatelessWidget {
                         },
                       ),
                       const SizedBox(width: 16),
+                      Obx(
+                        () => _ModernActionButton(
+                          icon:
+                              requestsController.isLoading.value
+                                  ? Icons.hourglass_empty
+                                  : Icons.download,
+                          label:
+                              requestsController.isLoading.value
+                                  ? 'Exportando...'
+                                  : 'Exportar',
+                          color:
+                              requestsController.isLoading.value
+                                  ? Colors.grey.shade400
+                                  : Colors.blue.shade400,
+                          onPressed:
+                              requestsController.isLoading.value
+                                  ? () {} // Función vacía cuando está cargando
+                                  : () {
+                                    requestsController.exportRequests();
+                                  },
+                        ),
+                      ),
+                      const SizedBox(width: 16),
                     ],
                   ),
                   SliverToBoxAdapter(
