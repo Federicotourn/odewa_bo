@@ -1,7 +1,6 @@
 class Urls {
-  // Odewa API URLs
   // static String baseUrl = 'http://127.0.0.1:3000/api';
-  static String baseUrl = 'http://18.232.128.22:3000/api';
+  static String baseUrl = 'https://api.paytonic.app/api';
 
   // Authentication endpoints
   static String authLogin = '$baseUrl/auth/login';
