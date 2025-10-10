@@ -1,11 +1,11 @@
 {
-    "name": "Odewa",
-    "short_name": "Odewa",
+    "name": "Paytonic",
+    "short_name": "Paytonic",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "Paytonic - Sistema de gestión empresarial",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

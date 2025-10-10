@@ -42,7 +42,7 @@ class MyApp extends StatelessWidget {
       defaultTransition: Transition.leftToRightWithFade,
       getPages: AppPages.routes,
       debugShowCheckedModeBanner: false,
-      title: "Odewa Backoffice",
+      title: "Paytonic",
       locale: const Locale('es', 'ES'),
       theme: ThemeData(
         scaffoldBackgroundColor: AppTheme.light,

@@ -61,8 +61,8 @@ class SideMenu extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Image.asset(
-                      "assets/logotipo_recortado.png",
-                      width: 150,
+                      "assets/logotipo-paytonic.png",
+                      width: 200,
                     ),
                   ),
                   const SizedBox(height: 16),

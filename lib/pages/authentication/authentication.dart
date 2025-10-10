@@ -33,7 +33,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
               FittedBox(
                 fit: BoxFit.contain,
                 child: Image.asset(
-                  "assets/logotipo_recortado.png",
+                  "assets/logotipo.png",
                   width: Get.width * 0.5,
                 ),
               ),
