@@ -22,7 +22,8 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.primaryLight.withValues(alpha: 0.3),
+      // backgroundColor: AppTheme.primaryLight.withValues(alpha: 0.3),
+      backgroundColor: AppTheme.primary,
       body: Center(
         child: Container(
           constraints: const BoxConstraints(maxWidth: 400),
@@ -33,18 +34,30 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
               FittedBox(
                 fit: BoxFit.contain,
                 child: Image.asset(
-                  "assets/logotipo.png",
+                  "assets/logotipo-paytonic.png",
                   width: Get.width * 0.5,
                 ),
               ),
               const SizedBox(height: 40),
               TextField(
                 controller: authController.emailController,
+                style: TextStyle(color: Colors.white),
                 decoration: InputDecoration(
                   labelText: "Email",
+                  labelStyle: TextStyle(color: Colors.white),
                   hintText: "abc@odewa.com",
+                  hintStyle: TextStyle(color: Colors.white),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(20),
+                    borderSide: BorderSide(color: Colors.white),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20),
+                    borderSide: BorderSide(color: Colors.white),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20),
+                    borderSide: BorderSide(color: Colors.white),
                   ),
                 ),
               ),
@@ -52,13 +65,14 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
               TextField(
                 controller: authController.passwordController,
                 obscureText: !authController.passwordIsVisible.value,
+                style: TextStyle(color: Colors.white),
                 decoration: InputDecoration(
                   suffixIcon: IconButton(
                     icon: Icon(
                       authController.passwordIsVisible.value
                           ? Icons.visibility_off
                           : Icons.visibility,
-                      color: Colors.grey,
+                      color: Colors.white,
                     ),
                     onPressed: () {
                       setState(() {
@@ -68,9 +82,20 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                     },
                   ),
                   labelText: "Contraseña",
+                  labelStyle: TextStyle(color: Colors.white),
                   hintText: "Contraseña",
+                  hintStyle: TextStyle(color: Colors.white),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(20),
+                    borderSide: BorderSide(color: Colors.white),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20),
+                    borderSide: BorderSide(color: Colors.white),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20),
+                    borderSide: BorderSide(color: Colors.white),
                   ),
                 ),
               ),
@@ -132,8 +157,8 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppTheme.primary,
-                    foregroundColor: Colors.white,
+                    backgroundColor: AppTheme.light,
+                    foregroundColor: AppTheme.primary,
                     minimumSize: const Size(double.infinity, 50),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
