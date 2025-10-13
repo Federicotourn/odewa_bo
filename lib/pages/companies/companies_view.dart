@@ -295,17 +295,6 @@ class CompaniesView extends StatelessWidget {
                           icon: Icons.business,
                           isRequired: true,
                         ),
-
-                        const SizedBox(height: 20),
-
-                        // Campo de número de empleados
-                        _ModernTextField(
-                          label: 'Número de Empleados',
-                          hint: 'Ej: 50',
-                          controller: employeeCountController,
-                          icon: Icons.people,
-                          isRequired: true,
-                        ),
                       ],
                     ),
                   ),
@@ -337,8 +326,7 @@ class CompaniesView extends StatelessWidget {
                                 : 'Actualizar Empresa',
                         icon: company == null ? Icons.add : Icons.save,
                         onPressed: () async {
-                          if (nameController.text.trim().isEmpty ||
-                              employeeCountController.text.trim().isEmpty) {
+                          if (nameController.text.trim().isEmpty) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: Row(
@@ -365,8 +353,6 @@ class CompaniesView extends StatelessWidget {
                             loading(context);
                             controller.nameController.text =
                                 nameController.text.trim();
-                            controller.employeeCountController.text =
-                                employeeCountController.text.trim();
                             await controller.createCompany();
                             Get.back();
                             Navigator.of(Get.context!).pop();

@@ -92,10 +92,7 @@ class CompanyController extends GetxController {
 
     isLoading.value = true;
 
-    final request = CreateCompanyRequest(
-      name: nameController.text.trim(),
-      employeeCount: int.parse(employeeCountController.text.trim()),
-    );
+    final request = CreateCompanyRequest(name: nameController.text.trim());
 
     final result = await _companyService.createCompany(request);
 
@@ -201,29 +198,6 @@ class CompanyController extends GetxController {
       Get.snackbar(
         'Error',
         'El nombre de la empresa es requerido',
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
-      return false;
-    }
-
-    if (employeeCountController.text.trim().isEmpty) {
-      Get.snackbar(
-        'Error',
-        'El número de empleados es requerido',
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
-      return false;
-    }
-
-    final employeeCount = int.tryParse(employeeCountController.text.trim());
-    if (employeeCount == null || employeeCount <= 0) {
-      Get.snackbar(
-        'Error',
-        'El número de empleados debe ser un número válido mayor a 0',
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red,
         colorText: Colors.white,

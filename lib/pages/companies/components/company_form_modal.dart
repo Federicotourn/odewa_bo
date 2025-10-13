@@ -108,15 +108,6 @@ class CompanyFormModal extends StatelessWidget {
             icon: Icons.business_outlined,
             isRequired: true,
           ),
-          const SizedBox(height: 20),
-          _buildTextField(
-            controller: controller.employeeCountController,
-            label: 'Número de Empleados',
-            hint: 'Ingrese el número de empleados (opcional)',
-            icon: Icons.people_outlined,
-            keyboardType: TextInputType.number,
-            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-          ),
         ],
       ),
     );

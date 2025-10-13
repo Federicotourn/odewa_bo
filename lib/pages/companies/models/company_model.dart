@@ -66,7 +66,7 @@ class Company {
   dynamic deletedById;
   bool isActive;
   String name;
-  int employeeCount;
+  int employeeCount = 0;
   double? averageMonthlyBalance;
 
   Company({
@@ -79,7 +79,7 @@ class Company {
     required this.deletedById,
     required this.isActive,
     required this.name,
-    required this.employeeCount,
+    this.employeeCount = 0,
     this.averageMonthlyBalance,
   });
 
@@ -93,7 +93,7 @@ class Company {
     deletedById: json["deletedById"],
     isActive: json["isActive"],
     name: json["name"],
-    employeeCount: json["employeeCount"],
+    employeeCount: json["employeeCount"] ?? 0,
     averageMonthlyBalance: json["averageMonthlyBalance"],
   );
 
@@ -107,7 +107,7 @@ class Company {
     "deletedById": deletedById,
     "isActive": isActive,
     "name": name,
-    "employeeCount": employeeCount,
+    "employeeCount": employeeCount ?? 0,
     "averageMonthlyBalance": averageMonthlyBalance,
   };
 
@@ -144,14 +144,10 @@ class Company {
 
 class CreateCompanyRequest {
   String name;
-  int employeeCount;
 
-  CreateCompanyRequest({required this.name, required this.employeeCount});
+  CreateCompanyRequest({required this.name});
 
-  Map<String, dynamic> toJson() => {
-    "name": name,
-    "employeeCount": employeeCount,
-  };
+  Map<String, dynamic> toJson() => {"name": name};
 }
 
 class UpdateCompanyRequest {

@@ -41,6 +41,7 @@ class ClientService extends GetxService {
         throw Exception('Failed to load clients');
       }
     } catch (e) {
+      print(e);
       throw Exception('Error fetching clients: $e');
     }
   }
