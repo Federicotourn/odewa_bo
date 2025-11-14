@@ -67,7 +67,7 @@ class _ReceiptUploadDialogState extends State<ReceiptUploadDialog> {
     });
 
     if (success) {
-      Get.back();
+      Navigator.of(context).pop();
     }
   }
 
