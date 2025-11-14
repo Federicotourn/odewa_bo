@@ -2,6 +2,7 @@ import 'package:odewa_bo/controllers/navigation_controller.dart';
 import 'package:odewa_bo/pages/requests/controllers/request_controller.dart';
 import 'package:odewa_bo/pages/requests/models/request_model.dart';
 import 'package:odewa_bo/pages/companies/models/company_model.dart';
+import 'package:odewa_bo/pages/requests/components/receipt_upload_dialog.dart';
 // import 'package:odewa_bo/controllers/logged_user_controller.dart';
 
 import 'package:flutter/material.dart';
@@ -120,6 +121,7 @@ class RequestDetailView extends StatelessWidget {
                       _buildStatusChangeSection(
                         requestController.selectedRequest.value!,
                         requestController,
+                        context,
                       ),
 
                       const SizedBox(height: 32),
@@ -545,6 +547,7 @@ class RequestDetailView extends StatelessWidget {
   Widget _buildStatusChangeSection(
     OdewaRequest request,
     RequestController controller,
+    BuildContext context,
   ) {
     final availableStatuses = RequestStatus.getAvailableStatuses(
       request.status,
@@ -625,7 +628,17 @@ class RequestDetailView extends StatelessWidget {
                       currentStatus: request.status,
                       newStatus: status,
                       onStatusChange: (newStatus) {
-                        controller.updateRequestStatus(request.id, newStatus);
+                        // Si el nuevo estado es "completed", mostrar el diálogo de receipt
+                        if (newStatus == 'completed') {
+                          showDialog(
+                            context: context,
+                            builder: (context) => ReceiptUploadDialog(
+                              requestId: request.id,
+                            ),
+                          );
+                        } else {
+                          controller.updateRequestStatus(request.id, newStatus);
+                        }
                       },
                     );
                   }).toList(),

@@ -6,6 +6,7 @@ import 'package:odewa_bo/pages/requests/models/request_model.dart';
 import 'package:odewa_bo/services/token_validation_service.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:http/http.dart' as http;
 
 class RequestService extends GetxService {
   final TokenValidationService _tokenValidationService =
@@ -403,5 +404,79 @@ class RequestService extends GetxService {
     throw UnsupportedError(
       'Exportación de archivos no soportada en esta plataforma',
     );
+  }
+
+  Future<(bool, OdewaRequest?, String)> uploadReceipt(
+    String id,
+    List<int> fileBytes,
+    String fileName,
+  ) async {
+    try {
+      // Validar que el token existe
+      final token = box.read('token');
+      if (token == null || token.toString().isEmpty) {
+        return (false, null, 'No se encontró el token de autenticación');
+      }
+
+      final uri = Uri.parse('${Urls.requests}/$id/receipt');
+
+      // Crear multipart request
+      final request = http.MultipartRequest('POST', uri);
+
+      // Agregar headers
+      request.headers.addAll({
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      });
+
+      // Agregar el archivo
+      request.files.add(
+        http.MultipartFile.fromBytes('file', fileBytes, filename: fileName),
+      );
+
+      // Enviar la petición
+      final streamedResponse = await _tokenValidationService.client.send(
+        request,
+      );
+      final response = await http.Response.fromStream(streamedResponse);
+
+      if (response.statusCode == Constants.HTTP_200_OK ||
+          response.statusCode == Constants.HTTP_201_CREATED) {
+        try {
+          final responseBody = response.body;
+          if (responseBody.isEmpty) {
+            return (false, null, 'La respuesta del servidor está vacía');
+          }
+
+          final decodedBody = json.decode(responseBody);
+
+          // Verificar que decodedBody no sea null
+          if (decodedBody == null) {
+            return (false, null, 'La respuesta del servidor es null');
+          }
+
+          // Intentar parsear el request
+          final updatedRequest = OdewaRequest.fromJson(decodedBody);
+          return (true, updatedRequest, 'Comprobante subido exitosamente');
+        } catch (e, stackTrace) {
+          // Log más detallado del error
+          print('Error al procesar respuesta de uploadReceipt: $e');
+          print('Stack trace: $stackTrace');
+          print('Response body: ${response.body}');
+          return (
+            false,
+            null,
+            'Error al procesar la respuesta del servidor: $e',
+          );
+        }
+      } else {
+        final error = Constants.handleError(response.body, response.statusCode);
+        final errorMessage =
+            error.$2.isNotEmpty ? error.$2 : 'Error desconocido del servidor';
+        return (false, null, errorMessage);
+      }
+    } catch (e) {
+      return (false, null, 'Error al subir comprobante: $e');
+    }
   }
 }

@@ -105,8 +105,12 @@ class OdewaRequest {
     date: json["date"],
     status: json["status"],
     clientId: json["clientId"],
-    client:
-        json["client"] != null ? RequestClient.fromJson(json["client"]) : null,
+    client: json["client"] != null && 
+            json["client"] is Map && 
+            (json["client"] as Map).isNotEmpty &&
+            json["client"]["id"] != null
+        ? RequestClient.fromJson(json["client"])
+        : null,
   );
 
   Map<String, dynamic> toJson() => {

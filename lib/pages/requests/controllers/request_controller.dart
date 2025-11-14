@@ -203,6 +203,17 @@ class RequestController extends GetxController {
   }
 
   Future<void> updateRequestStatus(String id, String newStatus) async {
+    // Si el nuevo estado es "completed", primero debemos subir el receipt
+    if (newStatus == 'completed') {
+      // Mostrar el diálogo de subida de receipt
+      // El diálogo manejará la subida y luego completará la orden
+      return;
+    }
+
+    await _updateRequestStatusDirectly(id, newStatus);
+  }
+
+  Future<void> _updateRequestStatusDirectly(String id, String newStatus) async {
     final result = await _requestService.updateRequestStatus(id, newStatus);
 
     if (result.$1) {
@@ -214,7 +225,9 @@ class RequestController extends GetxController {
         colorText: Colors.white,
       );
       await loadRequests(showLoading: false);
-      selectedRequest.value = requests.firstWhere((r) => r.id == id);
+      if (requests.any((r) => r.id == id)) {
+        selectedRequest.value = requests.firstWhere((r) => r.id == id);
+      }
     } else {
       Get.snackbar(
         'Error',
@@ -224,6 +237,47 @@ class RequestController extends GetxController {
         colorText: Colors.white,
       );
     }
+  }
+
+  Future<bool> uploadReceiptAndComplete(
+    String id,
+    List<int> fileBytes,
+    String fileName,
+  ) async {
+    // Primero subir el receipt
+    final uploadResult = await _requestService.uploadReceipt(
+      id,
+      fileBytes,
+      fileName,
+    );
+
+    if (!uploadResult.$1) {
+      Get.snackbar(
+        'Error',
+        uploadResult.$3,
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      return false;
+    }
+
+    // Si la subida fue exitosa, ahora completar la orden
+    // Usamos el método directo para evitar el check de "completed"
+    await _updateRequestStatusDirectly(id, 'completed');
+
+    Get.snackbar(
+      'Éxito',
+      'Comprobante subido y orden completada exitosamente',
+      snackPosition: SnackPosition.TOP,
+      backgroundColor: Colors.green,
+      colorText: Colors.white,
+    );
+    await loadRequests(showLoading: false);
+    if (requests.any((r) => r.id == id)) {
+      selectedRequest.value = requests.firstWhere((r) => r.id == id);
+    }
+    return true;
   }
 
   Future<void> toggleRequestStatus(OdewaRequest request) async {
