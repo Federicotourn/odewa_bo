@@ -6,10 +6,7 @@ import 'package:odewa_bo/pages/requests/controllers/request_controller.dart';
 class ReceiptUploadDialog extends StatefulWidget {
   final String requestId;
 
-  const ReceiptUploadDialog({
-    super.key,
-    required this.requestId,
-  });
+  const ReceiptUploadDialog({super.key, required this.requestId});
 
   @override
   State<ReceiptUploadDialog> createState() => _ReceiptUploadDialogState();
@@ -70,9 +67,7 @@ class _ReceiptUploadDialogState extends State<ReceiptUploadDialog> {
     });
 
     if (success) {
-      if (mounted) {
-        Navigator.of(context).pop();
-      }
+      Get.back();
     }
   }
 
@@ -196,9 +191,10 @@ class _ReceiptUploadDialogState extends State<ReceiptUploadDialog> {
                           color: Colors.grey.shade50,
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
-                            color: _selectedFile != null
-                                ? Colors.teal.shade400
-                                : Colors.grey.shade300,
+                            color:
+                                _selectedFile != null
+                                    ? Colors.teal.shade400
+                                    : Colors.grey.shade300,
                             width: 2,
                             style: BorderStyle.solid,
                           ),
@@ -210,9 +206,10 @@ class _ReceiptUploadDialogState extends State<ReceiptUploadDialog> {
                                   ? Icons.check_circle
                                   : Icons.cloud_upload_outlined,
                               size: 64,
-                              color: _selectedFile != null
-                                  ? Colors.teal.shade400
-                                  : Colors.grey.shade400,
+                              color:
+                                  _selectedFile != null
+                                      ? Colors.teal.shade400
+                                      : Colors.grey.shade400,
                             ),
                             const SizedBox(height: 16),
                             Text(
@@ -288,9 +285,7 @@ class _ReceiptUploadDialogState extends State<ReceiptUploadDialog> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   OutlinedButton.icon(
-                    onPressed: _isUploading
-                        ? null
-                        : () => Navigator.of(context).pop(),
+                    onPressed: _isUploading ? null : () => Get.back(),
                     icon: const Icon(Icons.close),
                     label: const Text('Cancelar'),
                     style: OutlinedButton.styleFrom(
@@ -305,22 +300,26 @@ class _ReceiptUploadDialogState extends State<ReceiptUploadDialog> {
                   ),
                   const SizedBox(width: 16),
                   ElevatedButton.icon(
-                    onPressed: _isUploading || _selectedFile == null
-                        ? null
-                        : _uploadAndComplete,
-                    icon: _isUploading
-                        ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                Colors.white,
+                    onPressed:
+                        _isUploading || _selectedFile == null
+                            ? null
+                            : _uploadAndComplete,
+                    icon:
+                        _isUploading
+                            ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  Colors.white,
+                                ),
                               ),
-                            ),
-                          )
-                        : const Icon(Icons.upload),
-                    label: Text(_isUploading ? 'Subiendo...' : 'Subir y Completar'),
+                            )
+                            : const Icon(Icons.upload),
+                    label: Text(
+                      _isUploading ? 'Subiendo...' : 'Subir y Completar',
+                    ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.teal.shade400,
                       foregroundColor: Colors.white,
@@ -343,4 +342,3 @@ class _ReceiptUploadDialogState extends State<ReceiptUploadDialog> {
     );
   }
 }
-

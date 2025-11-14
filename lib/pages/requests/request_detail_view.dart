@@ -630,11 +630,11 @@ class RequestDetailView extends StatelessWidget {
                       onStatusChange: (newStatus) {
                         // Si el nuevo estado es "completed", mostrar el diálogo de receipt
                         if (newStatus == 'completed') {
-                          showDialog(
-                            context: context,
-                            builder: (context) => ReceiptUploadDialog(
+                          Get.dialog(
+                            ReceiptUploadDialog(
                               requestId: request.id,
                             ),
+                            barrierDismissible: false,
                           );
                         } else {
                           controller.updateRequestStatus(request.id, newStatus);
