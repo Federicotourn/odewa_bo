@@ -5,12 +5,8 @@ import 'package:get/get.dart';
 class AuthController extends GetxController {
   final AuthService authService = Get.find<AuthService>();
 
-  final TextEditingController emailController = TextEditingController(
-    text: 'admin@odewa.com',
-  );
-  final TextEditingController passwordController = TextEditingController(
-    text: 'admin123',
-  );
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
   RxBool isLoggingIn = false.obs;
   RxBool passwordIsVisible = false.obs;
 
