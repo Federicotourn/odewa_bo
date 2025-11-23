@@ -1094,6 +1094,13 @@ class ClientDetailView extends StatelessWidget {
                           if (success) {
                             controller.selectedClient.value = updatedClient;
                             Navigator.pop(context);
+                            Get.snackbar(
+                              'Éxito',
+                              'Cliente actualizado correctamente',
+                              snackPosition: SnackPosition.TOP,
+                              backgroundColor: Colors.green,
+                              colorText: Colors.white,
+                            );
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(

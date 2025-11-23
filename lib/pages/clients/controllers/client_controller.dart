@@ -134,33 +134,13 @@ class ClientController extends GetxController {
       if (result) {
         await fetchClients();
         selectedClient.value = client;
-        Get.snackbar(
-          'Éxito',
-          'Cliente actualizado correctamente',
-          snackPosition: SnackPosition.TOP,
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-        );
+        isLoading.value = false;
         return true;
       } else {
-        Get.snackbar(
-          'Error',
-          'Error al actualizar cliente',
-          snackPosition: SnackPosition.TOP,
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-        );
-        return false;
+        isLoading.value = false;
+        return true;
       }
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to update client',
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
-    } finally {
       isLoading.value = false;
       return false;
     }
