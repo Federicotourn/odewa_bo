@@ -19,13 +19,17 @@ class ClientService extends GetxService {
 
   Future<ClientsResponse> getClients({
     int page = 1,
-    int limit = 10,
+    int limit = 25,
     String? search,
   }) async {
     try {
-      final uri = Uri.parse(
+      final uriString = StringBuffer(
         '${Urls.backofficeClients}?page=$page&limit=$limit',
       );
+      if (search != null && search.isNotEmpty) {
+        uriString.write('&search=${Uri.encodeComponent(search)}');
+      }
+      final uri = Uri.parse(uriString.toString());
 
       final response = await _tokenValidationService.client.get(
         uri,

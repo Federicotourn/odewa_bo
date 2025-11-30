@@ -32,11 +32,11 @@ class ClientsResponse {
 class Client {
   String id;
   DateTime createdAt;
-  DateTime updatedAt;
+  DateTime? updatedAt;
   bool isActive;
   String firstName;
   String lastName;
-  String email;
+  String? email;
   String document;
   String? phone;
   String? address;
@@ -47,7 +47,7 @@ class Client {
   String? branch;
   String? branchNumber;
   String? beneficiary;
-  int? monthlyBalance;
+  double? monthlyBalance;
   String? password;
   String? employeeNumber;
   Company? company;
@@ -57,11 +57,11 @@ class Client {
   Client({
     required this.id,
     required this.createdAt,
-    required this.updatedAt,
+    this.updatedAt,
     required this.isActive,
     required this.firstName,
     required this.lastName,
-    required this.email,
+    this.email,
     required this.document,
     this.phone,
     this.address,
@@ -83,11 +83,12 @@ class Client {
   factory Client.fromJson(Map<String, dynamic> json) => Client(
     id: json["id"],
     createdAt: DateTime.parse(json["createdAt"]),
-    updatedAt: DateTime.parse(json["updatedAt"]),
+    updatedAt:
+        json["updatedAt"] != null ? DateTime.parse(json["updatedAt"]) : null,
     isActive: json["isActive"],
     firstName: json["firstName"],
     lastName: json["lastName"],
-    email: json["email"],
+    email: json["email"] ?? '',
     document: json["document"],
     phone: json["phone"],
     address: json["address"],
@@ -98,7 +99,12 @@ class Client {
     branch: json["branch"],
     branchNumber: json["branchNumber"],
     beneficiary: json["beneficiary"],
-    monthlyBalance: json["monthlyBalance"],
+    monthlyBalance:
+        json["monthlyBalance"] != null
+            ? (json["monthlyBalance"] is int
+                ? json["monthlyBalance"].toDouble()
+                : json["monthlyBalance"] as double)
+            : null,
     password: json["password"],
     employeeNumber: json["employeeNumber"],
     company: json["company"] != null ? Company.fromJson(json["company"]) : null,
@@ -109,7 +115,7 @@ class Client {
   Map<String, dynamic> toJson() => {
     "id": id,
     "createdAt": createdAt.toIso8601String(),
-    "updatedAt": updatedAt.toIso8601String(),
+    "updatedAt": updatedAt?.toIso8601String(),
     "isActive": isActive,
     "firstName": firstName,
     "lastName": lastName,
@@ -171,10 +177,16 @@ class Meta {
   });
 
   factory Meta.fromJson(Map<String, dynamic> json) => Meta(
-    page: json["page"],
-    limit: json["limit"],
-    total: json["total"],
-    totalPages: json["totalPages"],
+    page: json["page"]?.toString() ?? '1',
+    limit: json["limit"]?.toString() ?? '10',
+    total:
+        json["total"] is int
+            ? json["total"] as int
+            : int.tryParse(json["total"]?.toString() ?? '0') ?? 0,
+    totalPages:
+        json["totalPages"] is int
+            ? json["totalPages"] as int
+            : int.tryParse(json["totalPages"]?.toString() ?? '1') ?? 1,
   );
 
   Map<String, dynamic> toJson() => {

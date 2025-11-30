@@ -15,7 +15,7 @@ class ClientController extends GetxController {
   final RxInt totalPages = 1.obs;
   final RxInt totalItems = 0.obs;
   final RxString searchQuery = ''.obs;
-  final int limit = 10;
+  final RxInt limit = 25.obs; // Tamaño de página por defecto: 25
   final Rx<Client?> selectedClient = Rx<Client?>(null);
 
   // Companies for dropdown
@@ -35,8 +35,8 @@ class ClientController extends GetxController {
       isLoading.value = true;
       final result = await _clientService.getClients(
         page: currentPage.value,
-        limit: limit,
-        search: searchQuery.value,
+        limit: limit.value,
+        search: searchQuery.value.isEmpty ? null : searchQuery.value,
       );
 
       clients.value = result.data;
@@ -117,6 +117,14 @@ class ClientController extends GetxController {
   void setPage(int page) {
     if (page != currentPage.value && page > 0 && page <= totalPages.value) {
       currentPage.value = page;
+      fetchClients();
+    }
+  }
+
+  void setLimit(int newLimit) {
+    if (newLimit != limit.value && newLimit > 0) {
+      limit.value = newLimit;
+      currentPage.value = 1; // Reset to first page when changing limit
       fetchClients();
     }
   }

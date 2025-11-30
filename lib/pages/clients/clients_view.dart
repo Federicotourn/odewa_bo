@@ -125,7 +125,7 @@ class ClientsView extends StatelessWidget {
                       child: _InfoCard(
                         icon: Icons.email,
                         label: 'Email',
-                        value: client.email,
+                        value: client.email ?? 'No especificado',
                         color: Colors.purple.shade400,
                       ),
                     ),
@@ -455,25 +455,27 @@ class ClientsView extends StatelessWidget {
                   color: Colors.grey.shade50,
                 ),
                 child: DropdownButtonHideUnderline(
-                  child: DropdownButton<int>(
-                    value: controller.limit,
-                    items:
-                        [10, 25, 50, 100].map((int value) {
-                          return DropdownMenuItem<int>(
-                            value: value,
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
+                  child: Obx(
+                    () => DropdownButton<int>(
+                      value: controller.limit.value,
+                      items:
+                          [10, 25, 50, 100].map((int value) {
+                            return DropdownMenuItem<int>(
+                              value: value,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                ),
+                                child: Text('$value'),
                               ),
-                              child: Text('$value'),
-                            ),
-                          );
-                        }).toList(),
-                    onChanged: (int? newValue) {
-                      if (newValue != null) {
-                        controller.fetchClients();
-                      }
-                    },
+                            );
+                          }).toList(),
+                      onChanged: (int? newValue) {
+                        if (newValue != null) {
+                          controller.setLimit(newValue);
+                        }
+                      },
+                    ),
                   ),
                 ),
               ),

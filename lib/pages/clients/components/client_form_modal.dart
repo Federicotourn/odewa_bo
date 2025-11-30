@@ -36,7 +36,7 @@ class _ClientFormModalState extends State<ClientFormModal> {
       _firstNameController.text = widget.client!.firstName;
       _lastNameController.text = widget.client!.lastName;
       _documentController.text = widget.client!.document;
-      _emailController.text = widget.client!.email;
+      _emailController.text = widget.client!.email ?? '';
       _phoneController.text = widget.client!.phone ?? '';
       _monthlyBalanceController.text =
           widget.client!.monthlyBalance?.toString() ?? '';
@@ -82,7 +82,7 @@ class _ClientFormModalState extends State<ClientFormModal> {
         monthlyBalance:
             _monthlyBalanceController.text.isEmpty
                 ? null
-                : int.tryParse(_monthlyBalanceController.text),
+                : double.tryParse(_monthlyBalanceController.text),
         password:
             _passwordController.text.isEmpty ? null : _passwordController.text,
         employeeNumber:

@@ -260,7 +260,7 @@ class ClientDetailView extends StatelessWidget {
                 child: _InfoCard(
                   icon: Icons.email,
                   label: 'Email',
-                  value: client.email,
+                  value: client.email ?? 'No especificado',
                   color: Colors.purple.shade400,
                 ),
               ),
@@ -324,7 +324,7 @@ class ClientDetailView extends StatelessWidget {
                     ? client.employeeNumber!
                     : 'No especificado',
           ),
-          infoRow(label: 'Email', value: client.email),
+          infoRow(label: 'Email', value: client.email ?? 'No especificado'),
           infoRow(
             label: 'Estado',
             value: client.isActive ? 'Activo' : 'Inactivo',
@@ -332,7 +332,10 @@ class ClientDetailView extends StatelessWidget {
           infoRow(label: 'Creado', value: _formatDateTime(client.createdAt)),
           infoRow(
             label: 'Actualizado',
-            value: _formatDateTime(client.updatedAt),
+            value:
+                client.updatedAt != null
+                    ? _formatDateTime(client.updatedAt!)
+                    : 'No especificado',
           ),
           infoRow(
             label: 'Balance Mensual',
@@ -1105,7 +1108,7 @@ class ClientDetailView extends StatelessWidget {
                             accountNumber: client.accountNumber,
                             branch: client.branch,
                             beneficiary: client.beneficiary,
-                            monthlyBalance: newBalance,
+                            monthlyBalance: newBalance?.toDouble(),
                             company: client.company,
                           );
 
