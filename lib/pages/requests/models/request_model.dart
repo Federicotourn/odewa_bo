@@ -189,6 +189,7 @@ class RequestClient {
   String? beneficiary;
   String? password;
   String? salt;
+  String? employeeNumber;
   int? monthlyBalance;
   String? companyId;
   Company? company;
@@ -216,6 +217,7 @@ class RequestClient {
     this.beneficiary,
     this.password,
     this.salt,
+    this.employeeNumber,
     this.monthlyBalance,
     this.companyId,
     this.company,
@@ -246,6 +248,7 @@ class RequestClient {
     beneficiary: json["beneficiary"],
     password: json["password"],
     salt: json["salt"],
+    employeeNumber: json["employeeNumber"],
     monthlyBalance: json["monthlyBalance"],
     companyId: json["companyId"],
     company: json["company"] != null ? Company.fromJson(json["company"]) : null,
@@ -274,6 +277,7 @@ class RequestClient {
     "beneficiary": beneficiary,
     "password": password,
     "salt": salt,
+    "employeeNumber": employeeNumber,
     "monthlyBalance": monthlyBalance,
     "companyId": companyId,
     "company": company?.toJson(),

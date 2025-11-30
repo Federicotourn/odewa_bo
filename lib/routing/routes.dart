@@ -96,6 +96,12 @@ class AuthMiddleware extends GetMiddleware {
       if (loggedUserController.user.value == null) {
         return const RouteSettings(name: authenticationPageRoute);
       }
+
+      // Si el usuario es client e intenta acceder a companies, redirigir al overview
+      if (route == companiesPageRoute && loggedUserController.isClient) {
+        return const RouteSettings(name: overViewPageRoute);
+      }
+
       return null;
     } catch (e) {
       return const RouteSettings(name: authenticationPageRoute);

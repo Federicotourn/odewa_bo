@@ -45,9 +45,11 @@ class Client {
   String? currency;
   String? accountNumber;
   String? branch;
+  String? branchNumber;
   String? beneficiary;
   int? monthlyBalance;
   String? password;
+  String? employeeNumber;
   Company? company;
   double? monthlyAdvancedAmount;
   double? availableBalance;
@@ -68,9 +70,11 @@ class Client {
     this.currency,
     this.accountNumber,
     this.branch,
+    this.branchNumber,
     this.beneficiary,
     this.monthlyBalance,
     this.password,
+    this.employeeNumber,
     this.company,
     this.monthlyAdvancedAmount,
     this.availableBalance,
@@ -92,9 +96,11 @@ class Client {
     currency: json["currency"],
     accountNumber: json["accountNumber"],
     branch: json["branch"],
+    branchNumber: json["branchNumber"],
     beneficiary: json["beneficiary"],
     monthlyBalance: json["monthlyBalance"],
     password: json["password"],
+    employeeNumber: json["employeeNumber"],
     company: json["company"] != null ? Company.fromJson(json["company"]) : null,
     monthlyAdvancedAmount: json["monthlyAdvancedAmount"],
     availableBalance: json["availableBalance"],
@@ -116,9 +122,11 @@ class Client {
     "currency": currency,
     "accountNumber": accountNumber,
     "branch": branch,
+    "branchNumber": branchNumber,
     "beneficiary": beneficiary,
     "monthlyBalance": monthlyBalance,
     "password": password,
+    "employeeNumber": employeeNumber,
     "company": company?.toJson(),
     "monthlyAdvancedAmount": monthlyAdvancedAmount,
     "availableBalance": availableBalance,
@@ -138,9 +146,11 @@ class Client {
     "currency": currency,
     "accountNumber": accountNumber,
     "branch": branch,
+    "branchNumber": branchNumber,
     "beneficiary": beneficiary,
     "monthlyBalance": monthlyBalance,
     "password": password,
+    "employeeNumber": employeeNumber,
     "companyId": company?.id,
     "monthlyAdvancedAmount": monthlyAdvancedAmount,
     "availableBalance": availableBalance,

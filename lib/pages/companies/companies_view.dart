@@ -4,6 +4,7 @@ import 'package:odewa_bo/pages/companies/models/company_model.dart';
 import 'package:odewa_bo/widgets/confirmation_dialog.dart';
 import 'package:odewa_bo/widgets/loading.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 class CompaniesView extends StatelessWidget {
@@ -119,12 +120,25 @@ class CompaniesView extends StatelessWidget {
                         color: Colors.green.shade400,
                       ),
                     ),
-                    const SizedBox(width: 20),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _InfoCard(
+                        icon: Icons.percent,
+                        label: 'Max Salario',
+                        value:
+                            '${company.maxSalaryPercentage.toStringAsFixed(1)}%',
+                        color: Colors.orange.shade400,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
                     Expanded(
                       child: _InfoCard(
                         icon: Icons.account_balance_wallet,
-                        label: 'Promedio de balance mensual',
-                        value: '${company.averageMonthlyBalance}',
+                        label: 'Promedio balance',
+                        value:
+                            company.averageMonthlyBalance != null
+                                ? '\$${company.averageMonthlyBalance!.toStringAsFixed(0)}'
+                                : 'N/A',
                         color: Colors.blue.shade400,
                       ),
                     ),
@@ -198,6 +212,9 @@ class CompaniesView extends StatelessWidget {
     final employeeCountController = TextEditingController(
       text: company?.employeeCount.toString() ?? '',
     );
+    final maxSalaryPercentageController = TextEditingController(
+      text: company?.maxSalaryPercentage.toString() ?? '100.0',
+    );
 
     showDialog(
       context: context,
@@ -208,8 +225,10 @@ class CompaniesView extends StatelessWidget {
           ),
           child: Container(
             width: Get.width * 0.5,
-            height: Get.height * 0.4,
-            constraints: BoxConstraints(maxHeight: Get.height * 0.8),
+            constraints: BoxConstraints(
+              maxHeight: Get.height * 0.85,
+              minHeight: 400,
+            ),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(24),
               gradient: LinearGradient(
@@ -281,11 +300,12 @@ class CompaniesView extends StatelessWidget {
                 ),
 
                 // Contenido del modal
-                Expanded(
+                Flexible(
                   child: SingleChildScrollView(
                     padding: const EdgeInsets.all(24),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         // Campo de nombre
                         _ModernTextField(
@@ -294,6 +314,23 @@ class CompaniesView extends StatelessWidget {
                           controller: nameController,
                           icon: Icons.business,
                           isRequired: true,
+                        ),
+                        const SizedBox(height: 20),
+                        // Campo de porcentaje máximo de salario
+                        _ModernTextField(
+                          label: 'Porcentaje Máximo de Salario',
+                          hint: 'Ej: 50.5 (por defecto: 100)',
+                          controller: maxSalaryPercentageController,
+                          icon: Icons.percent,
+                          isRequired: true,
+                          keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true,
+                          ),
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(
+                              RegExp(r'^\d+\.?\d{0,2}'),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -326,7 +363,10 @@ class CompaniesView extends StatelessWidget {
                                 : 'Actualizar Empresa',
                         icon: company == null ? Icons.add : Icons.save,
                         onPressed: () async {
-                          if (nameController.text.trim().isEmpty) {
+                          if (nameController.text.trim().isEmpty ||
+                              maxSalaryPercentageController.text
+                                  .trim()
+                                  .isEmpty) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: Row(
@@ -348,11 +388,39 @@ class CompaniesView extends StatelessWidget {
                             return;
                           }
 
+                          // Validar que maxSalaryPercentage sea un número válido
+                          final maxSalaryPercentageValue = double.tryParse(
+                            maxSalaryPercentageController.text.trim(),
+                          );
+                          if (maxSalaryPercentageValue == null) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Row(
+                                  children: [
+                                    Icon(Icons.warning, color: Colors.white),
+                                    const SizedBox(width: 8),
+                                    const Text(
+                                      'El porcentaje máximo de salario debe ser un número válido',
+                                    ),
+                                  ],
+                                ),
+                                backgroundColor: Colors.orange,
+                                behavior: SnackBarBehavior.floating,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                            );
+                            return;
+                          }
+
                           if (company == null) {
                             // Create new company
                             loading(context);
                             controller.nameController.text =
                                 nameController.text.trim();
+                            controller.maxSalaryPercentageController.text =
+                                maxSalaryPercentageController.text.trim();
                             await controller.createCompany();
                             Get.back();
                             Navigator.of(Get.context!).pop();
@@ -363,6 +431,8 @@ class CompaniesView extends StatelessWidget {
                                 nameController.text.trim();
                             controller.employeeCountController.text =
                                 employeeCountController.text.trim();
+                            controller.maxSalaryPercentageController.text =
+                                maxSalaryPercentageController.text.trim();
                             await controller.updateCompany(company.id);
                             Get.back();
                             Navigator.of(Get.context!).pop();
@@ -449,7 +519,7 @@ class CompaniesView extends StatelessWidget {
                     automaticallyImplyLeading: false,
                     flexibleSpace: FlexibleSpaceBar(
                       title: Text(
-                        '🏢 Empresas del Sistema',
+                        'Empresas del Sistema',
                         style: TextStyle(
                           color: Colors.indigo.shade800,
                           fontWeight: FontWeight.bold,
@@ -916,6 +986,8 @@ class _ModernTextField extends StatelessWidget {
   final TextEditingController controller;
   final IconData icon;
   final bool isRequired;
+  final TextInputType? keyboardType;
+  final List<TextInputFormatter>? inputFormatters;
 
   const _ModernTextField({
     required this.label,
@@ -923,6 +995,8 @@ class _ModernTextField extends StatelessWidget {
     required this.controller,
     required this.icon,
     this.isRequired = false,
+    this.keyboardType,
+    this.inputFormatters,
   });
 
   @override
@@ -968,6 +1042,8 @@ class _ModernTextField extends StatelessWidget {
           ),
           child: TextField(
             controller: controller,
+            keyboardType: keyboardType,
+            inputFormatters: inputFormatters,
             decoration: InputDecoration(
               hintText: hint,
               hintStyle: TextStyle(color: Colors.grey.shade400),

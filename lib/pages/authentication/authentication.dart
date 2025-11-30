@@ -3,7 +3,7 @@ import 'package:odewa_bo/constants/app_theme.dart';
 import 'package:odewa_bo/pages/authentication/controllers/auth_controller.dart';
 import 'package:odewa_bo/controllers/logged_user_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 
 class AuthenticationPage extends StatefulWidget {
@@ -14,10 +14,52 @@ class AuthenticationPage extends StatefulWidget {
 }
 
 class _AuthenticationPageState extends State<AuthenticationPage> {
-  final AuthController authController = Get.put(AuthController());
-  final LoggedUserController loggedUserController = Get.put(
-    LoggedUserController(),
-  );
+  late final AuthController authController;
+  late final LoggedUserController loggedUserController;
+
+  @override
+  void initState() {
+    super.initState();
+    // Limpiar cualquier sesión previa al cargar la página de login
+    _cleanupPreviousSession();
+
+    // Inicializar controladores de forma segura
+    try {
+      authController = Get.find<AuthController>();
+    } catch (e) {
+      authController = Get.put(AuthController());
+    }
+
+    try {
+      loggedUserController = Get.find<LoggedUserController>();
+      // Si existe pero tiene datos, limpiarlo
+      if (loggedUserController.user.value != null) {
+        loggedUserController.clearUser();
+      }
+    } catch (e) {
+      loggedUserController = Get.put(LoggedUserController());
+    }
+
+    // Limpiar los campos del formulario
+    authController.emailController.clear();
+    authController.passwordController.clear();
+  }
+
+  Future<void> _cleanupPreviousSession() async {
+    try {
+      // Limpiar cualquier diálogo abierto
+      while (Get.isDialogOpen == true) {
+        Get.back();
+      }
+
+      // Cerrar cualquier snackbar abierto
+      if (Get.isSnackbarOpen == true) {
+        Get.closeAllSnackbars();
+      }
+    } catch (e) {
+      // Ignorar errores
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -122,10 +164,22 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                     try {
                       final (success, message) = await authController.login();
                       if (success) {
+                        // Esperar un poco para asegurar que los datos se guardaron
+                        await Future.delayed(const Duration(milliseconds: 100));
+
+                        // Recargar el usuario
                         final userLoaded =
                             await loggedUserController.getLoggedUser();
                         if (userLoaded &&
                             loggedUserController.user.value != null) {
+                          // Limpiar cualquier diálogo o snackbar antes de navegar
+                          while (Get.isDialogOpen == true) {
+                            Get.back();
+                          }
+                          if (Get.isSnackbarOpen == true) {
+                            Get.closeAllSnackbars();
+                          }
+                          // Navegar al home y limpiar el stack de navegación
                           Get.offAllNamed('/home');
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
@@ -146,6 +200,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                         );
                       }
                     } catch (e) {
+                      debugPrint('Error en login: $e');
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text(

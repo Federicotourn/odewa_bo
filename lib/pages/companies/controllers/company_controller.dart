@@ -20,6 +20,7 @@ class CompanyController extends GetxController {
   // Form controllers
   final nameController = TextEditingController();
   final employeeCountController = TextEditingController();
+  final maxSalaryPercentageController = TextEditingController();
 
   @override
   void onInit() {
@@ -31,12 +32,14 @@ class CompanyController extends GetxController {
   void onClose() {
     nameController.dispose();
     employeeCountController.dispose();
+    maxSalaryPercentageController.dispose();
     super.onClose();
   }
 
   void clearForm() {
     nameController.clear();
     employeeCountController.clear();
+    maxSalaryPercentageController.text = '100.0';
   }
 
   Future<void> loadCompanies({bool showLoading = true}) async {
@@ -92,7 +95,14 @@ class CompanyController extends GetxController {
 
     isLoading.value = true;
 
-    final request = CreateCompanyRequest(name: nameController.text.trim());
+    final maxSalaryPercentageValue = maxSalaryPercentageController.text.trim().isEmpty
+        ? 100.0
+        : (double.tryParse(maxSalaryPercentageController.text.trim()) ?? 100.0);
+
+    final request = CreateCompanyRequest(
+      name: nameController.text.trim(),
+      maxSalaryPercentage: maxSalaryPercentageValue,
+    );
 
     final result = await _companyService.createCompany(request);
 
@@ -134,6 +144,10 @@ class CompanyController extends GetxController {
           employeeCountController.text.trim().isEmpty
               ? null
               : int.tryParse(employeeCountController.text.trim()),
+      maxSalaryPercentage:
+          maxSalaryPercentageController.text.trim().isEmpty
+              ? null
+              : double.tryParse(maxSalaryPercentageController.text.trim()),
     );
 
     final result = await _companyService.updateCompany(id, request);
@@ -191,6 +205,7 @@ class CompanyController extends GetxController {
   void fillFormForEdit(Company company) {
     nameController.text = company.name;
     employeeCountController.text = company.employeeCount.toString();
+    maxSalaryPercentageController.text = company.maxSalaryPercentage.toString();
   }
 
   bool _validateForm() {

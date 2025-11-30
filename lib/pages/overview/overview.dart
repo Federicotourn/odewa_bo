@@ -1,6 +1,7 @@
 import 'package:odewa_bo/pages/overview/controllers/overview_controller.dart';
 import 'package:odewa_bo/pages/overview/models/kpis_model.dart';
 import 'package:odewa_bo/widgets/dashboard_filters.dart';
+import 'package:odewa_bo/controllers/logged_user_controller.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -13,6 +14,14 @@ class OverviewPageNew extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    late final LoggedUserController loggedUserController;
+    try {
+      loggedUserController = Get.find<LoggedUserController>();
+    } catch (e) {
+      loggedUserController = Get.put(LoggedUserController());
+    }
+    final isClient = loggedUserController.isClient;
+
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -38,7 +47,7 @@ class OverviewPageNew extends StatelessWidget {
               automaticallyImplyLeading: false,
               flexibleSpace: FlexibleSpaceBar(
                 title: Text(
-                  '📊 Dashboard - Resumen Mensual',
+                  'Dashboard - Resumen Mensual',
                   style: TextStyle(
                     color: Colors.teal.shade800,
                     fontWeight: FontWeight.bold,
@@ -95,7 +104,10 @@ class OverviewPageNew extends StatelessWidget {
                       else if (controller.kpisData.value == null)
                         _buildErrorState()
                       else
-                        _buildDashboardContent(controller.kpisData.value!),
+                        _buildDashboardContent(
+                          controller.kpisData.value!,
+                          isClient,
+                        ),
                     ],
                   );
                 }),
@@ -144,41 +156,47 @@ class OverviewPageNew extends StatelessWidget {
     );
   }
 
-  Widget _buildDashboardContent(KpisData data) {
+  Widget _buildDashboardContent(KpisData data, bool isClient) {
     return Column(
       children: [
         // KPI Cards
-        _buildKpiCards(data),
+        _buildKpiCards(data, isClient),
 
-        const SizedBox(height: 32),
-
-        // Statistics Module
-        _buildStatisticsModule(data),
-
-        const SizedBox(height: 32),
+        // Statistics Module (solo para admins)
+        if (!isClient) ...[
+          const SizedBox(height: 32),
+          _buildStatisticsModule(data),
+        ],
 
         // Charts Section
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Pie Chart
-            Expanded(
-              flex: 1,
-              child: Column(
-                children: [
-                  _buildStatusChart(data),
-                  const SizedBox(height: 24),
-                  Container(),
-                ],
+        if (!isClient) ...[
+          const SizedBox(height: 32),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Pie Chart
+              Expanded(
+                flex: 1,
+                child: Column(
+                  children: [
+                    _buildStatusChart(data),
+                    const SizedBox(height: 24),
+                    Container(),
+                  ],
+                ),
               ),
-            ),
 
-            const SizedBox(width: 20),
+              const SizedBox(width: 20),
 
-            // Latest Requests
-            Expanded(flex: 2, child: _buildLatestRequests(data)),
-          ],
-        ),
+              // Latest Requests
+              Expanded(flex: 2, child: _buildLatestRequests(data)),
+            ],
+          ),
+        ] else ...[
+          // Para clientes, solo mostrar últimas solicitudes
+          const SizedBox(height: 32),
+          _buildLatestRequests(data),
+        ],
       ],
     );
   }
@@ -245,7 +263,7 @@ class OverviewPageNew extends StatelessWidget {
     );
   }
 
-  Widget _buildKpiCards(KpisData data) {
+  Widget _buildKpiCards(KpisData data, bool isClient) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -279,26 +297,29 @@ class OverviewPageNew extends StatelessWidget {
                 subtitle: 'Monto procesado',
               ),
             ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: _KpiCard(
-                title: 'Pendientes',
-                value: controller.formatNumber(data.pendingRequests),
-                icon: Icons.pending_actions,
-                color: Colors.orange.shade400,
-                subtitle: 'Por revisar',
+            // Pendientes y Completadas solo para admins
+            if (!isClient) ...[
+              const SizedBox(width: 16),
+              Expanded(
+                child: _KpiCard(
+                  title: 'Pendientes',
+                  value: controller.formatNumber(data.pendingRequests),
+                  icon: Icons.pending_actions,
+                  color: Colors.orange.shade400,
+                  subtitle: 'Por revisar',
+                ),
               ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: _KpiCard(
-                title: 'Completadas',
-                value: controller.formatNumber(data.completedRequests),
-                icon: Icons.check_circle,
-                color: Colors.teal.shade400,
-                subtitle: 'Finalizadas',
+              const SizedBox(width: 16),
+              Expanded(
+                child: _KpiCard(
+                  title: 'Completadas',
+                  value: controller.formatNumber(data.completedRequests),
+                  icon: Icons.check_circle,
+                  color: Colors.teal.shade400,
+                  subtitle: 'Finalizadas',
+                ),
               ),
-            ),
+            ],
           ],
         ),
       ],

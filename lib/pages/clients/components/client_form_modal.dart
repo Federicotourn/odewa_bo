@@ -23,6 +23,8 @@ class _ClientFormModalState extends State<ClientFormModal> {
   final TextEditingController _monthlyBalanceController =
       TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _employeeNumberController =
+      TextEditingController();
 
   // Company selection
   String? _selectedCompanyId;
@@ -39,6 +41,7 @@ class _ClientFormModalState extends State<ClientFormModal> {
       _monthlyBalanceController.text =
           widget.client!.monthlyBalance?.toString() ?? '';
       _passwordController.text = widget.client!.password ?? '';
+      _employeeNumberController.text = widget.client!.employeeNumber ?? '';
       _selectedCompanyId = widget.client!.company?.id;
     }
   }
@@ -52,6 +55,7 @@ class _ClientFormModalState extends State<ClientFormModal> {
     _phoneController.dispose();
     _monthlyBalanceController.dispose();
     _passwordController.dispose();
+    _employeeNumberController.dispose();
     super.dispose();
   }
 
@@ -81,6 +85,10 @@ class _ClientFormModalState extends State<ClientFormModal> {
                 : int.tryParse(_monthlyBalanceController.text),
         password:
             _passwordController.text.isEmpty ? null : _passwordController.text,
+        employeeNumber:
+            _employeeNumberController.text.isEmpty
+                ? null
+                : _employeeNumberController.text,
         company:
             _selectedCompanyId != null && _selectedCompanyId!.isNotEmpty
                 ? Company(
@@ -233,6 +241,17 @@ class _ClientFormModalState extends State<ClientFormModal> {
                         controller: _documentController,
                         icon: Icons.badge,
                         isRequired: true,
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      // Campo de número de empleado
+                      _ModernTextField(
+                        label: 'Número de Empleado',
+                        hint: 'Ej: EMP-001',
+                        controller: _employeeNumberController,
+                        icon: Icons.badge_outlined,
+                        isRequired: false,
                       ),
 
                       const SizedBox(height: 20),

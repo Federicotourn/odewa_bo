@@ -108,6 +108,18 @@ class CompanyFormModal extends StatelessWidget {
             icon: Icons.business_outlined,
             isRequired: true,
           ),
+          const SizedBox(height: 20),
+          _buildTextField(
+            controller: controller.maxSalaryPercentageController,
+            label: 'Porcentaje Máximo de Salario',
+            hint: 'Ej: 50.5 (por defecto: 100)',
+            icon: Icons.percent,
+            isRequired: true,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
+            ],
+          ),
         ],
       ),
     );

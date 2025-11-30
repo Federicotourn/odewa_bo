@@ -232,7 +232,7 @@ class ClientsView extends StatelessWidget {
                     automaticallyImplyLeading: false,
                     flexibleSpace: FlexibleSpaceBar(
                       title: Text(
-                        '👥 Usuarios del Sistema',
+                        'Usuarios del Sistema',
                         style: TextStyle(
                           color: Colors.blue.shade800,
                           fontWeight: FontWeight.bold,

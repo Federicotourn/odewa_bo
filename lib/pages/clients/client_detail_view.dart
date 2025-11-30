@@ -316,6 +316,14 @@ class ClientDetailView extends StatelessWidget {
           infoRow(label: 'Nombre', value: client.firstName),
           infoRow(label: 'Apellido', value: client.lastName),
           infoRow(label: 'Documento', value: client.document),
+          infoRow(
+            label: 'Número de Empleado',
+            value:
+                client.employeeNumber != null &&
+                        client.employeeNumber!.isNotEmpty
+                    ? client.employeeNumber!
+                    : 'No especificado',
+          ),
           infoRow(label: 'Email', value: client.email),
           infoRow(
             label: 'Estado',
@@ -617,6 +625,19 @@ class ClientDetailView extends StatelessWidget {
                   color: Colors.teal.shade600,
                 ),
               ),
+              // Mostrar branchNumber solo si tiene valor
+              if (client.branchNumber != null &&
+                  client.branchNumber!.isNotEmpty) ...[
+                const SizedBox(width: 16),
+                Expanded(
+                  child: _InfoCard(
+                    icon: Icons.location_on,
+                    label: 'Número de Sucursal',
+                    value: client.branchNumber!,
+                    color: Colors.purple.shade600,
+                  ),
+                ),
+              ],
             ],
           ),
           const SizedBox(height: 20),

@@ -387,6 +387,16 @@ class RequestDetailView extends StatelessWidget {
                   color: Colors.green.shade600,
                 ),
               ),
+              if (client.employeeNumber != null &&
+                  client.employeeNumber!.isNotEmpty)
+                Expanded(
+                  child: _InfoCard(
+                    icon: Icons.badge_outlined,
+                    label: 'Número de Empleado',
+                    value: client.employeeNumber!,
+                    color: Colors.orange.shade600,
+                  ),
+                ),
             ],
           ),
           const SizedBox(height: 20),

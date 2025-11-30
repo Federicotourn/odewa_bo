@@ -1,4 +1,4 @@
-// import 'package:odewa_bo/controllers/logged_user_controller.dart';
+import 'package:odewa_bo/controllers/logged_user_controller.dart';
 import 'package:odewa_bo/pages/users/controllers/users_controller.dart';
 import 'package:odewa_bo/pages/users/models/user_model.dart';
 import 'package:odewa_bo/pages/users/components/company_selection_components.dart';
@@ -99,7 +99,20 @@ class UsersView extends StatelessWidget {
                         color: Colors.blue.shade400,
                       ),
                     ),
-                    const SizedBox(width: 16),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _InfoCard(
+                        icon: Icons.security,
+                        label: 'Rol',
+                        value:
+                            user.role == 'admin' ? 'Administrador' : 'Cliente',
+                        color:
+                            user.role == 'admin'
+                                ? Colors.purple.shade400
+                                : Colors.orange.shade400,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
                     Expanded(
                       child: _InfoCard(
                         icon: Icons.business,
@@ -227,327 +240,459 @@ class UsersView extends StatelessWidget {
     UsersController controller, {
     User? user,
   }) {
+    late final LoggedUserController loggedUserController;
+    try {
+      loggedUserController = Get.find<LoggedUserController>();
+    } catch (e) {
+      loggedUserController = Get.put(LoggedUserController());
+    }
+    final isLoggedUserAdmin = loggedUserController.isAdmin;
+    final isLoggedUserClient = loggedUserController.isClient;
+
     final nameController = TextEditingController(text: user?.firstName ?? '');
     final lastNameController = TextEditingController(
       text: user?.lastName ?? '',
     );
-    // final roleController = TextEditingController(
-    //   text: user?.lastName ?? 'admin',
-    // );
     final passwordController = TextEditingController(text: '');
     final emailController = TextEditingController(text: user?.email ?? '');
+
+    // Role selector - default based on logged user's role
+    String initialRole =
+        user?.role ?? (isLoggedUserClient ? 'client' : 'admin');
+    String selectedRole = initialRole;
 
     showDialog(
       context: context,
       builder: (context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(24),
-          ),
-          child: Container(
-            width: Get.width * 0.5,
-            constraints: BoxConstraints(maxHeight: Get.height * 0.8),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(24),
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [Colors.white, Colors.grey.shade50],
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(24),
               ),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Header moderno con gradiente
-                Container(
-                  padding: const EdgeInsets.all(24),
-                  decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(24),
-                      topRight: Radius.circular(24),
-                    ),
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [Colors.blue.shade400, Colors.indigo.shade400],
-                    ),
+              child: Container(
+                width: Get.width * 0.5,
+                constraints: BoxConstraints(maxHeight: Get.height * 0.8),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(24),
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [Colors.white, Colors.grey.shade50],
                   ),
-                  child: Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.2),
-                          borderRadius: BorderRadius.circular(16),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Header moderno con gradiente
+                    Container(
+                      padding: const EdgeInsets.all(24),
+                      decoration: BoxDecoration(
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(24),
+                          topRight: Radius.circular(24),
                         ),
-                        child: Icon(
-                          user == null ? Icons.person_add : Icons.edit,
-                          color: Colors.white,
-                          size: 28,
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              user == null
-                                  ? 'Crear Nuevo Administrador'
-                                  : 'Editar Administrador',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Text(
-                              user == null
-                                  ? 'Define un nuevo administrador con sus permisos'
-                                  : 'Modifica la información del administrador existente',
-                              style: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.9),
-                                fontSize: 14,
-                              ),
-                            ),
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            Colors.blue.shade400,
+                            Colors.indigo.shade400,
                           ],
                         ),
                       ),
-                    ],
-                  ),
-                ),
-
-                // Contenido del modal
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.all(24),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Campo de nombre
-                        _ModernTextField(
-                          label: 'Nombre',
-                          hint: 'Ej: Juan Pérez, María García',
-                          controller: nameController,
-                          icon: Icons.person,
-                          isRequired: true,
-                        ),
-
-                        const SizedBox(height: 20),
-
-                        // Campo de rol
-                        _ModernTextField(
-                          label: 'Apellido',
-                          hint: 'Ej: Pérez, García',
-                          controller: lastNameController,
-                          icon: Icons.security,
-                          isRequired: true,
-                        ),
-
-                        const SizedBox(height: 20),
-
-                        // Campo de email
-                        _ModernTextField(
-                          label: 'Email',
-                          hint: 'usuario@ejemplo.com',
-                          controller: emailController,
-                          icon: Icons.email,
-                          isRequired: true,
-                          enabled: user == null,
-                        ),
-
-                        const SizedBox(height: 20),
-
-                        // Campo de selección de empresas
-                        _buildCompanySelection(controller, user),
-
-                        const SizedBox(height: 20),
-
-                        // Campo de contraseña (solo para usuarios nuevos)
-                        if (user == null) ...[
-                          _ModernTextField(
-                            label: 'Contraseña',
-                            hint: 'Ingresa una contraseña segura',
-                            controller: passwordController,
-                            icon: Icons.lock,
-                            isRequired: true,
-                            isPassword: true,
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.2),
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: Icon(
+                              user == null ? Icons.person_add : Icons.edit,
+                              color: Colors.white,
+                              size: 28,
+                            ),
                           ),
-                          const SizedBox(height: 20),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  user == null
+                                      ? (isLoggedUserAdmin
+                                          ? 'Crear Nuevo Usuario'
+                                          : 'Crear Nuevo Cliente')
+                                      : 'Editar Usuario',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Text(
+                                  user == null
+                                      ? (isLoggedUserAdmin
+                                          ? 'Define un nuevo usuario con sus permisos'
+                                          : 'Define un nuevo cliente para tu empresa')
+                                      : 'Modifica la información del usuario existente',
+                                  style: TextStyle(
+                                    color: Colors.white.withValues(alpha: 0.9),
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ],
-                      ],
-                    ),
-                  ),
-                ),
-
-                // Footer con acciones
-                Container(
-                  padding: const EdgeInsets.all(24),
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade50,
-                    borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(24),
-                      bottomRight: Radius.circular(24),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      _ModernOutlinedButton(
-                        label: 'Cancelar',
-                        icon: Icons.close,
-                        onPressed: () => Navigator.pop(context),
                       ),
-                      const SizedBox(width: 16),
-                      _ModernElevatedButton(
-                        label:
-                            user == null
-                                ? 'Crear Administrador'
-                                : 'Actualizar Administrador',
-                        icon: user == null ? Icons.add : Icons.save,
-                        onPressed: () async {
-                          if (nameController.text.trim().isEmpty ||
-                              emailController.text.trim().isEmpty ||
-                              lastNameController.text.trim().isEmpty ||
-                              !controller.hasSelectedCompanies ||
-                              (user == null &&
-                                  passwordController.text.isEmpty)) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Row(
-                                  children: [
-                                    Icon(Icons.warning, color: Colors.white),
-                                    const SizedBox(width: 8),
-                                    const Text(
-                                      'Completa todos los campos obligatorios',
-                                    ),
-                                  ],
-                                ),
-                                backgroundColor: Colors.orange,
-                                behavior: SnackBarBehavior.floating,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                              ),
-                            );
-                            return;
-                          }
+                    ),
 
-                          if (user == null) {
-                            // Add new user
-                            loading(context);
-                            final (success, message) = await controller
-                                .addUser({
+                    // Contenido del modal
+                    Expanded(
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.all(24),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Campo de nombre
+                            _ModernTextField(
+                              label: 'Nombre',
+                              hint: 'Ej: Juan Pérez, María García',
+                              controller: nameController,
+                              icon: Icons.person,
+                              isRequired: true,
+                            ),
+
+                            const SizedBox(height: 20),
+
+                            // Campo de apellido
+                            _ModernTextField(
+                              label: 'Apellido',
+                              hint: 'Ej: Pérez, García',
+                              controller: lastNameController,
+                              icon: Icons.person_outline,
+                              isRequired: true,
+                            ),
+
+                            const SizedBox(height: 20),
+
+                            // Campo de rol (solo si el usuario logueado es admin)
+                            if (isLoggedUserAdmin)
+                              _buildRoleSelector(selectedRole, (role) {
+                                setState(() {
+                                  if (role != null) {
+                                    selectedRole = role;
+                                  }
+                                });
+                              }),
+
+                            if (isLoggedUserAdmin) const SizedBox(height: 20),
+
+                            // Campo de email
+                            _ModernTextField(
+                              label: 'Email',
+                              hint: 'usuario@ejemplo.com',
+                              controller: emailController,
+                              icon: Icons.email,
+                              isRequired: true,
+                              enabled: user == null,
+                            ),
+
+                            const SizedBox(height: 20),
+
+                            // Campo de selección de empresas (solo si es admin o si el usuario a crear es admin)
+                            if (isLoggedUserAdmin ||
+                                (isLoggedUserClient && selectedRole == 'admin'))
+                              _buildCompanySelection(controller, user),
+
+                            // Si el usuario logueado es client, usar su empresa automáticamente
+                            if (isLoggedUserClient &&
+                                selectedRole == 'client') ...[
+                              const SizedBox(height: 20),
+                              _buildClientCompanyInfo(loggedUserController),
+                            ],
+
+                            const SizedBox(height: 20),
+
+                            // Campo de contraseña (solo para usuarios nuevos)
+                            if (user == null) ...[
+                              _ModernTextField(
+                                label: 'Contraseña',
+                                hint: 'Ingresa una contraseña segura',
+                                controller: passwordController,
+                                icon: Icons.lock,
+                                isRequired: true,
+                                isPassword: true,
+                              ),
+                              const SizedBox(height: 20),
+                            ],
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    // Footer con acciones
+                    Container(
+                      padding: const EdgeInsets.all(24),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade50,
+                        borderRadius: const BorderRadius.only(
+                          bottomLeft: Radius.circular(24),
+                          bottomRight: Radius.circular(24),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          _ModernOutlinedButton(
+                            label: 'Cancelar',
+                            icon: Icons.close,
+                            onPressed: () => Navigator.pop(context),
+                          ),
+                          const SizedBox(width: 16),
+                          _ModernElevatedButton(
+                            label:
+                                user == null
+                                    ? (isLoggedUserAdmin
+                                        ? 'Crear Usuario'
+                                        : 'Crear Cliente')
+                                    : 'Actualizar Usuario',
+                            icon: user == null ? Icons.add : Icons.save,
+                            onPressed: () async {
+                              // Validaciones básicas
+                              if (nameController.text.trim().isEmpty ||
+                                  emailController.text.trim().isEmpty ||
+                                  lastNameController.text.trim().isEmpty ||
+                                  (user == null &&
+                                      passwordController.text.isEmpty)) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.warning,
+                                          color: Colors.white,
+                                        ),
+                                        const SizedBox(width: 8),
+                                        const Text(
+                                          'Completa todos los campos obligatorios',
+                                        ),
+                                      ],
+                                    ),
+                                    backgroundColor: Colors.orange,
+                                    behavior: SnackBarBehavior.floating,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                );
+                                return;
+                              }
+
+                              // Validar selección de empresas (solo para admin o si se crea admin)
+                              if ((isLoggedUserAdmin ||
+                                      selectedRole == 'admin') &&
+                                  !controller.hasSelectedCompanies) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.warning,
+                                          color: Colors.white,
+                                        ),
+                                        const SizedBox(width: 8),
+                                        const Text(
+                                          'Debes seleccionar al menos una empresa',
+                                        ),
+                                      ],
+                                    ),
+                                    backgroundColor: Colors.orange,
+                                    behavior: SnackBarBehavior.floating,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                );
+                                return;
+                              }
+
+                              if (user == null) {
+                                // Add new user
+                                loading(context);
+
+                                // Preparar datos del usuario
+                                final Map<String, dynamic> userData = {
                                   'email': emailController.text.trim(),
                                   'firstName': nameController.text.trim(),
                                   'lastName': lastNameController.text.trim(),
                                   'password': passwordController.text,
-                                  'companyIds':
-                                      controller.selectedCompanyIds.toList(),
-                                });
-                            Get.back();
-                            if (success) {
-                              Navigator.of(context).pop();
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Row(
-                                    children: [
-                                      Icon(
-                                        Icons.check_circle,
-                                        color: Colors.white,
+                                  'role': selectedRole,
+                                };
+
+                                // Agregar companyIds según el role del usuario logueado
+                                if (isLoggedUserAdmin ||
+                                    selectedRole == 'admin') {
+                                  // Admin puede seleccionar empresas
+                                  userData['companyIds'] =
+                                      controller.selectedCompanyIds.toList();
+                                } else if (isLoggedUserClient &&
+                                    selectedRole == 'client') {
+                                  // Client solo puede crear en su propia empresa
+                                  final loggedUser =
+                                      loggedUserController.user.value;
+                                  final companies = loggedUser?.companies;
+
+                                  if (companies != null &&
+                                      companies.isNotEmpty) {
+                                    userData['companyIds'] = [
+                                      companies.first.id,
+                                    ];
+                                  } else {
+                                    Get.back();
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Row(
+                                          children: [
+                                            Icon(
+                                              Icons.error,
+                                              color: Colors.white,
+                                            ),
+                                            const SizedBox(width: 8),
+                                            const Text(
+                                              'No se pudo determinar la empresa del usuario',
+                                            ),
+                                          ],
+                                        ),
+                                        backgroundColor: Colors.red,
+                                        behavior: SnackBarBehavior.floating,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                        ),
                                       ),
-                                      const SizedBox(width: 8),
-                                      Text(message),
-                                    ],
-                                  ),
-                                  backgroundColor: Colors.green,
-                                  behavior: SnackBarBehavior.floating,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                ),
-                              );
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Row(
-                                    children: [
-                                      Icon(Icons.error, color: Colors.white),
-                                      const SizedBox(width: 8),
-                                      Text(message),
-                                    ],
-                                  ),
-                                  backgroundColor: Colors.red,
-                                  behavior: SnackBarBehavior.floating,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                ),
-                              );
-                            }
-                          } else {
-                            // Update existing user
-                            loading(context);
-                            // Get selected companies
-                            final selectedCompanies =
-                                controller.getSelectedCompanies();
-                            final updatedUser = user.copyWith(
-                              email: emailController.text.trim(),
-                              firstName: nameController.text.trim(),
-                              lastName: lastNameController.text.trim(),
-                              companies: selectedCompanies,
-                            );
-                            final (success, message) = await controller
-                                .updateUser(updatedUser);
-                            Get.back();
-                            if (success) {
-                              Navigator.of(context).pop();
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Row(
-                                    children: [
-                                      Icon(
-                                        Icons.check_circle,
-                                        color: Colors.white,
+                                    );
+                                    return;
+                                  }
+                                }
+
+                                final (success, message) = await controller
+                                    .addUser(userData);
+                                Get.back();
+                                if (success) {
+                                  Navigator.of(context).pop();
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Row(
+                                        children: [
+                                          Icon(
+                                            Icons.check_circle,
+                                            color: Colors.white,
+                                          ),
+                                          const SizedBox(width: 8),
+                                          Text(message),
+                                        ],
                                       ),
-                                      const SizedBox(width: 8),
-                                      Text(message),
-                                    ],
-                                  ),
-                                  backgroundColor: Colors.green,
-                                  behavior: SnackBarBehavior.floating,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                ),
-                              );
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Row(
-                                    children: [
-                                      Icon(Icons.error, color: Colors.white),
-                                      const SizedBox(width: 8),
-                                      Text(message),
-                                    ],
-                                  ),
-                                  backgroundColor: Colors.red,
-                                  behavior: SnackBarBehavior.floating,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                ),
-                              );
-                            }
-                          }
-                        },
+                                      backgroundColor: Colors.green,
+                                      behavior: SnackBarBehavior.floating,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                    ),
+                                  );
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Row(
+                                        children: [
+                                          Icon(
+                                            Icons.error,
+                                            color: Colors.white,
+                                          ),
+                                          const SizedBox(width: 8),
+                                          Text(message),
+                                        ],
+                                      ),
+                                      backgroundColor: Colors.red,
+                                      behavior: SnackBarBehavior.floating,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                    ),
+                                  );
+                                }
+                              } else {
+                                // Update existing user
+                                loading(context);
+                                // Get selected companies
+                                final selectedCompanies =
+                                    controller.getSelectedCompanies();
+                                final updatedUser = user.copyWith(
+                                  email: emailController.text.trim(),
+                                  firstName: nameController.text.trim(),
+                                  lastName: lastNameController.text.trim(),
+                                  companies: selectedCompanies,
+                                );
+                                final (success, message) = await controller
+                                    .updateUser(updatedUser);
+                                Get.back();
+                                if (success) {
+                                  Navigator.of(context).pop();
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Row(
+                                        children: [
+                                          Icon(
+                                            Icons.check_circle,
+                                            color: Colors.white,
+                                          ),
+                                          const SizedBox(width: 8),
+                                          Text(message),
+                                        ],
+                                      ),
+                                      backgroundColor: Colors.green,
+                                      behavior: SnackBarBehavior.floating,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                    ),
+                                  );
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Row(
+                                        children: [
+                                          Icon(
+                                            Icons.error,
+                                            color: Colors.white,
+                                          ),
+                                          const SizedBox(width: 8),
+                                          Text(message),
+                                        ],
+                                      ),
+                                      backgroundColor: Colors.red,
+                                      behavior: SnackBarBehavior.floating,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                    ),
+                                  );
+                                }
+                              }
+                            },
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          ),
+              ),
+            );
+          },
         );
       },
     );
@@ -770,7 +915,7 @@ class UsersView extends StatelessWidget {
                     automaticallyImplyLeading: false,
                     flexibleSpace: FlexibleSpaceBar(
                       title: Text(
-                        '👥 Administradores del Sistema',
+                        'Administradores del Sistema',
                         style: TextStyle(
                           color: Colors.blue.shade800,
                           fontWeight: FontWeight.bold,
@@ -1065,6 +1210,136 @@ class UsersView extends StatelessWidget {
         ],
       );
     });
+  }
+
+  Widget _buildRoleSelector(String? selectedRole, Function(String?) onChanged) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(Icons.security, size: 20, color: Colors.blue.shade600),
+            const SizedBox(width: 8),
+            Text(
+              'Rol',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: Colors.grey.shade700,
+              ),
+            ),
+            const SizedBox(width: 4),
+            Text(
+              '*',
+              style: TextStyle(
+                color: Colors.red.shade400,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 10,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: DropdownButtonFormField<String>(
+            value: selectedRole,
+            decoration: InputDecoration(
+              hintText: 'Selecciona un rol',
+              hintStyle: TextStyle(color: Colors.grey.shade400),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: BorderSide(color: Colors.grey.shade300),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: BorderSide(color: Colors.grey.shade300),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: BorderSide(color: Colors.blue.shade400, width: 2),
+              ),
+              filled: true,
+              fillColor: Colors.white,
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 20,
+                vertical: 16,
+              ),
+            ),
+            items: const [
+              DropdownMenuItem<String>(
+                value: 'admin',
+                child: Text('Administrador'),
+              ),
+              DropdownMenuItem<String>(value: 'client', child: Text('Cliente')),
+            ],
+            onChanged: onChanged,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildClientCompanyInfo(LoggedUserController loggedUserController) {
+    // Obtener la empresa del usuario logueado directamente desde el controller
+    final loggedUser = loggedUserController.user.value;
+    final companies = loggedUser?.companies;
+
+    final companyName =
+        companies != null && companies.isNotEmpty
+            ? companies.first.name
+            : 'Empresa asignada';
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.blue.shade50,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.blue.shade200),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.business, color: Colors.blue.shade600, size: 24),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Empresa',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey.shade600,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  companyName,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.blue.shade800,
+                  ),
+                ),
+                Text(
+                  'El usuario se creará automáticamente en esta empresa',
+                  style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildCompanySelection(UsersController controller, User? user) {

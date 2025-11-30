@@ -53,6 +53,7 @@ class User {
   String? salt;
   dynamic document;
   String? position;
+  String? role;
   List<int>? roles;
   List<Company>? companies;
 
@@ -71,6 +72,7 @@ class User {
     this.salt,
     required this.document,
     this.position,
+    this.role,
     this.roles,
     this.companies,
   });
@@ -90,6 +92,7 @@ class User {
     salt: json["salt"],
     document: json["document"],
     position: json["position"],
+    role: json["role"],
     roles: json["roles"] != null ? List<int>.from(json["roles"]) : null,
     companies:
         json["companies"] != null
@@ -114,6 +117,7 @@ class User {
     "salt": salt,
     "document": document,
     "position": position,
+    "role": role,
     "roles": roles,
     "companies": companies?.map((x) => x.toJson()).toList(),
   };
@@ -134,6 +138,7 @@ class User {
     String? salt,
     dynamic document,
     String? position,
+    String? role,
     List<int>? roles,
     List<Company>? companies,
   }) {
@@ -152,6 +157,7 @@ class User {
       salt: salt ?? this.salt,
       document: document ?? this.document,
       position: position ?? this.position,
+      role: role ?? this.role,
       roles: roles ?? this.roles,
       companies: companies ?? this.companies,
     );

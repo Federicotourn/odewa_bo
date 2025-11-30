@@ -68,6 +68,7 @@ class Company {
   String name;
   int employeeCount = 0;
   double? averageMonthlyBalance;
+  double maxSalaryPercentage = 100.0;
 
   Company({
     required this.id,
@@ -81,6 +82,7 @@ class Company {
     required this.name,
     this.employeeCount = 0,
     this.averageMonthlyBalance,
+    this.maxSalaryPercentage = 100.0,
   });
 
   factory Company.fromJson(Map<String, dynamic> json) => Company(
@@ -95,6 +97,7 @@ class Company {
     name: json["name"],
     employeeCount: json["employeeCount"] ?? 0,
     averageMonthlyBalance: json["averageMonthlyBalance"],
+    maxSalaryPercentage: (json["maxSalaryPercentage"] ?? 100.0).toDouble(),
   );
 
   Map<String, dynamic> toJson() => {
@@ -107,8 +110,9 @@ class Company {
     "deletedById": deletedById,
     "isActive": isActive,
     "name": name,
-    "employeeCount": employeeCount ?? 0,
+    "employeeCount": employeeCount,
     "averageMonthlyBalance": averageMonthlyBalance,
+    "maxSalaryPercentage": maxSalaryPercentage,
   };
 
   // Método copyWith para facilitar la actualización
@@ -124,6 +128,7 @@ class Company {
     String? name,
     int? employeeCount,
     double? averageMonthlyBalance,
+    double? maxSalaryPercentage,
   }) {
     return Company(
       id: id ?? this.id,
@@ -138,28 +143,38 @@ class Company {
       employeeCount: employeeCount ?? this.employeeCount,
       averageMonthlyBalance:
           averageMonthlyBalance ?? this.averageMonthlyBalance,
+      maxSalaryPercentage:
+          maxSalaryPercentage ?? this.maxSalaryPercentage,
     );
   }
 }
 
 class CreateCompanyRequest {
   String name;
+  double maxSalaryPercentage;
 
-  CreateCompanyRequest({required this.name});
+  CreateCompanyRequest({required this.name, this.maxSalaryPercentage = 100.0});
 
-  Map<String, dynamic> toJson() => {"name": name};
+  Map<String, dynamic> toJson() => {
+    "name": name,
+    "maxSalaryPercentage": maxSalaryPercentage,
+  };
 }
 
 class UpdateCompanyRequest {
   String? name;
   int? employeeCount;
+  double? maxSalaryPercentage;
 
-  UpdateCompanyRequest({this.name, this.employeeCount});
+  UpdateCompanyRequest({this.name, this.employeeCount, this.maxSalaryPercentage});
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {};
     if (name != null) data["name"] = name;
     if (employeeCount != null) data["employeeCount"] = employeeCount;
+    if (maxSalaryPercentage != null) {
+      data["maxSalaryPercentage"] = maxSalaryPercentage;
+    }
     return data;
   }
 }

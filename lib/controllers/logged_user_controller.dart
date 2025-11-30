@@ -84,6 +84,11 @@ class LoggedUserController extends GetxController {
     clearCookies();
   }
 
+  String? get userRole => user.value?.role;
+
+  bool get isAdmin => userRole == 'admin';
+  bool get isClient => userRole == 'client';
+
   List<String> get userPermissions {
     return [];
   }

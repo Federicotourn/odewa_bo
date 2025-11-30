@@ -1,7 +1,7 @@
 import 'package:odewa_bo/controllers/navigation_controller.dart';
 import 'package:odewa_bo/pages/requests/controllers/request_controller.dart';
 import 'package:odewa_bo/pages/requests/models/request_model.dart';
-// import 'package:odewa_bo/controllers/logged_user_controller.dart';
+import 'package:odewa_bo/controllers/logged_user_controller.dart';
 import 'package:odewa_bo/routing/routes.dart';
 
 import 'package:flutter/material.dart';
@@ -15,10 +15,15 @@ class RequestsView extends StatelessWidget {
     RequestController controller,
     BuildContext context,
   ) {
-    // final LoggedUserController loggedUserController =
-    //     Get.find<LoggedUserController>();
+    late final LoggedUserController loggedUserController;
+    try {
+      loggedUserController = Get.find<LoggedUserController>();
+    } catch (e) {
+      loggedUserController = Get.put(LoggedUserController());
+    }
     final NavigationController navigationController =
         Get.find<NavigationController>();
+    final isAdmin = loggedUserController.isAdmin;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -246,55 +251,26 @@ class RequestsView extends StatelessWidget {
 
                 const SizedBox(height: 16),
 
-                // Acciones
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    _CompactActionButton(
-                      icon: Icons.visibility,
-                      label: 'Ver Detalle',
-                      color: Colors.teal.shade400,
-                      onPressed: () {
-                        // Seleccionar la solicitud en el controller
-                        controller.selectRequestForDetail(request);
-                        // Navegar a la vista detallada usando el router
-                        navigationController.navigateTo(requestDetailPageRoute);
-                      },
-                    ),
-                    // _CompactActionButton(
-                    //   icon: Icons.edit,
-                    //   label: 'Editar',
-                    //   color: Colors.blue.shade400,
-                    //   onPressed: () async {
-                    //     loading(context);
-                    //     Get.back();
-                    //     _showRequestModal(
-                    //       context,
-                    //       controller,
-                    //       request: request,
-                    //     );
-                    //   },
-                    // ),
-                    // const SizedBox(width: 12),
-                    // _CompactActionButton(
-                    //   icon: Icons.update,
-                    //   label: 'Cambiar Estado',
-                    //   color: Colors.orange.shade400,
-                    //   onPressed:
-                    //       () => _showStatusModal(context, controller, request),
-                    // ),
-                    // const SizedBox(width: 12),
-                    // _CompactActionButton(
-                    //   icon: request.isActive ? Icons.block : Icons.check_circle,
-                    //   label: request.isActive ? 'Desactivar' : 'Activar',
-                    //   color:
-                    //       request.isActive
-                    //           ? Colors.orange.shade400
-                    //           : Colors.green.shade400,
-                    //   onPressed: () => controller.toggleRequestStatus(request),
-                    // ),
-                  ],
-                ),
+                // Acciones (solo para admins)
+                if (isAdmin)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      _CompactActionButton(
+                        icon: Icons.visibility,
+                        label: 'Ver Detalle',
+                        color: Colors.teal.shade400,
+                        onPressed: () {
+                          // Seleccionar la solicitud en el controller
+                          controller.selectRequestForDetail(request);
+                          // Navegar a la vista detallada usando el router
+                          navigationController.navigateTo(
+                            requestDetailPageRoute,
+                          );
+                        },
+                      ),
+                    ],
+                  ),
               ],
             ),
           ),
@@ -336,7 +312,7 @@ class RequestsView extends StatelessWidget {
                     automaticallyImplyLeading: false,
                     flexibleSpace: FlexibleSpaceBar(
                       title: Text(
-                        '📋 Solicitudes del Sistema',
+                        'Solicitudes del Sistema',
                         style: TextStyle(
                           color: Colors.teal.shade800,
                           fontWeight: FontWeight.bold,

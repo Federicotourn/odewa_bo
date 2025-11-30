@@ -1,15 +1,13 @@
 // ignore_for_file: avoid_print
 
 import 'package:odewa_bo/constants/app_theme.dart';
-import 'package:odewa_bo/constants/constants.dart';
 import 'package:odewa_bo/constants/controllers.dart';
 import 'package:odewa_bo/controllers/logged_user_controller.dart';
-import 'package:odewa_bo/helpers/cookie_manager.dart';
 import 'package:odewa_bo/pages/authentication/services/auth_service.dart';
+import 'package:odewa_bo/services/token_validation_service.dart';
 import 'package:odewa_bo/widgets/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 
 import '../helpers/responsiveness.dart';
 import '../routing/routes.dart';
@@ -145,6 +143,7 @@ class SideMenu extends StatelessWidget {
                 }
 
                 final userPermissions = loggedUserController.userPermissions;
+                final isClient = loggedUserController.isClient;
                 return Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 16,
@@ -157,6 +156,9 @@ class SideMenu extends StatelessWidget {
                           .where(
                             (item) =>
                                 item.route != authenticationPageRoute &&
+                                // Ocultar empresas si el usuario es client
+                                !(isClient &&
+                                    item.route == companiesPageRoute) &&
                                 (item.requiredPermissions == null ||
                                     item.requiredPermissions!.any(
                                       (perm) => userPermissions.contains(perm),
@@ -202,20 +204,23 @@ class SideMenu extends StatelessWidget {
                       // Botón de cerrar sesión
                       _ModernLogoutButton(
                         onTap: () async {
-                          final authService = Get.find<AuthService>();
-                          loading(context);
-                          await authService.logout();
-                          menuController.changeActiveItemTo(
-                            overViewPageDisplayName,
-                          );
-                          final box = GetStorage('User');
-                          box.remove('user');
-                          box.remove('token');
-                          CookieManager().removeCookie(Constants.cookieName);
-                          loggedUserController.clearCookies();
-                          Get.delete<LoggedUserController>();
-                          Get.back();
-                          Get.offAllNamed(authenticationPageRoute);
+                          try {
+                            final authService = Get.find<AuthService>();
+                            loading(context);
+                            // El método logout ya limpia todo
+                            await authService.logout();
+                            // Cerrar el menú lateral si está abierto
+                            if (ResponsiveWidget.isSmallScreen(context)) {
+                              Get.back();
+                            }
+                            // Redirigir al login (ya se hace en logout, pero por si acaso)
+                            Get.offAllNamed(authenticationPageRoute);
+                          } catch (e) {
+                            // Si hay error, usar el método de fuerza del token service
+                            final tokenService =
+                                Get.find<TokenValidationService>();
+                            await tokenService.logout();
+                          }
                         },
                       ),
                     ],

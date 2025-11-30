@@ -43,10 +43,9 @@ class AuthService extends GetxService {
       if (response.statusCode == Constants.HTTP_201_CREATED) {
         LoginResponse loginResponse = loginResponseFromJson(response.body);
         box.write('token', loginResponse.token);
-        box.write('user', json.encode(loginResponse.user.toJson()));
-        _loggedUserController.saveUserToCookie(
-          loginResponse.user.toJson().toString(),
-        );
+        final userJson = json.encode(loginResponse.user.toJson());
+        box.write('user', userJson);
+        _loggedUserController.saveUserToCookie(userJson);
         _loggedUserController.getLoggedUser();
         return (true, 'Inicio de sesión exitoso');
       } else {
@@ -89,28 +88,67 @@ class AuthService extends GetxService {
   //   }
   // }
 
-  Future<void> logout() async {
+  /// Limpia completamente todos los datos de sesión
+  Future<void> clearAllSessionData() async {
     try {
-      final Uri url = Uri.parse('${Urls.baseUrl}/auth/logout');
+      // Limpiar storage
+      box.remove('user');
+      box.remove('token');
 
-      Map<String, String> headers = {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'ngrok-skip-browser-warning': 'true',
-        'Authorization': 'Bearer ${box.read('token')}',
-      };
+      // Limpiar cookies
+      _loggedUserController.clearCookies();
+      _loggedUserController.clearUser();
 
-      var response = await _tokenValidationService.client.post(
-        url,
-        headers: headers,
-      );
+      // Limpiar controladores
+      try {
+        Get.delete<LoggedUserController>(force: true);
+      } catch (e) {
+        // Ignorar si no existe
+      }
 
-      if (response.statusCode == Constants.HTTP_200_OK) {
-        _loggedUserController.clearUser();
-        _loggedUserController.clearCookies();
+      // Cerrar cualquier diálogo abierto
+      if (Get.isDialogOpen == true) {
+        Get.back();
+      }
+
+      // Cerrar cualquier snackbar abierto
+      if (Get.isSnackbarOpen == true) {
+        Get.closeAllSnackbars();
       }
     } catch (e) {
-      debugPrint(e.toString());
+      debugPrint('Error clearing session data: $e');
+    }
+  }
+
+  Future<void> logout() async {
+    try {
+      // Intentar hacer logout en el servidor
+      final Uri url = Uri.parse('${Urls.baseUrl}/auth/logout');
+      final token = box.read('token');
+
+      if (token != null) {
+        Map<String, String> headers = {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'ngrok-skip-browser-warning': 'true',
+          'Authorization': 'Bearer $token',
+        };
+
+        try {
+          await _tokenValidationService.client.post(url, headers: headers);
+          // No importa el resultado, siempre limpiamos localmente
+        } catch (e) {
+          // Ignorar errores del servidor, siempre limpiamos localmente
+          debugPrint('Error calling logout endpoint: $e');
+        }
+      }
+
+      // Siempre limpiar datos locales, incluso si el logout del servidor falla
+      await clearAllSessionData();
+    } catch (e) {
+      debugPrint('Error in logout: $e');
+      // Asegurar limpieza incluso si hay errores
+      await clearAllSessionData();
     }
   }
 }
