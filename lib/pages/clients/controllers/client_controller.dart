@@ -17,6 +17,12 @@ class ClientController extends GetxController {
   final RxString searchQuery = ''.obs;
   final RxInt limit = 25.obs; // Tamaño de página por defecto: 25
   final Rx<Client?> selectedClient = Rx<Client?>(null);
+  
+  // Filtros adicionales
+  final RxString documentFilter = ''.obs;
+  final RxString emailFilter = ''.obs;
+  final Rx<bool?> isActiveFilter = Rx<bool?>(null);
+  final RxString companyIdFilter = ''.obs;
 
   // Companies for dropdown
   final RxList<Company> companies = <Company>[].obs;
@@ -37,6 +43,10 @@ class ClientController extends GetxController {
         page: currentPage.value,
         limit: limit.value,
         search: searchQuery.value.isEmpty ? null : searchQuery.value,
+        document: documentFilter.value.isEmpty ? null : documentFilter.value,
+        email: emailFilter.value.isEmpty ? null : emailFilter.value,
+        isActive: isActiveFilter.value,
+        companyId: companyIdFilter.value.isEmpty ? null : companyIdFilter.value,
       );
 
       clients.value = result.data;
@@ -133,6 +143,68 @@ class ClientController extends GetxController {
     searchQuery.value = query;
     currentPage.value = 1; // Reset to first page when searching
     fetchClients();
+  }
+
+  void updateDocumentFilter(String document) {
+    documentFilter.value = document;
+  }
+
+  void updateEmailFilter(String email) {
+    emailFilter.value = email;
+  }
+
+  void updateIsActiveFilter(bool? isActive) {
+    isActiveFilter.value = isActive;
+  }
+
+  void updateCompanyIdFilter(String companyId) {
+    companyIdFilter.value = companyId;
+  }
+
+  void applyFilters() {
+    currentPage.value = 1;
+    fetchClients();
+  }
+
+  void clearAllFilters() {
+    searchQuery.value = '';
+    documentFilter.value = '';
+    emailFilter.value = '';
+    isActiveFilter.value = null;
+    companyIdFilter.value = '';
+    currentPage.value = 1;
+    fetchClients();
+  }
+
+  bool get hasActiveFilters {
+    return searchQuery.value.isNotEmpty ||
+        documentFilter.value.isNotEmpty ||
+        emailFilter.value.isNotEmpty ||
+        isActiveFilter.value != null ||
+        companyIdFilter.value.isNotEmpty;
+  }
+
+  String get activeFiltersDescription {
+    List<String> filters = [];
+    if (searchQuery.value.isNotEmpty) {
+      filters.add('Búsqueda: "${searchQuery.value}"');
+    }
+    if (documentFilter.value.isNotEmpty) {
+      filters.add('Documento: "${documentFilter.value}"');
+    }
+    if (emailFilter.value.isNotEmpty) {
+      filters.add('Email: "${emailFilter.value}"');
+    }
+    if (isActiveFilter.value != null) {
+      filters.add('Estado: ${isActiveFilter.value! ? "Activo" : "Inactivo"}');
+    }
+    if (companyIdFilter.value.isNotEmpty) {
+      final company = getSelectedCompany();
+      if (company != null) {
+        filters.add('Empresa: "${company.name}"');
+      }
+    }
+    return filters.join(' | ');
   }
 
   Future<bool> updateClient(Client client) async {

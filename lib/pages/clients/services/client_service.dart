@@ -21,6 +21,10 @@ class ClientService extends GetxService {
     int page = 1,
     int limit = 25,
     String? search,
+    String? document,
+    String? email,
+    bool? isActive,
+    String? companyId,
   }) async {
     try {
       final uriString = StringBuffer(
@@ -28,6 +32,18 @@ class ClientService extends GetxService {
       );
       if (search != null && search.isNotEmpty) {
         uriString.write('&search=${Uri.encodeComponent(search)}');
+      }
+      if (document != null && document.isNotEmpty) {
+        uriString.write('&document=${Uri.encodeComponent(document)}');
+      }
+      if (email != null && email.isNotEmpty) {
+        uriString.write('&email=${Uri.encodeComponent(email)}');
+      }
+      if (isActive != null) {
+        uriString.write('&isActive=$isActive');
+      }
+      if (companyId != null && companyId.isNotEmpty) {
+        uriString.write('&companyId=$companyId');
       }
       final uri = Uri.parse(uriString.toString());
 
