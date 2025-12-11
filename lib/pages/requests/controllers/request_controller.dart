@@ -1,5 +1,6 @@
 import 'package:odewa_bo/pages/requests/models/request_model.dart';
 import 'package:odewa_bo/pages/requests/services/request_service.dart';
+import 'package:odewa_bo/controllers/logged_user_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -26,6 +27,9 @@ class RequestController extends GetxController {
   var startDate = Rxn<DateTime>();
   var endDate = Rxn<DateTime>();
 
+  // Company filters
+  var selectedCompanyIds = <String>[].obs;
+
   // Form controllers
   final amountController = TextEditingController();
   final dateController = TextEditingController();
@@ -34,7 +38,23 @@ class RequestController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    _initializeCompanyFilterForClient();
     loadRequests();
+  }
+
+  void _initializeCompanyFilterForClient() {
+    try {
+      final loggedUserController = Get.find<LoggedUserController>();
+      if (loggedUserController.isClient) {
+        final user = loggedUserController.user.value;
+        if (user?.companies != null && user!.companies!.isNotEmpty) {
+          // Para clientes, automáticamente filtrar por su empresa
+          selectedCompanyIds.value = [user.companies!.first.id];
+        }
+      }
+    } catch (e) {
+      // Si no se encuentra el LoggedUserController, no hacer nada
+    }
   }
 
   @override
@@ -117,7 +137,13 @@ class RequestController extends GetxController {
               statusFilter.value == 'all' ||
               request.status == statusFilter.value;
 
-          return searchMatch && statusMatch;
+          // Company filter
+          final companyMatch =
+              selectedCompanyIds.isEmpty ||
+              (request.client?.companyId != null &&
+                  selectedCompanyIds.contains(request.client!.companyId));
+
+          return searchMatch && statusMatch && companyMatch;
         }).toList();
 
     return filtered;
@@ -408,6 +434,7 @@ class RequestController extends GetxController {
     statusFilter.value = 'all';
     startDate.value = null;
     endDate.value = null;
+    selectedCompanyIds.clear();
     loadRequests();
   }
 
@@ -415,7 +442,8 @@ class RequestController extends GetxController {
     return searchQuery.value.isNotEmpty ||
         statusFilter.value != 'all' ||
         startDate.value != null ||
-        endDate.value != null;
+        endDate.value != null ||
+        selectedCompanyIds.isNotEmpty;
   }
 
   String get activeFiltersDescription {
@@ -426,13 +454,17 @@ class RequestController extends GetxController {
     }
 
     if (statusFilter.value != 'all') {
-      descriptions.add('Estado: ${statusFilter.value}');
+      descriptions.add('Estado: ${RequestStatus.getLabel(statusFilter.value)}');
     }
 
     if (startDate.value != null && endDate.value != null) {
       descriptions.add(
         '${startDate.value!.day}/${startDate.value!.month}/${startDate.value!.year} - ${endDate.value!.day}/${endDate.value!.month}/${endDate.value!.year}',
       );
+    }
+
+    if (selectedCompanyIds.isNotEmpty) {
+      descriptions.add('${selectedCompanyIds.length} empresa(s)');
     }
 
     return descriptions.isEmpty ? 'Sin filtros' : descriptions.join(' • ');
@@ -445,6 +477,23 @@ class RequestController extends GetxController {
 
   // Getter para obtener el total de páginas
   int get totalPagesValue => totalPages.value;
+
+  // Company filter methods
+  void updateCompanyFilters(List<String> companyIds) {
+    selectedCompanyIds.value = companyIds;
+  }
+
+  void toggleCompany(String companyId) {
+    if (selectedCompanyIds.contains(companyId)) {
+      selectedCompanyIds.remove(companyId);
+    } else {
+      selectedCompanyIds.add(companyId);
+    }
+  }
+
+  void clearCompanyFilters() {
+    selectedCompanyIds.clear();
+  }
 
   Future<void> exportRequests() async {
     try {

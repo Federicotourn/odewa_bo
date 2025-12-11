@@ -143,8 +143,7 @@ class Company {
       employeeCount: employeeCount ?? this.employeeCount,
       averageMonthlyBalance:
           averageMonthlyBalance ?? this.averageMonthlyBalance,
-      maxSalaryPercentage:
-          maxSalaryPercentage ?? this.maxSalaryPercentage,
+      maxSalaryPercentage: maxSalaryPercentage ?? this.maxSalaryPercentage,
     );
   }
 }
@@ -166,7 +165,11 @@ class UpdateCompanyRequest {
   int? employeeCount;
   double? maxSalaryPercentage;
 
-  UpdateCompanyRequest({this.name, this.employeeCount, this.maxSalaryPercentage});
+  UpdateCompanyRequest({
+    this.name,
+    this.employeeCount,
+    this.maxSalaryPercentage,
+  });
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {};

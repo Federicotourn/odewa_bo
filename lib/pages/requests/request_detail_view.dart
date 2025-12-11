@@ -3,6 +3,7 @@ import 'package:odewa_bo/pages/requests/controllers/request_controller.dart';
 import 'package:odewa_bo/pages/requests/models/request_model.dart';
 import 'package:odewa_bo/pages/companies/models/company_model.dart';
 import 'package:odewa_bo/pages/requests/components/receipt_upload_dialog.dart';
+import 'package:intl/intl.dart';
 // import 'package:odewa_bo/controllers/logged_user_controller.dart';
 
 import 'package:flutter/material.dart';
@@ -252,7 +253,9 @@ class RequestDetailView extends StatelessWidget {
                 child: _InfoCard(
                   icon: Icons.calendar_today,
                   label: 'Fecha',
-                  value: request.date,
+                  value: DateFormat(
+                    'dd/MM/yyyy',
+                  ).format(DateTime.parse(request.date)),
                   color: Colors.blue.shade400,
                 ),
               ),
@@ -261,7 +264,9 @@ class RequestDetailView extends StatelessWidget {
                 child: _InfoCard(
                   icon: Icons.access_time,
                   label: 'Creada',
-                  value: _formatDate(request.createdAt),
+                  value: DateFormat(
+                    'dd/MM/yyyy HH:mm',
+                  ).format(request.createdAt.toLocal()),
                   color: Colors.purple.shade400,
                 ),
               ),
@@ -310,17 +315,31 @@ class RequestDetailView extends StatelessWidget {
             value: RequestStatus.getLabel(request.status),
           ),
           infoRow(label: 'Monto', value: '\$${request.amount}'),
-          infoRow(label: 'Fecha', value: request.date),
+          infoRow(
+            label: 'Fecha',
+            value: DateFormat(
+              'dd/MM/yyyy',
+            ).format(DateTime.parse(request.date)),
+          ),
           infoRow(label: 'Cliente ID', value: request.clientId),
-          infoRow(label: 'Creada', value: _formatDateTime(request.createdAt)),
+          infoRow(
+            label: 'Creada',
+            value: DateFormat(
+              'dd/MM/yyyy HH:mm',
+            ).format(request.createdAt.toLocal()),
+          ),
           infoRow(
             label: 'Actualizada',
-            value: _formatDateTime(request.updatedAt),
+            value: DateFormat(
+              'dd/MM/yyyy HH:mm',
+            ).format(request.updatedAt.toLocal()),
           ),
           if (request.deletedAt != null)
             infoRow(
               label: 'Eliminada',
-              value: _formatDateTime(request.deletedAt as DateTime),
+              value: DateFormat(
+                'dd/MM/yyyy HH:mm',
+              ).format(request.deletedAt as DateTime),
             ),
         ],
       ),
@@ -641,9 +660,7 @@ class RequestDetailView extends StatelessWidget {
                         // Si el nuevo estado es "completed", mostrar el diálogo de receipt
                         if (newStatus == 'completed') {
                           Get.dialog(
-                            ReceiptUploadDialog(
-                              requestId: request.id,
-                            ),
+                            ReceiptUploadDialog(requestId: request.id),
                             barrierDismissible: false,
                           );
                         } else {
@@ -824,11 +841,13 @@ class RequestDetailView extends StatelessWidget {
   }
 
   String _formatDate(DateTime date) {
-    return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}';
+    final localDate = date.toLocal();
+    return '${localDate.day.toString().padLeft(2, '0')}/${localDate.month.toString().padLeft(2, '0')}/${localDate.year}';
   }
 
   String _formatDateTime(DateTime date) {
-    return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year} ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
+    final localDate = date.toLocal();
+    return '${localDate.day.toString().padLeft(2, '0')}/${localDate.month.toString().padLeft(2, '0')}/${localDate.year} ${localDate.hour.toString().padLeft(2, '0')}:${localDate.minute.toString().padLeft(2, '0')}';
   }
 }
 

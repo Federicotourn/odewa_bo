@@ -3,9 +3,12 @@ import 'package:odewa_bo/pages/requests/controllers/request_controller.dart';
 import 'package:odewa_bo/pages/requests/models/request_model.dart';
 import 'package:odewa_bo/controllers/logged_user_controller.dart';
 import 'package:odewa_bo/routing/routes.dart';
+import 'package:odewa_bo/pages/companies/models/company_model.dart';
+import 'package:odewa_bo/pages/companies/services/company_service.dart';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 class RequestsView extends StatelessWidget {
   const RequestsView({super.key});
@@ -242,7 +245,9 @@ class RequestsView extends StatelessWidget {
                       child: _InfoCard(
                         icon: Icons.calendar_today,
                         label: 'Fecha',
-                        value: request.date,
+                        value: DateFormat(
+                          'dd/MM/yyyy',
+                        ).format(DateTime.parse(request.date)),
                         color: Colors.blue.shade400,
                       ),
                     ),
@@ -564,6 +569,32 @@ class RequestsView extends StatelessWidget {
                                         ),
                                       ],
                                     ),
+                                    const SizedBox(height: 16),
+
+                                    // Filtro de empresas (solo para admins)
+                                    Obx(() {
+                                      late final LoggedUserController
+                                      loggedUserController;
+                                      try {
+                                        loggedUserController =
+                                            Get.find<LoggedUserController>();
+                                      } catch (e) {
+                                        loggedUserController = Get.put(
+                                          LoggedUserController(),
+                                        );
+                                      }
+                                      final isClient =
+                                          loggedUserController.isClient;
+
+                                      if (isClient) {
+                                        // Para clientes, no mostrar el filtro de empresas
+                                        return const SizedBox.shrink();
+                                      }
+
+                                      return _CompanyFilterWidget(
+                                        controller: requestsController,
+                                      );
+                                    }),
                                   ],
                                 ),
                               ],
@@ -1072,6 +1103,296 @@ class _CompactActionButton extends StatelessWidget {
           elevation: 0,
         ),
       ),
+    );
+  }
+}
+
+// Widget para el filtro de empresas
+class _CompanyFilterWidget extends StatefulWidget {
+  final RequestController controller;
+
+  const _CompanyFilterWidget({required this.controller});
+
+  @override
+  State<_CompanyFilterWidget> createState() => _CompanyFilterWidgetState();
+}
+
+class _CompanyFilterWidgetState extends State<_CompanyFilterWidget> {
+  final CompanyService _companyService = Get.find<CompanyService>();
+  List<Company> _companies = [];
+  bool _isLoadingCompanies = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCompanies();
+  }
+
+  Future<void> _loadCompanies() async {
+    setState(() {
+      _isLoadingCompanies = true;
+    });
+
+    try {
+      late final LoggedUserController loggedUserController;
+      try {
+        loggedUserController = Get.find<LoggedUserController>();
+      } catch (e) {
+        loggedUserController = Get.put(LoggedUserController());
+      }
+
+      final isClient = loggedUserController.isClient;
+      final user = loggedUserController.user.value;
+
+      if (isClient && user?.companies != null && user!.companies!.isNotEmpty) {
+        // Para clientes, solo mostrar su empresa
+        setState(() {
+          _companies =
+              user.companies!.map((loginCompany) {
+                return Company(
+                  id: loginCompany.id,
+                  name: loginCompany.name,
+                  employeeCount: loginCompany.employeeCount,
+                  maxSalaryPercentage: loginCompany.maxSalaryPercentage,
+                  isActive: loginCompany.isActive,
+                  createdAt: DateTime.now(),
+                  updatedAt: DateTime.now(),
+                  deletedAt: null,
+                  createdById: null,
+                  updatedById: null,
+                  deletedById: null,
+                );
+              }).toList();
+
+          // Si es cliente, automáticamente seleccionar su empresa
+          if (_companies.isNotEmpty) {
+            widget.controller.updateCompanyFilters([_companies.first.id]);
+          }
+        });
+      } else {
+        // Para admins, cargar todas las empresas
+        final (success, response, error) = await _companyService
+            .getAllCompanies(
+              page: 1,
+              limit: 100, // Cargar todas las empresas
+            );
+
+        if (success && response != null) {
+          setState(() {
+            _companies =
+                response.data.where((company) => company.isActive).toList();
+          });
+        } else {
+          Get.snackbar(
+            'Error',
+            'No se pudieron cargar las empresas: $error',
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.red.shade100,
+            colorText: Colors.red.shade800,
+          );
+        }
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Error al cargar empresas: $e',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red.shade100,
+        colorText: Colors.red.shade800,
+      );
+    } finally {
+      setState(() {
+        _isLoadingCompanies = false;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Builder(
+          builder: (context) {
+            late final LoggedUserController loggedUserController;
+            try {
+              loggedUserController = Get.find<LoggedUserController>();
+            } catch (e) {
+              loggedUserController = Get.put(LoggedUserController());
+            }
+            final isClient = loggedUserController.isClient;
+
+            return Row(
+              children: [
+                Text(
+                  'Empresas',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey.shade800,
+                  ),
+                ),
+                if (!isClient) ...[
+                  const Spacer(),
+                  TextButton(
+                    onPressed: () {
+                      widget.controller.updateCompanyFilters(
+                        _companies.map((c) => c.id).toList(),
+                      );
+                    },
+                    child: Text(
+                      'Seleccionar todas',
+                      style: TextStyle(
+                        color: Colors.teal.shade600,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      widget.controller.clearCompanyFilters();
+                    },
+                    child: Text(
+                      'Limpiar',
+                      style: TextStyle(
+                        color: Colors.red.shade600,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                ],
+              ],
+            );
+          },
+        ),
+        const SizedBox(height: 12),
+        if (_isLoadingCompanies)
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey.shade300),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Center(child: CircularProgressIndicator()),
+          )
+        else if (_companies.isEmpty)
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade50,
+              border: Border.all(color: Colors.grey.shade300),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Center(
+              child: Text(
+                'No hay empresas disponibles',
+                style: TextStyle(color: Colors.grey.shade600, fontSize: 14),
+              ),
+            ),
+          )
+        else
+          Builder(
+            builder: (context) {
+              late final LoggedUserController loggedUserController;
+              try {
+                loggedUserController = Get.find<LoggedUserController>();
+              } catch (e) {
+                loggedUserController = Get.put(LoggedUserController());
+              }
+              final isClient = loggedUserController.isClient;
+
+              return Obx(() {
+                // Leer el valor observable directamente
+                final selectedIds =
+                    widget.controller.selectedCompanyIds.toList();
+
+                return Container(
+                  constraints: const BoxConstraints(maxHeight: 200),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey.shade300),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: _companies.length,
+                    itemBuilder: (context, index) {
+                      final company = _companies[index];
+                      final isSelected = selectedIds.contains(company.id);
+
+                      // Si es cliente, la empresa siempre está seleccionada y no se puede cambiar
+                      final isClientCompany =
+                          isClient && _companies.length == 1;
+
+                      return InkWell(
+                        onTap:
+                            isClientCompany
+                                ? null
+                                : () {
+                                  widget.controller.toggleCompany(company.id);
+                                },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
+                          decoration: BoxDecoration(
+                            color:
+                                (isSelected || isClientCompany)
+                                    ? Colors.teal.shade50
+                                    : Colors.transparent,
+                            border: Border(
+                              bottom: BorderSide(
+                                color: Colors.grey.shade200,
+                                width: 0.5,
+                              ),
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(
+                                (isSelected || isClientCompany)
+                                    ? Icons.check_box
+                                    : Icons.check_box_outline_blank,
+                                color:
+                                    (isSelected || isClientCompany)
+                                        ? Colors.teal.shade600
+                                        : Colors.grey.shade400,
+                                size: 20,
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Text(
+                                  company.name,
+                                  style: TextStyle(
+                                    color:
+                                        (isSelected || isClientCompany)
+                                            ? Colors.teal.shade800
+                                            : Colors.grey.shade700,
+                                    fontWeight:
+                                        (isSelected || isClientCompany)
+                                            ? FontWeight.w600
+                                            : FontWeight.normal,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ),
+                              if (isSelected || isClientCompany)
+                                Icon(
+                                  Icons.check_circle,
+                                  color: Colors.teal.shade600,
+                                  size: 16,
+                                ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                );
+              });
+            },
+          ),
+      ],
     );
   }
 }
