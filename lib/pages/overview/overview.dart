@@ -2,6 +2,8 @@ import 'package:odewa_bo/pages/overview/controllers/overview_controller.dart';
 import 'package:odewa_bo/pages/overview/models/kpis_model.dart';
 import 'package:odewa_bo/widgets/dashboard_filters.dart';
 import 'package:odewa_bo/controllers/logged_user_controller.dart';
+import 'package:odewa_bo/helpers/responsiveness.dart';
+import 'package:odewa_bo/helpers/scaffold_helper.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -45,34 +47,54 @@ class OverviewPageNew extends StatelessWidget {
               backgroundColor: Colors.transparent,
               elevation: 0,
               automaticallyImplyLeading: false,
+              leading:
+                  ResponsiveWidget.isSmallScreen(context)
+                      ? IconButton(
+                        icon: const Icon(Icons.menu),
+                        color: Colors.teal.shade800,
+                        onPressed: () {
+                          ScaffoldHelper.openParentDrawer(context);
+                        },
+                      )
+                      : null,
               flexibleSpace: FlexibleSpaceBar(
                 title: Text(
                   'Dashboard - Resumen Mensual',
                   style: TextStyle(
                     color: Colors.teal.shade800,
                     fontWeight: FontWeight.bold,
-                    fontSize: 24,
+                    fontSize: ResponsiveWidget.isSmallScreen(context) ? 18 : 24,
                   ),
+                  textAlign: TextAlign.center,
                 ),
                 centerTitle: true,
               ),
               actions: [
-                _ModernActionButton(
-                  icon: Icons.refresh,
-                  label: 'Actualizar',
-                  color: Colors.teal.shade400,
-                  onPressed: () {
-                    controller.getKpisData();
-                  },
-                ),
-                const SizedBox(width: 16),
+                ResponsiveWidget.isSmallScreen(context)
+                    ? IconButton(
+                      icon: const Icon(Icons.refresh),
+                      onPressed: () => controller.getKpisData(),
+                      tooltip: 'Actualizar',
+                    )
+                    : _ModernActionButton(
+                      icon: Icons.refresh,
+                      label: 'Actualizar',
+                      color: Colors.teal.shade400,
+                      onPressed: () {
+                        controller.getKpisData();
+                      },
+                    ),
+                if (!ResponsiveWidget.isSmallScreen(context))
+                  const SizedBox(width: 16),
               ],
             ),
 
             // Contenido del dashboard
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.all(24),
+                padding: EdgeInsets.all(
+                  ResponsiveWidget.isSmallScreen(context) ? 12 : 24,
+                ),
                 child: Obx(() {
                   return Column(
                     children: [
@@ -170,31 +192,41 @@ class OverviewPageNew extends StatelessWidget {
 
         // Charts Section
         if (!isClient) ...[
-          const SizedBox(height: 32),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Pie Chart
-              Expanded(
-                flex: 1,
-                child: Column(
-                  children: [
-                    _buildStatusChart(data),
-                    const SizedBox(height: 24),
-                    Container(),
-                  ],
-                ),
-              ),
-
-              const SizedBox(width: 20),
-
-              // Latest Requests
-              Expanded(flex: 2, child: _buildLatestRequests(data)),
-            ],
+          SizedBox(
+            height: ResponsiveWidget.isSmallScreen(Get.context!) ? 24 : 32,
           ),
+          ResponsiveWidget.isSmallScreen(Get.context!)
+              ? Column(
+                children: [
+                  _buildStatusChart(data),
+                  const SizedBox(height: 24),
+                  _buildLatestRequests(data),
+                ],
+              )
+              : Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Pie Chart
+                  Expanded(
+                    flex: 1,
+                    child: Column(
+                      children: [
+                        _buildStatusChart(data),
+                        const SizedBox(height: 24),
+                        Container(),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 20),
+                  // Latest Requests
+                  Expanded(flex: 2, child: _buildLatestRequests(data)),
+                ],
+              ),
         ] else ...[
           // Para clientes, solo mostrar últimas solicitudes
-          const SizedBox(height: 32),
+          SizedBox(
+            height: ResponsiveWidget.isSmallScreen(Get.context!) ? 24 : 32,
+          ),
           _buildLatestRequests(data),
         ],
       ],
@@ -264,156 +296,267 @@ class OverviewPageNew extends StatelessWidget {
   }
 
   Widget _buildKpiCards(KpisData data, bool isClient) {
+    final isSmallScreen = ResponsiveWidget.isSmallScreen(Get.context!);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'Métricas Principales',
           style: TextStyle(
-            fontSize: 20,
+            fontSize: isSmallScreen ? 18 : 20,
             fontWeight: FontWeight.bold,
             color: Colors.teal.shade800,
           ),
         ),
-        const SizedBox(height: 16),
-        Row(
-          children: [
-            Expanded(
-              child: _KpiCard(
-                title: 'Total Solicitudes',
-                value: controller.formatNumber(data.totalRequests),
-                icon: Icons.receipt_long,
-                color: Colors.blue.shade400,
-                subtitle: 'Este mes',
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: _KpiCard(
-                title: 'Volumen Total',
-                value: controller.formatCurrency(data.totalVolume),
-                icon: Icons.attach_money,
-                color: Colors.green.shade400,
-                subtitle: 'Monto procesado',
-              ),
-            ),
-            // Pendientes y Completadas solo para admins
-            if (!isClient) ...[
-              const SizedBox(width: 16),
-              Expanded(
-                child: _KpiCard(
-                  title: 'Pendientes',
-                  value: controller.formatNumber(data.pendingRequests),
-                  icon: Icons.pending_actions,
-                  color: Colors.orange.shade400,
-                  subtitle: 'Por revisar',
+        SizedBox(height: isSmallScreen ? 12 : 16),
+        isSmallScreen
+            ? Column(
+              children: [
+                _KpiCard(
+                  title: 'Total Solicitudes',
+                  value: controller.formatNumber(data.totalRequests),
+                  icon: Icons.receipt_long,
+                  color: Colors.blue.shade400,
+                  subtitle: 'Este mes',
                 ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: _KpiCard(
-                  title: 'Completadas',
-                  value: controller.formatNumber(data.completedRequests),
-                  icon: Icons.check_circle,
-                  color: Colors.teal.shade400,
-                  subtitle: 'Finalizadas',
+                SizedBox(height: isSmallScreen ? 12 : 16),
+                _KpiCard(
+                  title: 'Volumen Total',
+                  value: controller.formatCurrency(data.totalVolume),
+                  icon: Icons.attach_money,
+                  color: Colors.green.shade400,
+                  subtitle: 'Monto procesado',
                 ),
-              ),
-            ],
-          ],
-        ),
+                if (!isClient) ...[
+                  SizedBox(height: isSmallScreen ? 12 : 16),
+                  _KpiCard(
+                    title: 'Pendientes',
+                    value: controller.formatNumber(data.pendingRequests),
+                    icon: Icons.pending_actions,
+                    color: Colors.orange.shade400,
+                    subtitle: 'Por revisar',
+                  ),
+                  SizedBox(height: isSmallScreen ? 12 : 16),
+                  _KpiCard(
+                    title: 'Completadas',
+                    value: controller.formatNumber(data.completedRequests),
+                    icon: Icons.check_circle,
+                    color: Colors.teal.shade400,
+                    subtitle: 'Finalizadas',
+                  ),
+                ],
+              ],
+            )
+            : Row(
+              children: [
+                Expanded(
+                  child: _KpiCard(
+                    title: 'Total Solicitudes',
+                    value: controller.formatNumber(data.totalRequests),
+                    icon: Icons.receipt_long,
+                    color: Colors.blue.shade400,
+                    subtitle: 'Este mes',
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: _KpiCard(
+                    title: 'Volumen Total',
+                    value: controller.formatCurrency(data.totalVolume),
+                    icon: Icons.attach_money,
+                    color: Colors.green.shade400,
+                    subtitle: 'Monto procesado',
+                  ),
+                ),
+                if (!isClient) ...[
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: _KpiCard(
+                      title: 'Pendientes',
+                      value: controller.formatNumber(data.pendingRequests),
+                      icon: Icons.pending_actions,
+                      color: Colors.orange.shade400,
+                      subtitle: 'Por revisar',
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: _KpiCard(
+                      title: 'Completadas',
+                      value: controller.formatNumber(data.completedRequests),
+                      icon: Icons.check_circle,
+                      color: Colors.teal.shade400,
+                      subtitle: 'Finalizadas',
+                    ),
+                  ),
+                ],
+              ],
+            ),
       ],
     );
   }
 
   Widget _buildStatisticsModule(KpisData data) {
+    final isSmallScreen = ResponsiveWidget.isSmallScreen(Get.context!);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'Estadísticas de Usuarios',
           style: TextStyle(
-            fontSize: 20,
+            fontSize: isSmallScreen ? 18 : 20,
             fontWeight: FontWeight.bold,
             color: Colors.purple.shade800,
           ),
         ),
-        const SizedBox(height: 16),
-        Row(
-          children: [
-            Expanded(
-              child: _StatisticsCard(
-                title: 'Cantidad de empleados',
-                value: controller.formatNumber(data.clientKPIs.totalClients),
-                icon: Icons.people,
-                color: Colors.purple.shade400,
-                subtitle: 'Total registrados',
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: _StatisticsCard(
-                title: 'Sueldo Promedio',
-                value: controller.formatCurrency(
-                  data.clientKPIs.averageMonthlyBalance,
+        SizedBox(height: isSmallScreen ? 12 : 16),
+        isSmallScreen
+            ? Column(
+              children: [
+                _StatisticsCard(
+                  title: 'Cantidad de empleados',
+                  value: controller.formatNumber(data.clientKPIs.totalClients),
+                  icon: Icons.people,
+                  color: Colors.purple.shade400,
+                  subtitle: 'Total registrados',
                 ),
-                icon: Icons.account_balance_wallet,
-                color: Colors.indigo.shade400,
-                subtitle: 'Balance mensual',
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: _StatisticsCard(
-                title: 'Descargas estimadas',
-                value: controller.formatNumber(
-                  data.clientKPIs.estimatedDownloads,
+                SizedBox(height: isSmallScreen ? 12 : 16),
+                _StatisticsCard(
+                  title: 'Sueldo Promedio',
+                  value: controller.formatCurrency(
+                    data.clientKPIs.averageMonthlyBalance,
+                  ),
+                  icon: Icons.account_balance_wallet,
+                  color: Colors.indigo.shade400,
+                  subtitle: 'Balance mensual',
                 ),
-                icon: Icons.download,
-                color: Colors.cyan.shade400,
-                subtitle: 'Aplicaciones',
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 16),
-        Row(
-          children: [
-            Expanded(
-              child: _StatisticsCard(
-                title: 'Usuarios activos por mes',
-                value: controller.formatNumber(
-                  data.clientKPIs.estimatedActiveClients,
+                SizedBox(height: isSmallScreen ? 12 : 16),
+                _StatisticsCard(
+                  title: 'Descargas estimadas',
+                  value: controller.formatNumber(
+                    data.clientKPIs.estimatedDownloads,
+                  ),
+                  icon: Icons.download,
+                  color: Colors.cyan.shade400,
+                  subtitle: 'Aplicaciones',
                 ),
-                icon: Icons.trending_up,
-                color: Colors.green.shade400,
-                subtitle: 'Activos mensualmente',
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: _StatisticsCard(
-                title: 'Monto solicitado por persona',
-                value: controller.formatCurrency(
-                  data.clientKPIs.averageRequestAmount,
+                SizedBox(height: isSmallScreen ? 12 : 16),
+                _StatisticsCard(
+                  title: 'Usuarios activos por mes',
+                  value: controller.formatNumber(
+                    data.clientKPIs.estimatedActiveClients,
+                  ),
+                  icon: Icons.trending_up,
+                  color: Colors.green.shade400,
+                  subtitle: 'Activos mensualmente',
                 ),
-                icon: Icons.person_pin,
-                color: Colors.orange.shade400,
-                subtitle: 'Promedio por usuario',
-              ),
+                SizedBox(height: isSmallScreen ? 12 : 16),
+                _StatisticsCard(
+                  title: 'Monto solicitado por persona',
+                  value: controller.formatCurrency(
+                    data.clientKPIs.averageRequestAmount,
+                  ),
+                  icon: Icons.person_pin,
+                  color: Colors.orange.shade400,
+                  subtitle: 'Promedio por usuario',
+                ),
+                SizedBox(height: isSmallScreen ? 12 : 16),
+                _StatisticsCard(
+                  title: 'Liquidez necesaria',
+                  value: controller.formatCurrency(
+                    data.clientKPIs.amountToCover,
+                  ),
+                  icon: Icons.account_balance,
+                  color: Colors.red.shade400,
+                  subtitle: 'Fondos requeridos',
+                ),
+              ],
+            )
+            : Column(
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: _StatisticsCard(
+                        title: 'Cantidad de empleados',
+                        value: controller.formatNumber(
+                          data.clientKPIs.totalClients,
+                        ),
+                        icon: Icons.people,
+                        color: Colors.purple.shade400,
+                        subtitle: 'Total registrados',
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: _StatisticsCard(
+                        title: 'Sueldo Promedio',
+                        value: controller.formatCurrency(
+                          data.clientKPIs.averageMonthlyBalance,
+                        ),
+                        icon: Icons.account_balance_wallet,
+                        color: Colors.indigo.shade400,
+                        subtitle: 'Balance mensual',
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: _StatisticsCard(
+                        title: 'Descargas estimadas',
+                        value: controller.formatNumber(
+                          data.clientKPIs.estimatedDownloads,
+                        ),
+                        icon: Icons.download,
+                        color: Colors.cyan.shade400,
+                        subtitle: 'Aplicaciones',
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(
+                      child: _StatisticsCard(
+                        title: 'Usuarios activos por mes',
+                        value: controller.formatNumber(
+                          data.clientKPIs.estimatedActiveClients,
+                        ),
+                        icon: Icons.trending_up,
+                        color: Colors.green.shade400,
+                        subtitle: 'Activos mensualmente',
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: _StatisticsCard(
+                        title: 'Monto solicitado por persona',
+                        value: controller.formatCurrency(
+                          data.clientKPIs.averageRequestAmount,
+                        ),
+                        icon: Icons.person_pin,
+                        color: Colors.orange.shade400,
+                        subtitle: 'Promedio por usuario',
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: _StatisticsCard(
+                        title: 'Liquidez necesaria',
+                        value: controller.formatCurrency(
+                          data.clientKPIs.amountToCover,
+                        ),
+                        icon: Icons.account_balance,
+                        color: Colors.red.shade400,
+                        subtitle: 'Fondos requeridos',
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: _StatisticsCard(
-                title: 'Liquidez necesaria',
-                value: controller.formatCurrency(data.clientKPIs.amountToCover),
-                icon: Icons.account_balance,
-                color: Colors.red.shade400,
-                subtitle: 'Fondos requeridos',
-              ),
-            ),
-          ],
-        ),
       ],
     );
   }

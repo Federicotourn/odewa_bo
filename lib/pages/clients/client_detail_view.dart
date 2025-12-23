@@ -3,6 +3,8 @@ import 'package:odewa_bo/pages/clients/controllers/client_controller.dart';
 import 'package:odewa_bo/pages/clients/models/client_model.dart';
 import 'package:odewa_bo/pages/clients/components/client_form_modal.dart';
 import 'package:odewa_bo/widgets/confirmation_dialog.dart';
+import 'package:odewa_bo/helpers/responsiveness.dart';
+import 'package:odewa_bo/helpers/scaffold_helper.dart';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -46,12 +48,21 @@ class ClientDetailView extends StatelessWidget {
                   style: TextStyle(
                     color: Colors.blue.shade800,
                     fontWeight: FontWeight.bold,
-                    fontSize: 24,
+                    fontSize: ResponsiveWidget.isSmallScreen(context) ? 18 : 24,
                   ),
                 ),
                 centerTitle: true,
               ),
               actions: [
+                if (ResponsiveWidget.isSmallScreen(context))
+                  IconButton(
+                    icon: const Icon(Icons.menu),
+                    color: Colors.blue.shade800,
+                    onPressed: () {
+                      ScaffoldHelper.openParentDrawer(context);
+                    },
+                    tooltip: 'Menú',
+                  ),
                 IconButton(
                   icon: Icon(Icons.refresh, color: Colors.blue.shade800),
                   onPressed: () => clientController.fetchClients(),
@@ -63,7 +74,9 @@ class ClientDetailView extends StatelessWidget {
             // Contenido principal
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.all(24),
+                padding: EdgeInsets.all(
+                  ResponsiveWidget.isSmallScreen(context) ? 12 : 24,
+                ),
                 child: Obx(() {
                   if (clientController.selectedClient.value == null) {
                     return Center(
@@ -186,95 +199,172 @@ class ClientDetailView extends StatelessWidget {
                     Text(
                       '${client.firstName} ${client.lastName}',
                       style: TextStyle(
-                        fontSize: 24,
+                        fontSize:
+                            ResponsiveWidget.isSmallScreen(context) ? 20 : 24,
                         fontWeight: FontWeight.bold,
                         color: Colors.blue.shade800,
                       ),
                     ),
                     const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 6,
-                          ),
-                          decoration: BoxDecoration(
-                            color:
-                                client.isActive
-                                    ? Colors.green.shade100
-                                    : Colors.red.shade100,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Text(
-                            client.isActive ? 'Activo' : 'Inactivo',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color:
-                                  client.isActive
-                                      ? Colors.green.shade700
-                                      : Colors.red.shade700,
+                    ResponsiveWidget.isSmallScreen(context)
+                        ? Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 6,
+                              ),
+                              decoration: BoxDecoration(
+                                color:
+                                    client.isActive
+                                        ? Colors.green.shade100
+                                        : Colors.red.shade100,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Text(
+                                client.isActive ? 'Activo' : 'Inactivo',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                  color:
+                                      client.isActive
+                                          ? Colors.green.shade700
+                                          : Colors.red.shade700,
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 6,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.purple.shade100,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Text(
-                            'ID: ${client.id.substring(0, 8)}',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.purple.shade700,
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 6,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.purple.shade100,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Text(
+                                'ID: ${client.id.substring(0, 8)}',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.purple.shade700,
+                                ),
+                              ),
                             ),
-                          ),
+                          ],
+                        )
+                        : Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 6,
+                              ),
+                              decoration: BoxDecoration(
+                                color:
+                                    client.isActive
+                                        ? Colors.green.shade100
+                                        : Colors.red.shade100,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Text(
+                                client.isActive ? 'Activo' : 'Inactivo',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color:
+                                      client.isActive
+                                          ? Colors.green.shade700
+                                          : Colors.red.shade700,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 6,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.purple.shade100,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Text(
+                                'ID: ${client.id.substring(0, 8)}',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.purple.shade700,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
                   ],
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 20),
-          Row(
-            children: [
-              Expanded(
-                child: _InfoCard(
-                  icon: Icons.badge,
-                  label: 'Documento',
-                  value: client.document,
-                  color: Colors.orange.shade400,
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: _InfoCard(
-                  icon: Icons.email,
-                  label: 'Email',
-                  value: client.email ?? 'No especificado',
-                  color: Colors.purple.shade400,
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: _InfoCard(
-                  icon: Icons.access_time,
-                  label: 'Registrado',
-                  value: _formatDate(client.createdAt),
-                  color: Colors.green.shade400,
-                ),
-              ),
-            ],
+          SizedBox(
+            height: ResponsiveWidget.isSmallScreen(Get.context!) ? 16 : 20,
           ),
+          ResponsiveWidget.isSmallScreen(Get.context!)
+              ? Column(
+                children: [
+                  _InfoCard(
+                    icon: Icons.badge,
+                    label: 'Documento',
+                    value: client.document,
+                    color: Colors.orange.shade400,
+                  ),
+                  const SizedBox(height: 12),
+                  _InfoCard(
+                    icon: Icons.email,
+                    label: 'Email',
+                    value: client.email ?? 'No especificado',
+                    color: Colors.purple.shade400,
+                  ),
+                  const SizedBox(height: 12),
+                  _InfoCard(
+                    icon: Icons.access_time,
+                    label: 'Registrado',
+                    value: _formatDate(client.createdAt),
+                    color: Colors.green.shade400,
+                  ),
+                ],
+              )
+              : Row(
+                children: [
+                  Expanded(
+                    child: _InfoCard(
+                      icon: Icons.badge,
+                      label: 'Documento',
+                      value: client.document,
+                      color: Colors.orange.shade400,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: _InfoCard(
+                      icon: Icons.email,
+                      label: 'Email',
+                      value: client.email ?? 'No especificado',
+                      color: Colors.purple.shade400,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: _InfoCard(
+                      icon: Icons.access_time,
+                      label: 'Registrado',
+                      value: _formatDate(client.createdAt),
+                      color: Colors.green.shade400,
+                    ),
+                  ),
+                ],
+              ),
         ],
       ),
     );
@@ -394,41 +484,71 @@ class ClientDetailView extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 20),
+          SizedBox(
+            height: ResponsiveWidget.isSmallScreen(Get.context!) ? 16 : 20,
+          ),
           if (client.company != null) ...[
-            Row(
-              children: [
-                Expanded(
-                  child: _InfoCard(
-                    icon: Icons.business,
-                    label: 'Nombre de la Empresa',
-                    value: client.company!.name,
-                    color: Colors.indigo.shade600,
-                  ),
+            ResponsiveWidget.isSmallScreen(Get.context!)
+                ? Column(
+                  children: [
+                    _InfoCard(
+                      icon: Icons.business,
+                      label: 'Nombre de la Empresa',
+                      value: client.company!.name,
+                      color: Colors.indigo.shade600,
+                    ),
+                    const SizedBox(height: 12),
+                    _InfoCard(
+                      icon: Icons.people,
+                      label: 'Empleados',
+                      value: '${client.company!.employeeCount}',
+                      color: Colors.green.shade600,
+                    ),
+                    const SizedBox(height: 12),
+                    _InfoCard(
+                      icon: Icons.toggle_on,
+                      label: 'Estado',
+                      value: client.company!.isActive ? 'Activa' : 'Inactiva',
+                      color:
+                          client.company!.isActive
+                              ? Colors.green.shade600
+                              : Colors.red.shade600,
+                    ),
+                  ],
+                )
+                : Row(
+                  children: [
+                    Expanded(
+                      child: _InfoCard(
+                        icon: Icons.business,
+                        label: 'Nombre de la Empresa',
+                        value: client.company!.name,
+                        color: Colors.indigo.shade600,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: _InfoCard(
+                        icon: Icons.people,
+                        label: 'Empleados',
+                        value: '${client.company!.employeeCount}',
+                        color: Colors.green.shade600,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: _InfoCard(
+                        icon: Icons.toggle_on,
+                        label: 'Estado',
+                        value: client.company!.isActive ? 'Activa' : 'Inactiva',
+                        color:
+                            client.company!.isActive
+                                ? Colors.green.shade600
+                                : Colors.red.shade600,
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: _InfoCard(
-                    icon: Icons.people,
-                    label: 'Empleados',
-                    value: '${client.company!.employeeCount}',
-                    color: Colors.green.shade600,
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: _InfoCard(
-                    icon: Icons.toggle_on,
-                    label: 'Estado',
-                    value: client.company!.isActive ? 'Activa' : 'Inactiva',
-                    color:
-                        client.company!.isActive
-                            ? Colors.green.shade600
-                            : Colors.red.shade600,
-                  ),
-                ),
-              ],
-            ),
             const SizedBox(height: 20),
             infoRow(label: 'ID de la Empresa', value: client.company!.id),
             infoRow(
@@ -509,46 +629,82 @@ class ClientDetailView extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 20),
-          Row(
-            children: [
-              Expanded(
-                child: _InfoCard(
-                  icon: Icons.phone,
-                  label: 'Teléfono',
-                  value:
-                      client.phone != null && client.phone!.isNotEmpty
-                          ? client.phone!
-                          : 'No especificado',
-                  color: Colors.green.shade600,
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: _InfoCard(
-                  icon: Icons.location_on,
-                  label: 'Dirección',
-                  value:
-                      client.address != null && client.address!.isNotEmpty
-                          ? client.address!
-                          : 'No especificada',
-                  color: Colors.blue.shade600,
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: _InfoCard(
-                  icon: Icons.location_city,
-                  label: 'Ciudad',
-                  value:
-                      client.city != null && client.city!.isNotEmpty
-                          ? client.city!
-                          : 'No especificada',
-                  color: Colors.purple.shade600,
-                ),
-              ),
-            ],
+          SizedBox(
+            height: ResponsiveWidget.isSmallScreen(Get.context!) ? 16 : 20,
           ),
+          ResponsiveWidget.isSmallScreen(Get.context!)
+              ? Column(
+                children: [
+                  _InfoCard(
+                    icon: Icons.phone,
+                    label: 'Teléfono',
+                    value:
+                        client.phone != null && client.phone!.isNotEmpty
+                            ? client.phone!
+                            : 'No especificado',
+                    color: Colors.green.shade600,
+                  ),
+                  const SizedBox(height: 12),
+                  _InfoCard(
+                    icon: Icons.location_on,
+                    label: 'Dirección',
+                    value:
+                        client.address != null && client.address!.isNotEmpty
+                            ? client.address!
+                            : 'No especificada',
+                    color: Colors.blue.shade600,
+                  ),
+                  const SizedBox(height: 12),
+                  _InfoCard(
+                    icon: Icons.location_city,
+                    label: 'Ciudad',
+                    value:
+                        client.city != null && client.city!.isNotEmpty
+                            ? client.city!
+                            : 'No especificada',
+                    color: Colors.purple.shade600,
+                  ),
+                ],
+              )
+              : Row(
+                children: [
+                  Expanded(
+                    child: _InfoCard(
+                      icon: Icons.phone,
+                      label: 'Teléfono',
+                      value:
+                          client.phone != null && client.phone!.isNotEmpty
+                              ? client.phone!
+                              : 'No especificado',
+                      color: Colors.green.shade600,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: _InfoCard(
+                      icon: Icons.location_on,
+                      label: 'Dirección',
+                      value:
+                          client.address != null && client.address!.isNotEmpty
+                              ? client.address!
+                              : 'No especificada',
+                      color: Colors.blue.shade600,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: _InfoCard(
+                      icon: Icons.location_city,
+                      label: 'Ciudad',
+                      value:
+                          client.city != null && client.city!.isNotEmpty
+                              ? client.city!
+                              : 'No especificada',
+                      color: Colors.purple.shade600,
+                    ),
+                  ),
+                ],
+              ),
         ],
       ),
     );
@@ -589,60 +745,106 @@ class ClientDetailView extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 20),
-          Row(
-            children: [
-              Expanded(
-                child: _InfoCard(
-                  icon: Icons.account_balance,
-                  label: 'Banco',
-                  value:
-                      client.bank != null && client.bank!.isNotEmpty
-                          ? client.bank!
-                          : 'No especificado',
-                  color: Colors.indigo.shade600,
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: _InfoCard(
-                  icon: Icons.monetization_on,
-                  label: 'Moneda',
-                  value:
-                      client.currency != null && client.currency!.isNotEmpty
-                          ? client.currency!
-                          : 'No especificada',
-                  color: Colors.amber.shade600,
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: _InfoCard(
-                  icon: Icons.credit_card,
-                  label: 'Cuenta',
-                  value:
-                      client.accountNumber != null &&
-                              client.accountNumber!.isNotEmpty
-                          ? client.accountNumber!
-                          : 'No especificada',
-                  color: Colors.teal.shade600,
-                ),
-              ),
-              // Mostrar branchNumber solo si tiene valor
-              if (client.branchNumber != null &&
-                  client.branchNumber!.isNotEmpty) ...[
-                const SizedBox(width: 16),
-                Expanded(
-                  child: _InfoCard(
-                    icon: Icons.location_on,
-                    label: 'Número de Sucursal',
-                    value: client.branchNumber!,
-                    color: Colors.purple.shade600,
-                  ),
-                ),
-              ],
-            ],
+          SizedBox(
+            height: ResponsiveWidget.isSmallScreen(Get.context!) ? 16 : 20,
           ),
+          ResponsiveWidget.isSmallScreen(Get.context!)
+              ? Column(
+                children: [
+                  _InfoCard(
+                    icon: Icons.account_balance,
+                    label: 'Banco',
+                    value:
+                        client.bank != null && client.bank!.isNotEmpty
+                            ? client.bank!
+                            : 'No especificado',
+                    color: Colors.indigo.shade600,
+                  ),
+                  const SizedBox(height: 12),
+                  _InfoCard(
+                    icon: Icons.monetization_on,
+                    label: 'Moneda',
+                    value:
+                        client.currency != null && client.currency!.isNotEmpty
+                            ? client.currency!
+                            : 'No especificada',
+                    color: Colors.amber.shade600,
+                  ),
+                  const SizedBox(height: 12),
+                  _InfoCard(
+                    icon: Icons.credit_card,
+                    label: 'Cuenta',
+                    value:
+                        client.accountNumber != null &&
+                                client.accountNumber!.isNotEmpty
+                            ? client.accountNumber!
+                            : 'No especificada',
+                    color: Colors.teal.shade600,
+                  ),
+                  if (client.branchNumber != null &&
+                      client.branchNumber!.isNotEmpty) ...[
+                    const SizedBox(height: 12),
+                    _InfoCard(
+                      icon: Icons.location_on,
+                      label: 'Número de Sucursal',
+                      value: client.branchNumber!,
+                      color: Colors.purple.shade600,
+                    ),
+                  ],
+                ],
+              )
+              : Row(
+                children: [
+                  Expanded(
+                    child: _InfoCard(
+                      icon: Icons.account_balance,
+                      label: 'Banco',
+                      value:
+                          client.bank != null && client.bank!.isNotEmpty
+                              ? client.bank!
+                              : 'No especificado',
+                      color: Colors.indigo.shade600,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: _InfoCard(
+                      icon: Icons.monetization_on,
+                      label: 'Moneda',
+                      value:
+                          client.currency != null && client.currency!.isNotEmpty
+                              ? client.currency!
+                              : 'No especificada',
+                      color: Colors.amber.shade600,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: _InfoCard(
+                      icon: Icons.credit_card,
+                      label: 'Cuenta',
+                      value:
+                          client.accountNumber != null &&
+                                  client.accountNumber!.isNotEmpty
+                              ? client.accountNumber!
+                              : 'No especificada',
+                      color: Colors.teal.shade600,
+                    ),
+                  ),
+                  if (client.branchNumber != null &&
+                      client.branchNumber!.isNotEmpty) ...[
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: _InfoCard(
+                        icon: Icons.location_on,
+                        label: 'Número de Sucursal',
+                        value: client.branchNumber!,
+                        color: Colors.purple.shade600,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
           const SizedBox(height: 20),
           // infoRow(
           //   label: 'Sucursal',
@@ -792,31 +994,56 @@ class ClientDetailView extends StatelessWidget {
   }
 
   Widget infoRow({required String label, required String value}) {
+    final isSmallScreen = ResponsiveWidget.isSmallScreen(Get.context!);
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: 140,
-            child: Text(
-              '$label:',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: Colors.grey.shade700,
+      child:
+          isSmallScreen
+              ? Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey.shade700,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    value,
+                    style: TextStyle(fontSize: 16, color: Colors.grey.shade800),
+                  ),
+                ],
+              )
+              : Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    width: 140,
+                    child: Text(
+                      '$label:',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.grey.shade700,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      value,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.grey.shade800,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ),
-          const SizedBox(width: 20),
-          Expanded(
-            child: Text(
-              value,
-              style: TextStyle(fontSize: 14, color: Colors.grey.shade800),
-            ),
-          ),
-        ],
-      ),
     );
   }
 

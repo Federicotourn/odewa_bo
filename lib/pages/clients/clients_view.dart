@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import '../../controllers/navigation_controller.dart';
 import '../../routing/routes.dart';
 import '../../widgets/loading.dart';
+import '../../helpers/responsiveness.dart';
+import '../../helpers/scaffold_helper.dart';
 import 'components/client_form_modal.dart';
 import 'controllers/client_controller.dart';
 import 'models/client_model.dart';
@@ -110,58 +112,100 @@ class ClientsView extends StatelessWidget {
                 const SizedBox(height: 16),
 
                 // Información adicional del usuario
-                Row(
-                  children: [
-                    Expanded(
-                      child: _InfoCard(
-                        icon: Icons.badge,
-                        label: 'Documento',
-                        value: client.document,
-                        color: Colors.orange.shade400,
-                      ),
+                ResponsiveWidget.isSmallScreen(context)
+                    ? Column(
+                      children: [
+                        _InfoCard(
+                          icon: Icons.badge,
+                          label: 'Documento',
+                          value: client.document,
+                          color: Colors.orange.shade400,
+                        ),
+                        const SizedBox(height: 12),
+                        _InfoCard(
+                          icon: Icons.email,
+                          label: 'Email',
+                          value: client.email ?? 'No especificado',
+                          color: Colors.purple.shade400,
+                        ),
+                        const SizedBox(height: 12),
+                        _InfoCard(
+                          icon: Icons.phone,
+                          label: 'Teléfono',
+                          value:
+                              client.phone != null && client.phone!.isNotEmpty
+                                  ? client.phone!
+                                  : 'No registrado',
+                          color: Colors.green.shade400,
+                        ),
+                        const SizedBox(height: 12),
+                        _InfoCard(
+                          icon: Icons.business,
+                          label: 'Empresa',
+                          value:
+                              client.company != null &&
+                                      client.company!.name.isNotEmpty
+                                  ? client.company!.name
+                                  : 'No especificada',
+                          color: Colors.indigo.shade400,
+                        ),
+                      ],
+                    )
+                    : Column(
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: _InfoCard(
+                                icon: Icons.badge,
+                                label: 'Documento',
+                                value: client.document,
+                                color: Colors.orange.shade400,
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: _InfoCard(
+                                icon: Icons.email,
+                                label: 'Email',
+                                value: client.email ?? 'No especificado',
+                                color: Colors.purple.shade400,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: _InfoCard(
+                                icon: Icons.phone,
+                                label: 'Teléfono',
+                                value:
+                                    client.phone != null &&
+                                            client.phone!.isNotEmpty
+                                        ? client.phone!
+                                        : 'No registrado',
+                                color: Colors.green.shade400,
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: _InfoCard(
+                                icon: Icons.business,
+                                label: 'Empresa',
+                                value:
+                                    client.company != null &&
+                                            client.company!.name.isNotEmpty
+                                        ? client.company!.name
+                                        : 'No especificada',
+                                color: Colors.indigo.shade400,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: _InfoCard(
-                        icon: Icons.email,
-                        label: 'Email',
-                        value: client.email ?? 'No especificado',
-                        color: Colors.purple.shade400,
-                      ),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 12),
-
-                Row(
-                  children: [
-                    Expanded(
-                      child: _InfoCard(
-                        icon: Icons.phone,
-                        label: 'Teléfono',
-                        value:
-                            client.phone != null && client.phone!.isNotEmpty
-                                ? client.phone!
-                                : 'No registrado',
-                        color: Colors.green.shade400,
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: _InfoCard(
-                        icon: Icons.business,
-                        label: 'Empresa',
-                        value:
-                            client.company != null &&
-                                    client.company!.name.isNotEmpty
-                                ? client.company!.name
-                                : 'No especificada',
-                        color: Colors.indigo.shade400,
-                      ),
-                    ),
-                  ],
-                ),
 
                 const SizedBox(height: 16),
 
@@ -230,44 +274,74 @@ class ClientsView extends StatelessWidget {
                     backgroundColor: Colors.transparent,
                     elevation: 0,
                     automaticallyImplyLeading: false,
+                    leading:
+                        ResponsiveWidget.isSmallScreen(context)
+                            ? IconButton(
+                              icon: const Icon(Icons.menu),
+                              color: Colors.blue.shade800,
+                              onPressed: () {
+                                ScaffoldHelper.openParentDrawer(context);
+                              },
+                            )
+                            : null,
                     flexibleSpace: FlexibleSpaceBar(
                       title: Text(
                         'Usuarios del Sistema',
                         style: TextStyle(
                           color: Colors.blue.shade800,
                           fontWeight: FontWeight.bold,
-                          fontSize: 24,
+                          fontSize:
+                              ResponsiveWidget.isSmallScreen(context) ? 18 : 24,
                         ),
                       ),
                       centerTitle: true,
                     ),
                     actions: [
-                      _ModernActionButton(
-                        icon: Icons.refresh,
-                        label: 'Actualizar',
-                        color: Colors.blue.shade400,
-                        onPressed: () {
-                          clientController.fetchClients();
-                        },
-                      ),
-                      const SizedBox(width: 12),
-                      _ModernActionButton(
-                        icon: Icons.add,
-                        label: 'Crear Usuario',
-                        color: Colors.green.shade400,
-                        onPressed: () async {
-                          loading(context);
-                          Get.back();
-                          _showClientModal(context, clientController);
-                        },
-                      ),
-
-                      const SizedBox(width: 16),
+                      ResponsiveWidget.isSmallScreen(context)
+                          ? IconButton(
+                            icon: const Icon(Icons.refresh),
+                            onPressed: () => clientController.fetchClients(),
+                            tooltip: 'Actualizar',
+                          )
+                          : _ModernActionButton(
+                            icon: Icons.refresh,
+                            label: 'Actualizar',
+                            color: Colors.blue.shade400,
+                            onPressed: () {
+                              clientController.fetchClients();
+                            },
+                          ),
+                      if (!ResponsiveWidget.isSmallScreen(context))
+                        const SizedBox(width: 12),
+                      ResponsiveWidget.isSmallScreen(context)
+                          ? IconButton(
+                            icon: const Icon(Icons.add),
+                            onPressed: () async {
+                              loading(context);
+                              Get.back();
+                              _showClientModal(context, clientController);
+                            },
+                            tooltip: 'Crear Usuario',
+                          )
+                          : _ModernActionButton(
+                            icon: Icons.add,
+                            label: 'Crear Usuario',
+                            color: Colors.green.shade400,
+                            onPressed: () async {
+                              loading(context);
+                              Get.back();
+                              _showClientModal(context, clientController);
+                            },
+                          ),
+                      if (!ResponsiveWidget.isSmallScreen(context))
+                        const SizedBox(width: 16),
                     ],
                   ),
                   SliverToBoxAdapter(
                     child: Padding(
-                      padding: const EdgeInsets.all(24),
+                      padding: EdgeInsets.all(
+                        ResponsiveWidget.isSmallScreen(context) ? 12 : 24,
+                      ),
                       child: Column(
                         children: [
                           // Filtros
@@ -398,123 +472,18 @@ class ClientsView extends StatelessWidget {
                                     ),
                                     const SizedBox(height: 16),
 
-                                    // Fila 1: Documento y Email
-                                    Row(
-                                      children: [
-                                        // Documento
-                                        Expanded(
-                                          child: TextField(
-                                            onChanged:
-                                                clientController
-                                                    .updateDocumentFilter,
-                                            decoration: InputDecoration(
-                                              labelText: 'Documento',
-                                              prefixIcon: Icon(
-                                                Icons.badge,
-                                                color: Colors.blue.shade400,
-                                              ),
-                                              border: OutlineInputBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(12),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        const SizedBox(width: 16),
-
-                                        // Email
-                                        Expanded(
-                                          child: TextField(
-                                            onChanged:
-                                                clientController
-                                                    .updateEmailFilter,
-                                            decoration: InputDecoration(
-                                              labelText: 'Email',
-                                              prefixIcon: Icon(
-                                                Icons.email,
-                                                color: Colors.blue.shade400,
-                                              ),
-                                              border: OutlineInputBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(12),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 16),
-
-                                    // Fila 2: Estado y Empresa
-                                    Row(
-                                      children: [
-                                        // Estado (Activo/Inactivo)
-                                        Expanded(
-                                          child: Obx(
-                                            () =>
-                                                DropdownButtonFormField<bool?>(
-                                                  value:
-                                                      clientController
-                                                          .isActiveFilter
-                                                          .value,
-                                                  decoration: InputDecoration(
-                                                    labelText: 'Estado',
-                                                    prefixIcon: Icon(
-                                                      Icons.toggle_on,
-                                                      color:
-                                                          Colors.blue.shade400,
-                                                    ),
-                                                    border: OutlineInputBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                            12,
-                                                          ),
-                                                    ),
-                                                  ),
-                                                  items: const [
-                                                    DropdownMenuItem(
-                                                      value: null,
-                                                      child: Text('Todos'),
-                                                    ),
-                                                    DropdownMenuItem(
-                                                      value: true,
-                                                      child: Text('Activos'),
-                                                    ),
-                                                    DropdownMenuItem(
-                                                      value: false,
-                                                      child: Text('Inactivos'),
-                                                    ),
-                                                  ],
-                                                  onChanged: (value) {
-                                                    clientController
-                                                        .updateIsActiveFilter(
-                                                          value,
-                                                        );
-                                                  },
-                                                ),
-                                          ),
-                                        ),
-                                        const SizedBox(width: 16),
-
-                                        // Empresa
-                                        Expanded(
-                                          child: Obx(
-                                            () => DropdownButtonFormField<
-                                              String
-                                            >(
-                                              value:
+                                    // Filtros responsive
+                                    ResponsiveWidget.isSmallScreen(context)
+                                        ? Column(
+                                          children: [
+                                            TextField(
+                                              onChanged:
                                                   clientController
-                                                          .companyIdFilter
-                                                          .value
-                                                          .isEmpty
-                                                      ? null
-                                                      : clientController
-                                                          .companyIdFilter
-                                                          .value,
+                                                      .updateDocumentFilter,
                                               decoration: InputDecoration(
-                                                labelText: 'Empresa',
+                                                labelText: 'Documento',
                                                 prefixIcon: Icon(
-                                                  Icons.business,
+                                                  Icons.badge,
                                                   color: Colors.blue.shade400,
                                                 ),
                                                 border: OutlineInputBorder(
@@ -522,102 +491,446 @@ class ClientsView extends StatelessWidget {
                                                       BorderRadius.circular(12),
                                                 ),
                                               ),
-                                              items: [
-                                                const DropdownMenuItem(
-                                                  value: null,
-                                                  child: Text('Todas'),
-                                                ),
-                                                ...clientController.companies
-                                                    .map(
-                                                      (company) =>
-                                                          DropdownMenuItem(
-                                                            value: company.id,
-                                                            child: Text(
-                                                              company.name,
-                                                            ),
-                                                          ),
-                                                    ),
-                                              ],
-                                              onChanged: (value) {
-                                                clientController
-                                                    .updateCompanyIdFilter(
-                                                      value ?? '',
-                                                    );
-                                              },
                                             ),
-                                          ),
+                                            const SizedBox(height: 16),
+                                            TextField(
+                                              onChanged:
+                                                  clientController
+                                                      .updateEmailFilter,
+                                              decoration: InputDecoration(
+                                                labelText: 'Email',
+                                                prefixIcon: Icon(
+                                                  Icons.email,
+                                                  color: Colors.blue.shade400,
+                                                ),
+                                                border: OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(12),
+                                                ),
+                                              ),
+                                            ),
+                                            const SizedBox(height: 16),
+                                            Obx(
+                                              () => DropdownButtonFormField<
+                                                bool?
+                                              >(
+                                                value:
+                                                    clientController
+                                                        .isActiveFilter
+                                                        .value,
+                                                decoration: InputDecoration(
+                                                  labelText: 'Estado',
+                                                  prefixIcon: Icon(
+                                                    Icons.toggle_on,
+                                                    color: Colors.blue.shade400,
+                                                  ),
+                                                  border: OutlineInputBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          12,
+                                                        ),
+                                                  ),
+                                                ),
+                                                items: const [
+                                                  DropdownMenuItem(
+                                                    value: null,
+                                                    child: Text('Todos'),
+                                                  ),
+                                                  DropdownMenuItem(
+                                                    value: true,
+                                                    child: Text('Activos'),
+                                                  ),
+                                                  DropdownMenuItem(
+                                                    value: false,
+                                                    child: Text('Inactivos'),
+                                                  ),
+                                                ],
+                                                onChanged: (value) {
+                                                  clientController
+                                                      .updateIsActiveFilter(
+                                                        value,
+                                                      );
+                                                },
+                                              ),
+                                            ),
+                                            const SizedBox(height: 16),
+                                            Obx(
+                                              () => DropdownButtonFormField<
+                                                String
+                                              >(
+                                                value:
+                                                    clientController
+                                                            .companyIdFilter
+                                                            .value
+                                                            .isEmpty
+                                                        ? null
+                                                        : clientController
+                                                            .companyIdFilter
+                                                            .value,
+                                                decoration: InputDecoration(
+                                                  labelText: 'Empresa',
+                                                  prefixIcon: Icon(
+                                                    Icons.business,
+                                                    color: Colors.blue.shade400,
+                                                  ),
+                                                  border: OutlineInputBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          12,
+                                                        ),
+                                                  ),
+                                                ),
+                                                items: [
+                                                  const DropdownMenuItem(
+                                                    value: null,
+                                                    child: Text('Todas'),
+                                                  ),
+                                                  ...clientController.companies
+                                                      .map(
+                                                        (company) =>
+                                                            DropdownMenuItem(
+                                                              value: company.id,
+                                                              child: Text(
+                                                                company.name,
+                                                              ),
+                                                            ),
+                                                      ),
+                                                ],
+                                                onChanged: (value) {
+                                                  clientController
+                                                      .updateCompanyIdFilter(
+                                                        value ?? '',
+                                                      );
+                                                },
+                                              ),
+                                            ),
+                                          ],
+                                        )
+                                        : Column(
+                                          children: [
+                                            Row(
+                                              children: [
+                                                Expanded(
+                                                  child: TextField(
+                                                    onChanged:
+                                                        clientController
+                                                            .updateDocumentFilter,
+                                                    decoration: InputDecoration(
+                                                      labelText: 'Documento',
+                                                      prefixIcon: Icon(
+                                                        Icons.badge,
+                                                        color:
+                                                            Colors
+                                                                .blue
+                                                                .shade400,
+                                                      ),
+                                                      border: OutlineInputBorder(
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                              12,
+                                                            ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                const SizedBox(width: 16),
+                                                Expanded(
+                                                  child: TextField(
+                                                    onChanged:
+                                                        clientController
+                                                            .updateEmailFilter,
+                                                    decoration: InputDecoration(
+                                                      labelText: 'Email',
+                                                      prefixIcon: Icon(
+                                                        Icons.email,
+                                                        color:
+                                                            Colors
+                                                                .blue
+                                                                .shade400,
+                                                      ),
+                                                      border: OutlineInputBorder(
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                              12,
+                                                            ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            const SizedBox(height: 16),
+                                            Row(
+                                              children: [
+                                                Expanded(
+                                                  child: Obx(
+                                                    () => DropdownButtonFormField<
+                                                      bool?
+                                                    >(
+                                                      value:
+                                                          clientController
+                                                              .isActiveFilter
+                                                              .value,
+                                                      decoration: InputDecoration(
+                                                        labelText: 'Estado',
+                                                        prefixIcon: Icon(
+                                                          Icons.toggle_on,
+                                                          color:
+                                                              Colors
+                                                                  .blue
+                                                                  .shade400,
+                                                        ),
+                                                        border: OutlineInputBorder(
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                12,
+                                                              ),
+                                                        ),
+                                                      ),
+                                                      items: const [
+                                                        DropdownMenuItem(
+                                                          value: null,
+                                                          child: Text('Todos'),
+                                                        ),
+                                                        DropdownMenuItem(
+                                                          value: true,
+                                                          child: Text(
+                                                            'Activos',
+                                                          ),
+                                                        ),
+                                                        DropdownMenuItem(
+                                                          value: false,
+                                                          child: Text(
+                                                            'Inactivos',
+                                                          ),
+                                                        ),
+                                                      ],
+                                                      onChanged: (value) {
+                                                        clientController
+                                                            .updateIsActiveFilter(
+                                                              value,
+                                                            );
+                                                      },
+                                                    ),
+                                                  ),
+                                                ),
+                                                const SizedBox(width: 16),
+                                                Expanded(
+                                                  child: Obx(
+                                                    () => DropdownButtonFormField<
+                                                      String
+                                                    >(
+                                                      value:
+                                                          clientController
+                                                                  .companyIdFilter
+                                                                  .value
+                                                                  .isEmpty
+                                                              ? null
+                                                              : clientController
+                                                                  .companyIdFilter
+                                                                  .value,
+                                                      decoration: InputDecoration(
+                                                        labelText: 'Empresa',
+                                                        prefixIcon: Icon(
+                                                          Icons.business,
+                                                          color:
+                                                              Colors
+                                                                  .blue
+                                                                  .shade400,
+                                                        ),
+                                                        border: OutlineInputBorder(
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                12,
+                                                              ),
+                                                        ),
+                                                      ),
+                                                      items: [
+                                                        const DropdownMenuItem(
+                                                          value: null,
+                                                          child: Text('Todas'),
+                                                        ),
+                                                        ...clientController
+                                                            .companies
+                                                            .map(
+                                                              (company) =>
+                                                                  DropdownMenuItem(
+                                                                    value:
+                                                                        company
+                                                                            .id,
+                                                                    child: Text(
+                                                                      company
+                                                                          .name,
+                                                                    ),
+                                                                  ),
+                                                            ),
+                                                      ],
+                                                      onChanged: (value) {
+                                                        clientController
+                                                            .updateCompanyIdFilter(
+                                                              value ?? '',
+                                                            );
+                                                      },
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
                                         ),
-                                      ],
-                                    ),
                                     const SizedBox(height: 16),
 
                                     // Botones de acción
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        OutlinedButton.icon(
-                                          onPressed: () {
-                                            clientController.clearAllFilters();
-                                          },
-                                          icon: Icon(
-                                            Icons.clear_all,
-                                            color: Colors.red.shade600,
-                                            size: 18,
-                                          ),
-                                          label: Text(
-                                            'Limpiar Filtros',
-                                            style: TextStyle(
-                                              color: Colors.red.shade600,
-                                              fontWeight: FontWeight.w600,
+                                    ResponsiveWidget.isSmallScreen(context)
+                                        ? Column(
+                                          children: [
+                                            SizedBox(
+                                              width: double.infinity,
+                                              child: OutlinedButton.icon(
+                                                onPressed: () {
+                                                  clientController
+                                                      .clearAllFilters();
+                                                },
+                                                icon: Icon(
+                                                  Icons.clear_all,
+                                                  color: Colors.red.shade600,
+                                                  size: 18,
+                                                ),
+                                                label: Text(
+                                                  'Limpiar Filtros',
+                                                  style: TextStyle(
+                                                    color: Colors.red.shade600,
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                ),
+                                                style: OutlinedButton.styleFrom(
+                                                  padding:
+                                                      const EdgeInsets.symmetric(
+                                                        horizontal: 20,
+                                                        vertical: 12,
+                                                      ),
+                                                  side: BorderSide(
+                                                    color: Colors.red.shade400,
+                                                  ),
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          12,
+                                                        ),
+                                                  ),
+                                                ),
+                                              ),
                                             ),
-                                          ),
-                                          style: OutlinedButton.styleFrom(
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: 20,
-                                              vertical: 12,
+                                            const SizedBox(height: 12),
+                                            SizedBox(
+                                              width: double.infinity,
+                                              child: ElevatedButton.icon(
+                                                onPressed: () {
+                                                  clientController
+                                                      .applyFilters();
+                                                },
+                                                icon: const Icon(
+                                                  Icons.check,
+                                                  color: Colors.white,
+                                                  size: 18,
+                                                ),
+                                                label: const Text(
+                                                  'Aplicar Filtros',
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                ),
+                                                style: ElevatedButton.styleFrom(
+                                                  backgroundColor:
+                                                      Colors.blue.shade600,
+                                                  padding:
+                                                      const EdgeInsets.symmetric(
+                                                        horizontal: 20,
+                                                        vertical: 12,
+                                                      ),
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          12,
+                                                        ),
+                                                  ),
+                                                  elevation: 2,
+                                                ),
+                                              ),
                                             ),
-                                            side: BorderSide(
-                                              color: Colors.red.shade400,
+                                          ],
+                                        )
+                                        : Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          children: [
+                                            OutlinedButton.icon(
+                                              onPressed: () {
+                                                clientController
+                                                    .clearAllFilters();
+                                              },
+                                              icon: Icon(
+                                                Icons.clear_all,
+                                                color: Colors.red.shade600,
+                                                size: 18,
+                                              ),
+                                              label: Text(
+                                                'Limpiar Filtros',
+                                                style: TextStyle(
+                                                  color: Colors.red.shade600,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                              style: OutlinedButton.styleFrom(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                      horizontal: 20,
+                                                      vertical: 12,
+                                                    ),
+                                                side: BorderSide(
+                                                  color: Colors.red.shade400,
+                                                ),
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(12),
+                                                ),
+                                              ),
                                             ),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
+                                            const SizedBox(width: 12),
+                                            ElevatedButton.icon(
+                                              onPressed: () {
+                                                clientController.applyFilters();
+                                              },
+                                              icon: const Icon(
+                                                Icons.check,
+                                                color: Colors.white,
+                                                size: 18,
+                                              ),
+                                              label: const Text(
+                                                'Aplicar Filtros',
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor:
+                                                    Colors.blue.shade600,
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                      horizontal: 20,
+                                                      vertical: 12,
+                                                    ),
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(12),
+                                                ),
+                                                elevation: 2,
+                                              ),
                                             ),
-                                          ),
+                                          ],
                                         ),
-                                        const SizedBox(width: 12),
-                                        ElevatedButton.icon(
-                                          onPressed: () {
-                                            clientController.applyFilters();
-                                          },
-                                          icon: const Icon(
-                                            Icons.check,
-                                            color: Colors.white,
-                                            size: 18,
-                                          ),
-                                          label: const Text(
-                                            'Aplicar Filtros',
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor:
-                                                Colors.blue.shade600,
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: 20,
-                                              vertical: 12,
-                                            ),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
-                                            ),
-                                            elevation: 2,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
                                   ],
                                 ),
                               ],
@@ -796,100 +1109,206 @@ class ClientsView extends StatelessWidget {
   }
 
   Widget _buildPaginationControls(ClientController controller) {
+    final isSmallScreen = ResponsiveWidget.isSmallScreen(Get.context!);
+
     return Obx(() {
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
+      return isSmallScreen
+          ? Column(
             children: [
-              const Text('Mostrar'),
-              const SizedBox(width: 8),
-              Container(
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey.shade300),
-                  borderRadius: BorderRadius.circular(8),
-                  color: Colors.grey.shade50,
-                ),
-                child: DropdownButtonHideUnderline(
-                  child: Obx(
-                    () => DropdownButton<int>(
-                      value: controller.limit.value,
-                      items:
-                          [10, 25, 50, 100].map((int value) {
-                            return DropdownMenuItem<int>(
-                              value: value,
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                ),
-                                child: Text('$value'),
-                              ),
-                            );
-                          }).toList(),
-                      onChanged: (int? newValue) {
-                        if (newValue != null) {
-                          controller.setLimit(newValue);
-                        }
-                      },
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text('Mostrar'),
+                  const SizedBox(width: 8),
+                  Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey.shade300),
+                      borderRadius: BorderRadius.circular(8),
+                      color: Colors.grey.shade50,
+                    ),
+                    child: DropdownButtonHideUnderline(
+                      child: Obx(
+                        () => DropdownButton<int>(
+                          value: controller.limit.value,
+                          items:
+                              [10, 25, 50, 100].map((int value) {
+                                return DropdownMenuItem<int>(
+                                  value: value,
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                    ),
+                                    child: Text('$value'),
+                                  ),
+                                );
+                              }).toList(),
+                          onChanged: (int? newValue) {
+                            if (newValue != null) {
+                              controller.setLimit(newValue);
+                            }
+                          },
+                        ),
+                      ),
                     ),
                   ),
-                ),
+                  const SizedBox(width: 8),
+                  const Text('por página'),
+                ],
               ),
-              const SizedBox(width: 8),
-              const Text('registros por página'),
-            ],
-          ),
-          Row(
-            children: [
-              IconButton(
-                icon: Icon(
-                  Icons.chevron_left,
-                  color:
-                      controller.currentPage.value > 1
-                          ? Colors.blue.shade600
-                          : Colors.grey.shade400,
-                ),
-                onPressed:
-                    controller.currentPage.value > 1
-                        ? () =>
-                            controller.setPage(controller.currentPage.value - 1)
-                        : null,
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 6,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.blue.shade100,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  'Página ${controller.currentPage.value} de ${controller.totalPages.value}',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blue.shade700,
+              const SizedBox(height: 12),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                    icon: Icon(
+                      Icons.chevron_left,
+                      color:
+                          controller.currentPage.value > 1
+                              ? Colors.blue.shade600
+                              : Colors.grey.shade400,
+                    ),
+                    onPressed:
+                        controller.currentPage.value > 1
+                            ? () => controller.setPage(
+                              controller.currentPage.value - 1,
+                            )
+                            : null,
                   ),
-                ),
-              ),
-              IconButton(
-                icon: Icon(
-                  Icons.chevron_right,
-                  color:
-                      controller.currentPage.value < controller.totalPages.value
-                          ? Colors.blue.shade600
-                          : Colors.grey.shade400,
-                ),
-                onPressed:
-                    controller.currentPage.value < controller.totalPages.value
-                        ? () =>
-                            controller.setPage(controller.currentPage.value + 1)
-                        : null,
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.blue.shade100,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      '${controller.currentPage.value}/${controller.totalPages.value}',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue.shade700,
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    icon: Icon(
+                      Icons.chevron_right,
+                      color:
+                          controller.currentPage.value <
+                                  controller.totalPages.value
+                              ? Colors.blue.shade600
+                              : Colors.grey.shade400,
+                    ),
+                    onPressed:
+                        controller.currentPage.value <
+                                controller.totalPages.value
+                            ? () => controller.setPage(
+                              controller.currentPage.value + 1,
+                            )
+                            : null,
+                  ),
+                ],
               ),
             ],
-          ),
-        ],
-      );
+          )
+          : Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  const Text('Mostrar'),
+                  const SizedBox(width: 8),
+                  Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey.shade300),
+                      borderRadius: BorderRadius.circular(8),
+                      color: Colors.grey.shade50,
+                    ),
+                    child: DropdownButtonHideUnderline(
+                      child: Obx(
+                        () => DropdownButton<int>(
+                          value: controller.limit.value,
+                          items:
+                              [10, 25, 50, 100].map((int value) {
+                                return DropdownMenuItem<int>(
+                                  value: value,
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                    ),
+                                    child: Text('$value'),
+                                  ),
+                                );
+                              }).toList(),
+                          onChanged: (int? newValue) {
+                            if (newValue != null) {
+                              controller.setLimit(newValue);
+                            }
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  const Text('registros por página'),
+                ],
+              ),
+              Row(
+                children: [
+                  IconButton(
+                    icon: Icon(
+                      Icons.chevron_left,
+                      color:
+                          controller.currentPage.value > 1
+                              ? Colors.blue.shade600
+                              : Colors.grey.shade400,
+                    ),
+                    onPressed:
+                        controller.currentPage.value > 1
+                            ? () => controller.setPage(
+                              controller.currentPage.value - 1,
+                            )
+                            : null,
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.blue.shade100,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      'Página ${controller.currentPage.value} de ${controller.totalPages.value}',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue.shade700,
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    icon: Icon(
+                      Icons.chevron_right,
+                      color:
+                          controller.currentPage.value <
+                                  controller.totalPages.value
+                              ? Colors.blue.shade600
+                              : Colors.grey.shade400,
+                    ),
+                    onPressed:
+                        controller.currentPage.value <
+                                controller.totalPages.value
+                            ? () => controller.setPage(
+                              controller.currentPage.value + 1,
+                            )
+                            : null,
+                  ),
+                ],
+              ),
+            ],
+          );
     });
   }
 }

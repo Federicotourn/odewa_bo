@@ -5,6 +5,8 @@ import 'package:odewa_bo/controllers/logged_user_controller.dart';
 import 'package:odewa_bo/routing/routes.dart';
 import 'package:odewa_bo/pages/companies/models/company_model.dart';
 import 'package:odewa_bo/pages/companies/services/company_service.dart';
+import 'package:odewa_bo/helpers/responsiveness.dart';
+import 'package:odewa_bo/helpers/scaffold_helper.dart';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -56,101 +58,230 @@ class RequestsView extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Header con información de la solicitud
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: RequestStatus.getColor(
-                          request.status,
-                        ).withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Icon(
-                        Icons.request_page,
-                        color: RequestStatus.getColor(request.status),
-                        size: 24,
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Solicitud #${request.id.substring(0, 8)}',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.teal.shade800,
+                ResponsiveWidget.isSmallScreen(Get.context!)
+                    ? Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: RequestStatus.getColor(
+                                  request.status,
+                                ).withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Icon(
+                                Icons.request_page,
+                                color: RequestStatus.getColor(request.status),
+                                size: 24,
+                              ),
                             ),
-                          ),
-                          Row(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 4,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: RequestStatus.getColor(
-                                    request.status,
-                                  ).withValues(alpha: 0.1),
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Text(
-                                  RequestStatus.getLabel(request.status),
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
-                                    color: RequestStatus.getColor(
-                                      request.status,
-                                    ),
-                                  ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Text(
+                                'Solicitud #${request.id.substring(0, 8)}',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.teal.shade800,
                                 ),
                               ),
-                              const SizedBox(width: 8),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 4,
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: RequestStatus.getColor(
+                                  request.status,
+                                ).withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Text(
+                                RequestStatus.getLabel(request.status),
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                  color: RequestStatus.getColor(request.status),
                                 ),
-                                decoration: BoxDecoration(
+                              ),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color:
+                                    request.isActive
+                                        ? Colors.green.shade100
+                                        : Colors.red.shade100,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Text(
+                                request.isActive ? 'Activa' : 'Inactiva',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
                                   color:
                                       request.isActive
-                                          ? Colors.green.shade100
-                                          : Colors.red.shade100,
-                                  borderRadius: BorderRadius.circular(12),
+                                          ? Colors.green.shade700
+                                          : Colors.red.shade700,
                                 ),
-                                child: Text(
-                                  request.isActive ? 'Activa' : 'Inactiva',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
-                                    color:
-                                        request.isActive
-                                            ? Colors.green.shade700
-                                            : Colors.red.shade700,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    )
+                    : Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: RequestStatus.getColor(
+                              request.status,
+                            ).withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Icon(
+                            Icons.request_page,
+                            color: RequestStatus.getColor(request.status),
+                            size: 24,
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Solicitud #${request.id.substring(0, 8)}',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.teal.shade800,
+                                ),
+                              ),
+                              Row(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 4,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: RequestStatus.getColor(
+                                        request.status,
+                                      ).withValues(alpha: 0.1),
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Text(
+                                      RequestStatus.getLabel(request.status),
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w600,
+                                        color: RequestStatus.getColor(
+                                          request.status,
+                                        ),
+                                      ),
+                                    ),
                                   ),
-                                ),
+                                  const SizedBox(width: 8),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 4,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color:
+                                          request.isActive
+                                              ? Colors.green.shade100
+                                              : Colors.red.shade100,
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Text(
+                                      request.isActive ? 'Activa' : 'Inactiva',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w600,
+                                        color:
+                                            request.isActive
+                                                ? Colors.green.shade700
+                                                : Colors.red.shade700,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
 
                 const SizedBox(height: 16),
 
-                Row(
-                  children: [
-                    // Información del cliente
-                    if (request.client != null) ...[
-                      Expanded(
-                        child: Container(
-                          height: 75,
+                ResponsiveWidget.isSmallScreen(Get.context!)
+                    ? Column(
+                      children: [
+                        if (request.client != null) ...[
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: Colors.amber.shade50,
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: Colors.amber.shade200),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.person,
+                                  color: Colors.amber.shade600,
+                                  size: 20,
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Cliente: ${request.client!.fullName}',
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.amber.shade800,
+                                        ),
+                                      ),
+                                      Text(
+                                        'Documento: ${request.client!.document}',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.amber.shade600,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                        ],
+                        Container(
+                          width: double.infinity,
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
                             color: Colors.amber.shade50,
@@ -160,122 +291,197 @@ class RequestsView extends StatelessWidget {
                           child: Row(
                             children: [
                               Icon(
-                                Icons.person,
+                                Icons.business,
                                 color: Colors.amber.shade600,
                                 size: 20,
                               ),
                               const SizedBox(width: 12),
                               Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Cliente: ${request.client!.fullName}',
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w600,
-                                        color: Colors.amber.shade800,
-                                      ),
-                                    ),
-                                    Text(
-                                      'Documento: ${request.client!.document}',
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.amber.shade600,
-                                      ),
-                                    ),
-                                  ],
+                                child: Text(
+                                  'Empresa: ${request.client?.company?.name ?? 'N/A'}',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.amber.shade800,
+                                  ),
                                 ),
                               ),
                             ],
                           ),
                         ),
-                      ),
-                    ],
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Container(
-                        height: 75,
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: Colors.amber.shade50,
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: Colors.amber.shade200),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.person,
-                              color: Colors.amber.shade600,
-                              size: 20,
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Text(
-                                'Empresa: ${request.client!.company!.name}',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.amber.shade800,
+                      ],
+                    )
+                    : Row(
+                      children: [
+                        if (request.client != null) ...[
+                          Expanded(
+                            child: Container(
+                              height: 75,
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: Colors.amber.shade50,
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: Colors.amber.shade200,
                                 ),
                               ),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.person,
+                                    color: Colors.amber.shade600,
+                                    size: 20,
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Cliente: ${request.client!.fullName}',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w600,
+                                            color: Colors.amber.shade800,
+                                          ),
+                                        ),
+                                        Text(
+                                          'Documento: ${request.client!.document}',
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.amber.shade600,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ],
+                          ),
+                          const SizedBox(width: 16),
+                        ],
+                        Expanded(
+                          child: Container(
+                            height: 75,
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: Colors.amber.shade50,
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: Colors.amber.shade200),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.business,
+                                  color: Colors.amber.shade600,
+                                  size: 20,
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Text(
+                                    'Empresa: ${request.client?.company?.name ?? 'N/A'}',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.amber.shade800,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
-                      ),
+                      ],
                     ),
-                  ],
-                ),
 
                 const SizedBox(height: 16),
 
                 // Información de la solicitud
-                Row(
-                  children: [
-                    Expanded(
-                      child: _InfoCard(
-                        icon: Icons.attach_money,
-                        label: 'Monto',
-                        value: '\$${request.amount}',
-                        color: Colors.green.shade400,
-                      ),
+                ResponsiveWidget.isSmallScreen(Get.context!)
+                    ? Column(
+                      children: [
+                        _InfoCard(
+                          icon: Icons.attach_money,
+                          label: 'Monto',
+                          value: '\$${request.amount}',
+                          color: Colors.green.shade400,
+                        ),
+                        const SizedBox(height: 12),
+                        _InfoCard(
+                          icon: Icons.calendar_today,
+                          label: 'Fecha',
+                          value: DateFormat(
+                            'dd/MM/yyyy',
+                          ).format(DateTime.parse(request.date)),
+                          color: Colors.blue.shade400,
+                        ),
+                      ],
+                    )
+                    : Row(
+                      children: [
+                        Expanded(
+                          child: _InfoCard(
+                            icon: Icons.attach_money,
+                            label: 'Monto',
+                            value: '\$${request.amount}',
+                            color: Colors.green.shade400,
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: _InfoCard(
+                            icon: Icons.calendar_today,
+                            label: 'Fecha',
+                            value: DateFormat(
+                              'dd/MM/yyyy',
+                            ).format(DateTime.parse(request.date)),
+                            color: Colors.blue.shade400,
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: _InfoCard(
-                        icon: Icons.calendar_today,
-                        label: 'Fecha',
-                        value: DateFormat(
-                          'dd/MM/yyyy',
-                        ).format(DateTime.parse(request.date)),
-                        color: Colors.blue.shade400,
-                      ),
-                    ),
-                  ],
-                ),
 
                 const SizedBox(height: 16),
 
                 // Acciones (solo para admins)
                 if (isAdmin)
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      _CompactActionButton(
-                        icon: Icons.visibility,
-                        label: 'Ver Detalle',
-                        color: Colors.teal.shade400,
-                        onPressed: () {
-                          // Seleccionar la solicitud en el controller
-                          controller.selectRequestForDetail(request);
-                          // Navegar a la vista detallada usando el router
-                          navigationController.navigateTo(
-                            requestDetailPageRoute,
-                          );
-                        },
+                  ResponsiveWidget.isSmallScreen(Get.context!)
+                      ? SizedBox(
+                        width: double.infinity,
+                        child: _CompactActionButton(
+                          icon: Icons.visibility,
+                          label: 'Ver Detalle',
+                          color: Colors.teal.shade400,
+                          onPressed: () {
+                            // Seleccionar la solicitud en el controller
+                            controller.selectRequestForDetail(request);
+                            // Navegar a la vista detallada usando el router
+                            navigationController.navigateTo(
+                              requestDetailPageRoute,
+                            );
+                          },
+                        ),
+                      )
+                      : Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          _CompactActionButton(
+                            icon: Icons.visibility,
+                            label: 'Ver Detalle',
+                            color: Colors.teal.shade400,
+                            onPressed: () {
+                              // Seleccionar la solicitud en el controller
+                              controller.selectRequestForDetail(request);
+                              // Navegar a la vista detallada usando el router
+                              navigationController.navigateTo(
+                                requestDetailPageRoute,
+                              );
+                            },
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
               ],
             ),
           ),
@@ -315,67 +521,95 @@ class RequestsView extends StatelessWidget {
                     backgroundColor: Colors.transparent,
                     elevation: 0,
                     automaticallyImplyLeading: false,
+                    leading:
+                        ResponsiveWidget.isSmallScreen(context)
+                            ? IconButton(
+                              icon: const Icon(Icons.menu),
+                              color: Colors.teal.shade800,
+                              onPressed: () {
+                                ScaffoldHelper.openParentDrawer(context);
+                              },
+                            )
+                            : null,
                     flexibleSpace: FlexibleSpaceBar(
                       title: Text(
                         'Solicitudes del Sistema',
                         style: TextStyle(
                           color: Colors.teal.shade800,
                           fontWeight: FontWeight.bold,
-                          fontSize: 24,
+                          fontSize:
+                              ResponsiveWidget.isSmallScreen(context) ? 18 : 24,
                         ),
                       ),
                       centerTitle: true,
                     ),
                     actions: [
-                      // if (loggedUserController.hasPermission('REQUEST_CREATE'))
-                      //   _ModernActionButton(
-                      //     icon: Icons.add,
-                      //     label: 'Crear Solicitud',
-                      //     color: Colors.green.shade400,
-                      //     onPressed: () async {
-                      //       loading(context);
-                      //       Get.back();
-                      //       _showRequestModal(context, requestsController);
-                      //     },
-                      //   ),
-                      const SizedBox(width: 12),
-                      _ModernActionButton(
-                        icon: Icons.refresh,
-                        label: 'Actualizar',
-                        color: Colors.teal.shade400,
-                        onPressed: () {
-                          requestsController.loadRequests();
-                        },
-                      ),
-                      const SizedBox(width: 16),
-                      Obx(
-                        () => _ModernActionButton(
-                          icon:
-                              requestsController.isLoading.value
-                                  ? Icons.hourglass_empty
-                                  : Icons.download,
-                          label:
-                              requestsController.isLoading.value
-                                  ? 'Exportando...'
-                                  : 'Exportar',
-                          color:
-                              requestsController.isLoading.value
-                                  ? Colors.grey.shade400
-                                  : Colors.blue.shade400,
-                          onPressed:
-                              requestsController.isLoading.value
-                                  ? () {} // Función vacía cuando está cargando
-                                  : () {
-                                    requestsController.exportRequests();
-                                  },
-                        ),
-                      ),
-                      const SizedBox(width: 16),
+                      ResponsiveWidget.isSmallScreen(context)
+                          ? IconButton(
+                            icon: const Icon(Icons.refresh),
+                            onPressed: () => requestsController.loadRequests(),
+                            tooltip: 'Actualizar',
+                          )
+                          : _ModernActionButton(
+                            icon: Icons.refresh,
+                            label: 'Actualizar',
+                            color: Colors.teal.shade400,
+                            onPressed: () {
+                              requestsController.loadRequests();
+                            },
+                          ),
+                      if (!ResponsiveWidget.isSmallScreen(context))
+                        const SizedBox(width: 12),
+                      ResponsiveWidget.isSmallScreen(context)
+                          ? Obx(
+                            () => IconButton(
+                              icon: Icon(
+                                requestsController.isLoading.value
+                                    ? Icons.hourglass_empty
+                                    : Icons.download,
+                              ),
+                              onPressed:
+                                  requestsController.isLoading.value
+                                      ? null
+                                      : () =>
+                                          requestsController.exportRequests(),
+                              tooltip:
+                                  requestsController.isLoading.value
+                                      ? 'Exportando...'
+                                      : 'Exportar',
+                            ),
+                          )
+                          : Obx(
+                            () => _ModernActionButton(
+                              icon:
+                                  requestsController.isLoading.value
+                                      ? Icons.hourglass_empty
+                                      : Icons.download,
+                              label:
+                                  requestsController.isLoading.value
+                                      ? 'Exportando...'
+                                      : 'Exportar',
+                              color:
+                                  requestsController.isLoading.value
+                                      ? Colors.grey.shade400
+                                      : Colors.blue.shade400,
+                              onPressed:
+                                  requestsController.isLoading.value
+                                      ? () {}
+                                      : () {
+                                        requestsController.exportRequests();
+                                      },
+                            ),
+                          ),
+                      if (!ResponsiveWidget.isSmallScreen(context))
+                        const SizedBox(width: 16),
                     ],
                   ),
                   SliverToBoxAdapter(
                     child: Padding(
-                      padding: const EdgeInsets.all(24),
+                      padding: EdgeInsets.all(
+                        ResponsiveWidget.isSmallScreen(context) ? 12 : 24,
+                      ),
                       child: Column(
                         children: [
                           // Filtros
@@ -395,50 +629,105 @@ class RequestsView extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Row(
-                                  children: [
-                                    Icon(
-                                      Icons.filter_list,
-                                      color: Colors.teal.shade600,
-                                      size: 24,
-                                    ),
-                                    const SizedBox(width: 12),
-                                    Text(
-                                      'Filtros',
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.teal.shade800,
-                                      ),
-                                    ),
-                                    const Spacer(),
-                                    Obx(() {
-                                      if (requestsController.hasActiveFilters) {
-                                        return Container(
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 8,
-                                            vertical: 4,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            color: Colors.teal.shade100,
-                                            borderRadius: BorderRadius.circular(
-                                              12,
+                                ResponsiveWidget.isSmallScreen(context)
+                                    ? Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Icon(
+                                              Icons.filter_list,
+                                              color: Colors.teal.shade600,
+                                              size: 24,
                                             ),
-                                          ),
-                                          child: Text(
-                                            'Filtros activos',
-                                            style: TextStyle(
-                                              color: Colors.teal.shade700,
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w600,
+                                            const SizedBox(width: 12),
+                                            Expanded(
+                                              child: Text(
+                                                'Filtros',
+                                                style: TextStyle(
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.teal.shade800,
+                                                ),
+                                              ),
                                             ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Obx(() {
+                                          if (requestsController
+                                              .hasActiveFilters) {
+                                            return Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal: 8,
+                                                    vertical: 4,
+                                                  ),
+                                              decoration: BoxDecoration(
+                                                color: Colors.teal.shade100,
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                              ),
+                                              child: Text(
+                                                'Filtros activos',
+                                                style: TextStyle(
+                                                  color: Colors.teal.shade700,
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                            );
+                                          }
+                                          return const SizedBox.shrink();
+                                        }),
+                                      ],
+                                    )
+                                    : Row(
+                                      children: [
+                                        Icon(
+                                          Icons.filter_list,
+                                          color: Colors.teal.shade600,
+                                          size: 24,
+                                        ),
+                                        const SizedBox(width: 12),
+                                        Text(
+                                          'Filtros',
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.teal.shade800,
                                           ),
-                                        );
-                                      }
-                                      return const SizedBox.shrink();
-                                    }),
-                                  ],
-                                ),
+                                        ),
+                                        const Spacer(),
+                                        Obx(() {
+                                          if (requestsController
+                                              .hasActiveFilters) {
+                                            return Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal: 8,
+                                                    vertical: 4,
+                                                  ),
+                                              decoration: BoxDecoration(
+                                                color: Colors.teal.shade100,
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                              ),
+                                              child: Text(
+                                                'Filtros activos',
+                                                style: TextStyle(
+                                                  color: Colors.teal.shade700,
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                            );
+                                          }
+                                          return const SizedBox.shrink();
+                                        }),
+                                      ],
+                                    ),
                                 const SizedBox(height: 16),
 
                                 // Indicador de filtros activos
@@ -454,41 +743,109 @@ class RequestsView extends StatelessWidget {
                                           color: Colors.teal.shade200,
                                         ),
                                       ),
-                                      child: Row(
-                                        children: [
-                                          Icon(
-                                            Icons.info_outline,
-                                            color: Colors.teal.shade600,
-                                            size: 16,
-                                          ),
-                                          const SizedBox(width: 8),
-                                          Expanded(
-                                            child: Text(
-                                              requestsController
-                                                  .activeFiltersDescription,
-                                              style: TextStyle(
-                                                color: Colors.teal.shade800,
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w500,
+                                      child:
+                                          ResponsiveWidget.isSmallScreen(
+                                                context,
+                                              )
+                                              ? Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Row(
+                                                    children: [
+                                                      Icon(
+                                                        Icons.info_outline,
+                                                        color:
+                                                            Colors
+                                                                .teal
+                                                                .shade600,
+                                                        size: 16,
+                                                      ),
+                                                      const SizedBox(width: 8),
+                                                      Expanded(
+                                                        child: Text(
+                                                          requestsController
+                                                              .activeFiltersDescription,
+                                                          style: TextStyle(
+                                                            color:
+                                                                Colors
+                                                                    .teal
+                                                                    .shade800,
+                                                            fontSize: 12,
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  const SizedBox(height: 8),
+                                                  SizedBox(
+                                                    width: double.infinity,
+                                                    child: TextButton(
+                                                      onPressed:
+                                                          () =>
+                                                              requestsController
+                                                                  .clearAllFilters(),
+                                                      child: Text(
+                                                        'Limpiar',
+                                                        style: TextStyle(
+                                                          color:
+                                                              Colors
+                                                                  .teal
+                                                                  .shade600,
+                                                          fontSize: 12,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              )
+                                              : Row(
+                                                children: [
+                                                  Icon(
+                                                    Icons.info_outline,
+                                                    color: Colors.teal.shade600,
+                                                    size: 16,
+                                                  ),
+                                                  const SizedBox(width: 8),
+                                                  Expanded(
+                                                    child: Text(
+                                                      requestsController
+                                                          .activeFiltersDescription,
+                                                      style: TextStyle(
+                                                        color:
+                                                            Colors
+                                                                .teal
+                                                                .shade800,
+                                                        fontSize: 12,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  TextButton(
+                                                    onPressed:
+                                                        () =>
+                                                            requestsController
+                                                                .clearAllFilters(),
+                                                    child: Text(
+                                                      'Limpiar',
+                                                      style: TextStyle(
+                                                        color:
+                                                            Colors
+                                                                .teal
+                                                                .shade600,
+                                                        fontSize: 12,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
-                                            ),
-                                          ),
-                                          TextButton(
-                                            onPressed:
-                                                () =>
-                                                    requestsController
-                                                        .clearAllFilters(),
-                                            child: Text(
-                                              'Limpiar',
-                                              style: TextStyle(
-                                                color: Colors.teal.shade600,
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
                                     );
                                   }
                                   return const SizedBox.shrink();
@@ -518,57 +875,104 @@ class RequestsView extends StatelessWidget {
                                     ),
                                     const SizedBox(height: 16),
 
-                                    // Filtros en fila
-                                    Row(
-                                      children: [
-                                        // Estado
-                                        Expanded(
-                                          child: DropdownButtonFormField<
-                                            String
-                                          >(
-                                            value:
-                                                requestsController
-                                                    .statusFilter
-                                                    .value,
-                                            decoration: InputDecoration(
-                                              labelText: 'Estado',
-                                              border: OutlineInputBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(12),
+                                    // Filtros responsive
+                                    ResponsiveWidget.isSmallScreen(context)
+                                        ? Column(
+                                          children: [
+                                            DropdownButtonFormField<String>(
+                                              value:
+                                                  requestsController
+                                                      .statusFilter
+                                                      .value,
+                                              decoration: InputDecoration(
+                                                labelText: 'Estado',
+                                                border: OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(12),
+                                                ),
                                               ),
-                                            ),
-                                            items: [
-                                              DropdownMenuItem(
-                                                value: 'all',
-                                                child: Text('Todos'),
-                                              ),
-                                              ...RequestStatus.allStatuses.map(
-                                                (status) => DropdownMenuItem(
-                                                  value: status,
-                                                  child: Text(
-                                                    RequestStatus.getLabel(
-                                                      status,
+                                              items: [
+                                                DropdownMenuItem(
+                                                  value: 'all',
+                                                  child: Text('Todos'),
+                                                ),
+                                                ...RequestStatus.allStatuses.map(
+                                                  (status) => DropdownMenuItem(
+                                                    value: status,
+                                                    child: Text(
+                                                      RequestStatus.getLabel(
+                                                        status,
+                                                      ),
                                                     ),
                                                   ),
                                                 ),
+                                              ],
+                                              onChanged: (value) {
+                                                if (value != null) {
+                                                  requestsController
+                                                      .updateStatusFilter(
+                                                        value,
+                                                      );
+                                                }
+                                              },
+                                            ),
+                                            const SizedBox(height: 16),
+                                            _buildDateRangeFilter(),
+                                          ],
+                                        )
+                                        : Row(
+                                          children: [
+                                            Expanded(
+                                              child: DropdownButtonFormField<
+                                                String
+                                              >(
+                                                value:
+                                                    requestsController
+                                                        .statusFilter
+                                                        .value,
+                                                decoration: InputDecoration(
+                                                  labelText: 'Estado',
+                                                  border: OutlineInputBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          12,
+                                                        ),
+                                                  ),
+                                                ),
+                                                items: [
+                                                  DropdownMenuItem(
+                                                    value: 'all',
+                                                    child: Text('Todos'),
+                                                  ),
+                                                  ...RequestStatus.allStatuses.map(
+                                                    (
+                                                      status,
+                                                    ) => DropdownMenuItem(
+                                                      value: status,
+                                                      child: Text(
+                                                        RequestStatus.getLabel(
+                                                          status,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                                onChanged: (value) {
+                                                  if (value != null) {
+                                                    requestsController
+                                                        .updateStatusFilter(
+                                                          value,
+                                                        );
+                                                  }
+                                                },
                                               ),
-                                            ],
-                                            onChanged: (value) {
-                                              if (value != null) {
-                                                requestsController
-                                                    .updateStatusFilter(value);
-                                              }
-                                            },
-                                          ),
+                                            ),
+                                            const SizedBox(width: 16),
+                                            Expanded(
+                                              child: _buildDateRangeFilter(),
+                                            ),
+                                          ],
                                         ),
-                                        const SizedBox(width: 16),
-
-                                        // Rango de fechas
-                                        Expanded(
-                                          child: _buildDateRangeFilter(),
-                                        ),
-                                      ],
-                                    ),
                                     const SizedBox(height: 16),
 
                                     // Filtro de empresas (solo para admins)
@@ -683,45 +1087,97 @@ class RequestsView extends StatelessWidget {
                               );
                             }
 
+                            final isSmallScreen =
+                                ResponsiveWidget.isSmallScreen(Get.context!);
+
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Row(
-                                  children: [
-                                    Icon(
-                                      Icons.list,
-                                      color: Colors.teal.shade600,
-                                      size: 24,
-                                    ),
-                                    const SizedBox(width: 12),
-                                    Text(
-                                      'Solicitudes Registradas',
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.teal.shade800,
-                                      ),
-                                    ),
-                                    const Spacer(),
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 12,
-                                        vertical: 6,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: Colors.teal.shade100,
-                                        borderRadius: BorderRadius.circular(20),
-                                      ),
-                                      child: Text(
-                                        '${requests.length} solicitudes',
-                                        style: TextStyle(
-                                          color: Colors.teal.shade700,
-                                          fontWeight: FontWeight.w600,
+                                isSmallScreen
+                                    ? Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Icon(
+                                              Icons.list,
+                                              color: Colors.teal.shade600,
+                                              size: 24,
+                                            ),
+                                            const SizedBox(width: 12),
+                                            Expanded(
+                                              child: Text(
+                                                'Solicitudes Registradas',
+                                                style: TextStyle(
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.teal.shade800,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                      ),
+                                        const SizedBox(height: 8),
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 12,
+                                            vertical: 6,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: Colors.teal.shade100,
+                                            borderRadius: BorderRadius.circular(
+                                              20,
+                                            ),
+                                          ),
+                                          child: Text(
+                                            '${requests.length} solicitudes',
+                                            style: TextStyle(
+                                              color: Colors.teal.shade700,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                    : Row(
+                                      children: [
+                                        Icon(
+                                          Icons.list,
+                                          color: Colors.teal.shade600,
+                                          size: 24,
+                                        ),
+                                        const SizedBox(width: 12),
+                                        Text(
+                                          'Solicitudes Registradas',
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.teal.shade800,
+                                          ),
+                                        ),
+                                        const Spacer(),
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 12,
+                                            vertical: 6,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: Colors.teal.shade100,
+                                            borderRadius: BorderRadius.circular(
+                                              20,
+                                            ),
+                                          ),
+                                          child: Text(
+                                            '${requests.length} solicitudes',
+                                            style: TextStyle(
+                                              color: Colors.teal.shade700,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ],
-                                ),
                                 const SizedBox(height: 20),
                                 ...requests.map(
                                   (request) => _buildRequestCard(
@@ -776,97 +1232,196 @@ class RequestsView extends StatelessWidget {
   }
 
   Widget _buildPaginationControls(RequestController controller) {
+    final isSmallScreen = ResponsiveWidget.isSmallScreen(Get.context!);
+
     return Obx(() {
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
+      return isSmallScreen
+          ? Column(
             children: [
-              const Text('Mostrar'),
-              const SizedBox(width: 8),
-              Container(
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey.shade300),
-                  borderRadius: BorderRadius.circular(8),
-                  color: Colors.grey.shade50,
-                ),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<int>(
-                    value: controller.limit.value,
-                    items:
-                        [10, 25, 50, 100].map((int value) {
-                          return DropdownMenuItem<int>(
-                            value: value,
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                              ),
-                              child: Text('$value'),
-                            ),
-                          );
-                        }).toList(),
-                    onChanged: (int? newValue) {
-                      if (newValue != null) {
-                        controller.limit.value = newValue;
-                        controller.loadRequests();
-                      }
-                    },
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text('Mostrar'),
+                  const SizedBox(width: 8),
+                  Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey.shade300),
+                      borderRadius: BorderRadius.circular(8),
+                      color: Colors.grey.shade50,
+                    ),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<int>(
+                        value: controller.limit.value,
+                        items:
+                            [10, 25, 50, 100].map((int value) {
+                              return DropdownMenuItem<int>(
+                                value: value,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                  ),
+                                  child: Text('$value'),
+                                ),
+                              );
+                            }).toList(),
+                        onChanged: (int? newValue) {
+                          if (newValue != null) {
+                            controller.limit.value = newValue;
+                            controller.loadRequests();
+                          }
+                        },
+                      ),
+                    ),
                   ),
-                ),
+                  const SizedBox(width: 8),
+                  const Text('por página'),
+                ],
               ),
-              const SizedBox(width: 8),
-              const Text('registros por página'),
+              const SizedBox(height: 12),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                    icon: Icon(
+                      Icons.chevron_left,
+                      color:
+                          controller.currentPage.value > 1
+                              ? Colors.teal.shade600
+                              : Colors.grey.shade400,
+                    ),
+                    onPressed:
+                        controller.currentPage.value > 1
+                            ? controller.previousPage
+                            : null,
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.teal.shade100,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      '${controller.currentPage.value}/${controller.totalPagesValue}',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.teal.shade700,
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    icon: Icon(
+                      Icons.chevron_right,
+                      color:
+                          controller.currentPage.value <
+                                  controller.totalPagesValue
+                              ? Colors.teal.shade600
+                              : Colors.grey.shade400,
+                    ),
+                    onPressed:
+                        controller.currentPage.value <
+                                controller.totalPagesValue
+                            ? controller.nextPage
+                            : null,
+                  ),
+                ],
+              ),
             ],
-          ),
-          Row(
+          )
+          : Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              IconButton(
-                icon: Icon(
-                  Icons.chevron_left,
-                  color:
-                      controller.currentPage.value > 1
-                          ? Colors.teal.shade600
-                          : Colors.grey.shade400,
-                ),
-                onPressed:
-                    controller.currentPage.value > 1
-                        ? controller.previousPage
-                        : null,
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 6,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.teal.shade100,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  'Página ${controller.currentPage.value} de ${controller.totalPagesValue}',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.teal.shade700,
+              Row(
+                children: [
+                  const Text('Mostrar'),
+                  const SizedBox(width: 8),
+                  Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey.shade300),
+                      borderRadius: BorderRadius.circular(8),
+                      color: Colors.grey.shade50,
+                    ),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<int>(
+                        value: controller.limit.value,
+                        items:
+                            [10, 25, 50, 100].map((int value) {
+                              return DropdownMenuItem<int>(
+                                value: value,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                  ),
+                                  child: Text('$value'),
+                                ),
+                              );
+                            }).toList(),
+                        onChanged: (int? newValue) {
+                          if (newValue != null) {
+                            controller.limit.value = newValue;
+                            controller.loadRequests();
+                          }
+                        },
+                      ),
+                    ),
                   ),
-                ),
+                  const SizedBox(width: 8),
+                  const Text('registros por página'),
+                ],
               ),
-              IconButton(
-                icon: Icon(
-                  Icons.chevron_right,
-                  color:
-                      controller.currentPage.value < controller.totalPagesValue
-                          ? Colors.teal.shade600
-                          : Colors.grey.shade400,
-                ),
-                onPressed:
-                    controller.currentPage.value < controller.totalPagesValue
-                        ? controller.nextPage
-                        : null,
+              Row(
+                children: [
+                  IconButton(
+                    icon: Icon(
+                      Icons.chevron_left,
+                      color:
+                          controller.currentPage.value > 1
+                              ? Colors.teal.shade600
+                              : Colors.grey.shade400,
+                    ),
+                    onPressed:
+                        controller.currentPage.value > 1
+                            ? controller.previousPage
+                            : null,
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.teal.shade100,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      'Página ${controller.currentPage.value} de ${controller.totalPagesValue}',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.teal.shade700,
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    icon: Icon(
+                      Icons.chevron_right,
+                      color:
+                          controller.currentPage.value <
+                                  controller.totalPagesValue
+                              ? Colors.teal.shade600
+                              : Colors.grey.shade400,
+                    ),
+                    onPressed:
+                        controller.currentPage.value <
+                                controller.totalPagesValue
+                            ? controller.nextPage
+                            : null,
+                  ),
+                ],
               ),
             ],
-          ),
-        ],
-      );
+          );
     });
   }
 

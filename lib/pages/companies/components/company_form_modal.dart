@@ -1,6 +1,7 @@
 import 'package:odewa_bo/constants/app_theme.dart';
 import 'package:odewa_bo/pages/companies/controllers/company_controller.dart';
 import 'package:odewa_bo/widgets/custom_text.dart';
+import 'package:odewa_bo/helpers/responsiveness.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -19,10 +20,15 @@ class CompanyFormModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isSmallScreen = ResponsiveWidget.isSmallScreen(context);
+
     return Dialog(
       backgroundColor: Colors.transparent,
       child: Container(
-        width: 500,
+        width: isSmallScreen ? Get.width * 0.95 : 500,
+        constraints: BoxConstraints(
+          maxHeight: isSmallScreen ? Get.height * 0.9 : Get.height * 0.8,
+        ),
         padding: const EdgeInsets.all(0),
         decoration: BoxDecoration(
           color: Colors.white,
@@ -37,15 +43,21 @@ class CompanyFormModal extends StatelessWidget {
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          children: [_buildHeader(), _buildForm(), _buildActions()],
+          children: [
+            _buildHeader(context),
+            _buildForm(context),
+            _buildActions(context),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(BuildContext context) {
+    final isSmallScreen = ResponsiveWidget.isSmallScreen(context);
+
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: EdgeInsets.all(isSmallScreen ? 16 : 24),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
@@ -57,47 +69,97 @@ class CompanyFormModal extends StatelessWidget {
           topRight: Radius.circular(16),
         ),
       ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Icon(Icons.business, color: Colors.white, size: 24),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                CustomText(
-                  text: title,
-                  size: 20,
-                  weight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-                CustomText(
-                  text: "Complete la información de la empresa",
-                  size: 14,
-                  color: Colors.white.withValues(alpha: 0.9),
-                ),
-              ],
-            ),
-          ),
-          IconButton(
-            onPressed: () => Get.back(),
-            icon: const Icon(Icons.close, color: Colors.white),
-          ),
-        ],
-      ),
+      child:
+          isSmallScreen
+              ? Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.2),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Icon(
+                          Icons.business,
+                          color: Colors.white,
+                          size: 24,
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: CustomText(
+                          text: title,
+                          size: 18,
+                          weight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () => Get.back(),
+                        icon: const Icon(Icons.close, color: Colors.white),
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  CustomText(
+                    text: "Complete la información de la empresa",
+                    size: 12,
+                    color: Colors.white.withValues(alpha: 0.9),
+                  ),
+                ],
+              )
+              : Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(
+                      Icons.business,
+                      color: Colors.white,
+                      size: 24,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CustomText(
+                          text: title,
+                          size: 20,
+                          weight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                        CustomText(
+                          text: "Complete la información de la empresa",
+                          size: 14,
+                          color: Colors.white.withValues(alpha: 0.9),
+                        ),
+                      ],
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () => Get.back(),
+                    icon: const Icon(Icons.close, color: Colors.white),
+                  ),
+                ],
+              ),
     );
   }
 
-  Widget _buildForm() {
+  Widget _buildForm(BuildContext context) {
+    final isSmallScreen = ResponsiveWidget.isSmallScreen(context);
+
     return Padding(
-      padding: const EdgeInsets.all(24),
+      padding: EdgeInsets.all(isSmallScreen ? 16 : 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -183,9 +245,11 @@ class CompanyFormModal extends StatelessWidget {
     );
   }
 
-  Widget _buildActions() {
+  Widget _buildActions(BuildContext context) {
+    final isSmallScreen = ResponsiveWidget.isSmallScreen(context);
+
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: EdgeInsets.all(isSmallScreen ? 16 : 24),
       decoration: BoxDecoration(
         color: Colors.grey.shade50,
         borderRadius: const BorderRadius.only(
@@ -193,57 +257,127 @@ class CompanyFormModal extends StatelessWidget {
           bottomRight: Radius.circular(16),
         ),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          TextButton(
-            onPressed: () => Get.back(),
-            style: TextButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
-            child: const Text(
-              'Cancelar',
-              style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w600),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Obx(
-            () => ElevatedButton(
-              onPressed: controller.isLoading.value ? null : onSubmit,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.active,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 12,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-              child:
-                  controller.isLoading.value
-                      ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(
-                          color: Colors.white,
-                          strokeWidth: 2,
+      child:
+          isSmallScreen
+              ? Column(
+                children: [
+                  SizedBox(
+                    width: double.infinity,
+                    child: TextButton(
+                      onPressed: () => Get.back(),
+                      style: TextButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 24,
+                          vertical: 12,
                         ),
-                      )
-                      : const Text(
-                        'Guardar',
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      child: const Text(
+                        'Cancelar',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: Colors.grey,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-            ),
-          ),
-        ],
-      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    width: double.infinity,
+                    child: Obx(
+                      () => ElevatedButton(
+                        onPressed: controller.isLoading.value ? null : onSubmit,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppTheme.active,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 24,
+                            vertical: 12,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child:
+                            controller.isLoading.value
+                                ? const SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                                : const Text(
+                                  'Guardar',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                      ),
+                    ),
+                  ),
+                ],
+              )
+              : Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () => Get.back(),
+                    style: TextButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24,
+                        vertical: 12,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: const Text(
+                      'Cancelar',
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Obx(
+                    () => ElevatedButton(
+                      onPressed: controller.isLoading.value ? null : onSubmit,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppTheme.active,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 24,
+                          vertical: 12,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      child:
+                          controller.isLoading.value
+                              ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2,
+                                ),
+                              )
+                              : const Text(
+                                'Guardar',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                    ),
+                  ),
+                ],
+              ),
     );
   }
 }

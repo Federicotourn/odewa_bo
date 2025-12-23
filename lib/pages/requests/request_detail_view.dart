@@ -3,6 +3,8 @@ import 'package:odewa_bo/pages/requests/controllers/request_controller.dart';
 import 'package:odewa_bo/pages/requests/models/request_model.dart';
 import 'package:odewa_bo/pages/companies/models/company_model.dart';
 import 'package:odewa_bo/pages/requests/components/receipt_upload_dialog.dart';
+import 'package:odewa_bo/helpers/responsiveness.dart';
+import 'package:odewa_bo/helpers/scaffold_helper.dart';
 import 'package:intl/intl.dart';
 // import 'package:odewa_bo/controllers/logged_user_controller.dart';
 
@@ -50,12 +52,21 @@ class RequestDetailView extends StatelessWidget {
                   style: TextStyle(
                     color: Colors.teal.shade800,
                     fontWeight: FontWeight.bold,
-                    fontSize: 24,
+                    fontSize: ResponsiveWidget.isSmallScreen(context) ? 18 : 24,
                   ),
                 ),
                 centerTitle: true,
               ),
               actions: [
+                if (ResponsiveWidget.isSmallScreen(context))
+                  IconButton(
+                    icon: const Icon(Icons.menu),
+                    color: Colors.teal.shade800,
+                    onPressed: () {
+                      ScaffoldHelper.openParentDrawer(context);
+                    },
+                    tooltip: 'Menú',
+                  ),
                 IconButton(
                   icon: Icon(Icons.refresh, color: Colors.teal.shade800),
                   onPressed: () => requestController.loadRequests(),
@@ -67,7 +78,9 @@ class RequestDetailView extends StatelessWidget {
             // Contenido principal
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.all(24),
+                padding: EdgeInsets.all(
+                  ResponsiveWidget.isSmallScreen(context) ? 12 : 24,
+                ),
                 child: Obx(() {
                   // Usar directamente el objeto request pasado como parámetro
                   return Column(
@@ -177,101 +190,182 @@ class RequestDetailView extends StatelessWidget {
                     Text(
                       'Solicitud #${request.id.substring(0, 8)}',
                       style: TextStyle(
-                        fontSize: 24,
+                        fontSize:
+                            ResponsiveWidget.isSmallScreen(context) ? 20 : 24,
                         fontWeight: FontWeight.bold,
                         color: Colors.teal.shade800,
                       ),
                     ),
                     const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 6,
-                          ),
-                          decoration: BoxDecoration(
-                            color: RequestStatus.getColor(
-                              request.status,
-                            ).withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Text(
-                            RequestStatus.getLabel(request.status),
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: RequestStatus.getColor(request.status),
+                    ResponsiveWidget.isSmallScreen(context)
+                        ? Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 6,
+                              ),
+                              decoration: BoxDecoration(
+                                color: RequestStatus.getColor(
+                                  request.status,
+                                ).withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Text(
+                                RequestStatus.getLabel(request.status),
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                  color: RequestStatus.getColor(request.status),
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 6,
-                          ),
-                          decoration: BoxDecoration(
-                            color:
-                                request.isActive
-                                    ? Colors.green.shade100
-                                    : Colors.red.shade100,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Text(
-                            request.isActive ? 'Activa' : 'Inactiva',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color:
-                                  request.isActive
-                                      ? Colors.green.shade700
-                                      : Colors.red.shade700,
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 6,
+                              ),
+                              decoration: BoxDecoration(
+                                color:
+                                    request.isActive
+                                        ? Colors.green.shade100
+                                        : Colors.red.shade100,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Text(
+                                request.isActive ? 'Activa' : 'Inactiva',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                  color:
+                                      request.isActive
+                                          ? Colors.green.shade700
+                                          : Colors.red.shade700,
+                                ),
+                              ),
                             ),
-                          ),
+                          ],
+                        )
+                        : Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 6,
+                              ),
+                              decoration: BoxDecoration(
+                                color: RequestStatus.getColor(
+                                  request.status,
+                                ).withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Text(
+                                RequestStatus.getLabel(request.status),
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: RequestStatus.getColor(request.status),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 6,
+                              ),
+                              decoration: BoxDecoration(
+                                color:
+                                    request.isActive
+                                        ? Colors.green.shade100
+                                        : Colors.red.shade100,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Text(
+                                request.isActive ? 'Activa' : 'Inactiva',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color:
+                                      request.isActive
+                                          ? Colors.green.shade700
+                                          : Colors.red.shade700,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
                   ],
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 20),
-          Row(
-            children: [
-              Expanded(
-                child: _InfoCard(
-                  icon: Icons.attach_money,
-                  label: 'Monto',
-                  value: '\$${request.amount}',
-                  color: Colors.green.shade400,
-                ),
+          SizedBox(height: ResponsiveWidget.isSmallScreen(context) ? 16 : 20),
+          ResponsiveWidget.isSmallScreen(context)
+              ? Column(
+                children: [
+                  _InfoCard(
+                    icon: Icons.attach_money,
+                    label: 'Monto',
+                    value: '\$${request.amount}',
+                    color: Colors.green.shade400,
+                  ),
+                  const SizedBox(height: 12),
+                  _InfoCard(
+                    icon: Icons.calendar_today,
+                    label: 'Fecha',
+                    value: DateFormat(
+                      'dd/MM/yyyy',
+                    ).format(DateTime.parse(request.date)),
+                    color: Colors.blue.shade400,
+                  ),
+                  const SizedBox(height: 12),
+                  _InfoCard(
+                    icon: Icons.access_time,
+                    label: 'Creada',
+                    value: DateFormat(
+                      'dd/MM/yyyy HH:mm',
+                    ).format(request.createdAt.toLocal()),
+                    color: Colors.purple.shade400,
+                  ),
+                ],
+              )
+              : Row(
+                children: [
+                  Expanded(
+                    child: _InfoCard(
+                      icon: Icons.attach_money,
+                      label: 'Monto',
+                      value: '\$${request.amount}',
+                      color: Colors.green.shade400,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: _InfoCard(
+                      icon: Icons.calendar_today,
+                      label: 'Fecha',
+                      value: DateFormat(
+                        'dd/MM/yyyy',
+                      ).format(DateTime.parse(request.date)),
+                      color: Colors.blue.shade400,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: _InfoCard(
+                      icon: Icons.access_time,
+                      label: 'Creada',
+                      value: DateFormat(
+                        'dd/MM/yyyy HH:mm',
+                      ).format(request.createdAt.toLocal()),
+                      color: Colors.purple.shade400,
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: _InfoCard(
-                  icon: Icons.calendar_today,
-                  label: 'Fecha',
-                  value: DateFormat(
-                    'dd/MM/yyyy',
-                  ).format(DateTime.parse(request.date)),
-                  color: Colors.blue.shade400,
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: _InfoCard(
-                  icon: Icons.access_time,
-                  label: 'Creada',
-                  value: DateFormat(
-                    'dd/MM/yyyy HH:mm',
-                  ).format(request.createdAt.toLocal()),
-                  color: Colors.purple.shade400,
-                ),
-              ),
-            ],
-          ),
         ],
       ),
     );
@@ -347,8 +441,10 @@ class RequestDetailView extends StatelessWidget {
   }
 
   Widget _buildClientInfo(RequestClient client) {
+    final isSmallScreen = ResponsiveWidget.isSmallScreen(Get.context!);
+
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: EdgeInsets.all(isSmallScreen ? 16 : 24),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -367,57 +463,98 @@ class RequestDetailView extends StatelessWidget {
             children: [
               Icon(Icons.person, color: Colors.amber.shade600, size: 24),
               const SizedBox(width: 12),
-              Text(
-                'Información del Cliente',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.amber.shade800,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          Row(
-            children: [
               Expanded(
-                child: _InfoCard(
-                  icon: Icons.person,
-                  label: 'Nombre Completo',
-                  value: client.fullName,
-                  color: Colors.amber.shade600,
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: _InfoCard(
-                  icon: Icons.email,
-                  label: 'Email',
-                  value: client.email,
-                  color: Colors.blue.shade600,
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: _InfoCard(
-                  icon: Icons.credit_card,
-                  label: 'Documento',
-                  value: client.document,
-                  color: Colors.green.shade600,
-                ),
-              ),
-              if (client.employeeNumber != null &&
-                  client.employeeNumber!.isNotEmpty)
-                Expanded(
-                  child: _InfoCard(
-                    icon: Icons.badge_outlined,
-                    label: 'Número de Empleado',
-                    value: client.employeeNumber!,
-                    color: Colors.orange.shade600,
+                child: Text(
+                  'Información del Cliente',
+                  style: TextStyle(
+                    fontSize: isSmallScreen ? 18 : 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.amber.shade800,
                   ),
                 ),
+              ),
             ],
           ),
+          SizedBox(
+            height: ResponsiveWidget.isSmallScreen(Get.context!) ? 16 : 20,
+          ),
+          ResponsiveWidget.isSmallScreen(Get.context!)
+              ? Column(
+                children: [
+                  _InfoCard(
+                    icon: Icons.person,
+                    label: 'Nombre Completo',
+                    value: client.fullName,
+                    color: Colors.amber.shade600,
+                  ),
+                  const SizedBox(height: 12),
+                  _InfoCard(
+                    icon: Icons.email,
+                    label: 'Email',
+                    value: client.email,
+                    color: Colors.blue.shade600,
+                  ),
+                  const SizedBox(height: 12),
+                  _InfoCard(
+                    icon: Icons.credit_card,
+                    label: 'Documento',
+                    value: client.document,
+                    color: Colors.green.shade600,
+                  ),
+                  if (client.employeeNumber != null &&
+                      client.employeeNumber!.isNotEmpty) ...[
+                    const SizedBox(height: 12),
+                    _InfoCard(
+                      icon: Icons.badge_outlined,
+                      label: 'Número de Empleado',
+                      value: client.employeeNumber!,
+                      color: Colors.orange.shade600,
+                    ),
+                  ],
+                ],
+              )
+              : Row(
+                children: [
+                  Expanded(
+                    child: _InfoCard(
+                      icon: Icons.person,
+                      label: 'Nombre Completo',
+                      value: client.fullName,
+                      color: Colors.amber.shade600,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: _InfoCard(
+                      icon: Icons.email,
+                      label: 'Email',
+                      value: client.email,
+                      color: Colors.blue.shade600,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: _InfoCard(
+                      icon: Icons.credit_card,
+                      label: 'Documento',
+                      value: client.document,
+                      color: Colors.green.shade600,
+                    ),
+                  ),
+                  if (client.employeeNumber != null &&
+                      client.employeeNumber!.isNotEmpty) ...[
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: _InfoCard(
+                        icon: Icons.badge_outlined,
+                        label: 'Número de Empleado',
+                        value: client.employeeNumber!,
+                        color: Colors.orange.shade600,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
           const SizedBox(height: 20),
           infoRow(label: 'ID', value: client.id),
           infoRow(
@@ -494,8 +631,10 @@ class RequestDetailView extends StatelessWidget {
   }
 
   Widget _buildCompanyInfo(Company company) {
+    final isSmallScreen = ResponsiveWidget.isSmallScreen(Get.context!);
+
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: EdgeInsets.all(isSmallScreen ? 16 : 24),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -514,50 +653,82 @@ class RequestDetailView extends StatelessWidget {
             children: [
               Icon(Icons.business, color: Colors.indigo.shade600, size: 24),
               const SizedBox(width: 12),
-              Text(
-                'Información de la Empresa del Cliente',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.indigo.shade800,
+              Expanded(
+                child: Text(
+                  'Información de la Empresa del Cliente',
+                  style: TextStyle(
+                    fontSize: isSmallScreen ? 16 : 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.indigo.shade800,
+                  ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 20),
-          Row(
-            children: [
-              Expanded(
-                child: _InfoCard(
-                  icon: Icons.business,
-                  label: 'Nombre de la Empresa',
-                  value: company.name,
-                  color: Colors.indigo.shade600,
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: _InfoCard(
-                  icon: Icons.people,
-                  label: 'Empleados',
-                  value: '${company.employeeCount}',
-                  color: Colors.green.shade600,
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: _InfoCard(
-                  icon: Icons.toggle_on,
-                  label: 'Estado',
-                  value: company.isActive ? 'Activa' : 'Inactiva',
-                  color:
-                      company.isActive
-                          ? Colors.green.shade600
-                          : Colors.red.shade600,
-                ),
-              ),
-            ],
+          SizedBox(
+            height: ResponsiveWidget.isSmallScreen(Get.context!) ? 16 : 20,
           ),
+          ResponsiveWidget.isSmallScreen(Get.context!)
+              ? Column(
+                children: [
+                  _InfoCard(
+                    icon: Icons.business,
+                    label: 'Nombre de la Empresa',
+                    value: company.name,
+                    color: Colors.indigo.shade600,
+                  ),
+                  const SizedBox(height: 12),
+                  _InfoCard(
+                    icon: Icons.people,
+                    label: 'Empleados',
+                    value: '${company.employeeCount}',
+                    color: Colors.green.shade600,
+                  ),
+                  const SizedBox(height: 12),
+                  _InfoCard(
+                    icon: Icons.toggle_on,
+                    label: 'Estado',
+                    value: company.isActive ? 'Activa' : 'Inactiva',
+                    color:
+                        company.isActive
+                            ? Colors.green.shade600
+                            : Colors.red.shade600,
+                  ),
+                ],
+              )
+              : Row(
+                children: [
+                  Expanded(
+                    child: _InfoCard(
+                      icon: Icons.business,
+                      label: 'Nombre de la Empresa',
+                      value: company.name,
+                      color: Colors.indigo.shade600,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: _InfoCard(
+                      icon: Icons.people,
+                      label: 'Empleados',
+                      value: '${company.employeeCount}',
+                      color: Colors.green.shade600,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: _InfoCard(
+                      icon: Icons.toggle_on,
+                      label: 'Estado',
+                      value: company.isActive ? 'Activa' : 'Inactiva',
+                      color:
+                          company.isActive
+                              ? Colors.green.shade600
+                              : Colors.red.shade600,
+                    ),
+                  ),
+                ],
+              ),
           const SizedBox(height: 20),
           infoRow(label: 'ID de la Empresa', value: company.id),
           infoRow(
@@ -581,9 +752,10 @@ class RequestDetailView extends StatelessWidget {
     final availableStatuses = RequestStatus.getAvailableStatuses(
       request.status,
     );
+    final isSmallScreen = ResponsiveWidget.isSmallScreen(context);
 
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: EdgeInsets.all(isSmallScreen ? 16 : 24),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -602,55 +774,91 @@ class RequestDetailView extends StatelessWidget {
             children: [
               Icon(Icons.update, color: Colors.orange.shade600, size: 24),
               const SizedBox(width: 12),
-              Text(
-                'Cambiar Estado',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.orange.shade800,
+              Expanded(
+                child: Text(
+                  'Cambiar Estado',
+                  style: TextStyle(
+                    fontSize: isSmallScreen ? 18 : 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.orange.shade800,
+                  ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: isSmallScreen ? 12 : 16),
           Text(
             'Estado actual: ${RequestStatus.getLabel(request.status)}',
-            style: TextStyle(fontSize: 16, color: Colors.grey.shade700),
+            style: TextStyle(
+              fontSize: isSmallScreen ? 14 : 16,
+              color: Colors.grey.shade700,
+            ),
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: isSmallScreen ? 16 : 20),
 
           if (availableStatuses.isEmpty) ...[
             Container(
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
               decoration: BoxDecoration(
                 color: Colors.grey.shade100,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: Colors.grey.shade300),
               ),
-              child: Row(
-                children: [
-                  Icon(Icons.info, color: Colors.grey.shade600),
-                  const SizedBox(width: 12),
-                  Text(
-                    'Esta solicitud ha alcanzado un estado final y no puede ser modificada',
-                    style: TextStyle(color: Colors.grey.shade600, fontSize: 14),
-                  ),
-                ],
-              ),
+              child:
+                  isSmallScreen
+                      ? Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.info,
+                                color: Colors.grey.shade600,
+                                size: 20,
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  'Esta solicitud ha alcanzado un estado final y no puede ser modificada',
+                                  style: TextStyle(
+                                    color: Colors.grey.shade600,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      )
+                      : Row(
+                        children: [
+                          Icon(Icons.info, color: Colors.grey.shade600),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              'Esta solicitud ha alcanzado un estado final y no puede ser modificada',
+                              style: TextStyle(
+                                color: Colors.grey.shade600,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
             ),
           ] else ...[
             Text(
               'Estados disponibles:',
               style: TextStyle(
-                fontSize: 16,
+                fontSize: isSmallScreen ? 14 : 16,
                 fontWeight: FontWeight.w600,
                 color: Colors.grey.shade700,
               ),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: isSmallScreen ? 12 : 16),
             Wrap(
-              spacing: 12,
-              runSpacing: 12,
+              spacing: isSmallScreen ? 8 : 12,
+              runSpacing: isSmallScreen ? 8 : 12,
               children:
                   availableStatuses.map((status) {
                     return _StatusChangeButton(
@@ -672,12 +880,12 @@ class RequestDetailView extends StatelessWidget {
             ),
           ],
 
-          const SizedBox(height: 20),
+          SizedBox(height: isSmallScreen ? 16 : 20),
 
           // Flujo de estados
           Obx(
             () => Container(
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
               decoration: BoxDecoration(
                 color: Colors.blue.shade50,
                 borderRadius: BorderRadius.circular(12),
@@ -688,19 +896,25 @@ class RequestDetailView extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.account_tree, color: Colors.blue.shade600),
+                      Icon(
+                        Icons.account_tree,
+                        color: Colors.blue.shade600,
+                        size: isSmallScreen ? 20 : 24,
+                      ),
                       const SizedBox(width: 8),
-                      Text(
-                        'Flujo de Estados',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.blue.shade700,
+                      Expanded(
+                        child: Text(
+                          'Flujo de Estados',
+                          style: TextStyle(
+                            fontSize: isSmallScreen ? 14 : 16,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.blue.shade700,
+                          ),
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 12),
+                  SizedBox(height: isSmallScreen ? 8 : 12),
                   _buildStatusFlow(),
                 ],
               ),
@@ -714,46 +928,81 @@ class RequestDetailView extends StatelessWidget {
   Widget _buildStatusFlow() {
     final requestController = Get.find<RequestController>();
     final status = requestController.selectedRequest.value!.status;
-    return Row(
-      children: [
-        Expanded(
-          child: statusFlowStep(
-            status: 'pending',
-            label: 'Pendiente',
-            isActive: status == 'pending',
-            canTransition: true,
-          ),
-        ),
-        statusFlowArrow(),
-        Expanded(
-          child: statusFlowStep(
-            status: 'approved',
-            label: 'Aprobado',
-            isActive: status == 'approved',
-            canTransition: true,
-          ),
-        ),
-        statusFlowArrow(),
-        Expanded(
-          child: statusFlowStep(
-            status: 'completed',
-            label: 'Completado',
-            isActive: status == 'completed',
-            canTransition: false,
-          ),
-        ),
-        const SizedBox(width: 16),
-        Expanded(
-          child: statusFlowStep(
-            status: 'rejected',
-            label: 'Rechazado',
-            isActive: status == 'rejected',
-            canTransition: false,
-            isRejection: true,
-          ),
-        ),
-      ],
-    );
+    final isSmallScreen = ResponsiveWidget.isSmallScreen(Get.context!);
+
+    return isSmallScreen
+        ? Column(
+          children: [
+            statusFlowStep(
+              status: 'pending',
+              label: 'Pendiente',
+              isActive: status == 'pending',
+              canTransition: true,
+            ),
+            const SizedBox(height: 12),
+            statusFlowStep(
+              status: 'approved',
+              label: 'Aprobado',
+              isActive: status == 'approved',
+              canTransition: true,
+            ),
+            const SizedBox(height: 12),
+            statusFlowStep(
+              status: 'completed',
+              label: 'Completado',
+              isActive: status == 'completed',
+              canTransition: false,
+            ),
+            const SizedBox(height: 12),
+            statusFlowStep(
+              status: 'rejected',
+              label: 'Rechazado',
+              isActive: status == 'rejected',
+              canTransition: false,
+              isRejection: true,
+            ),
+          ],
+        )
+        : Row(
+          children: [
+            Expanded(
+              child: statusFlowStep(
+                status: 'pending',
+                label: 'Pendiente',
+                isActive: status == 'pending',
+                canTransition: true,
+              ),
+            ),
+            statusFlowArrow(),
+            Expanded(
+              child: statusFlowStep(
+                status: 'approved',
+                label: 'Aprobado',
+                isActive: status == 'approved',
+                canTransition: true,
+              ),
+            ),
+            statusFlowArrow(),
+            Expanded(
+              child: statusFlowStep(
+                status: 'completed',
+                label: 'Completado',
+                isActive: status == 'completed',
+                canTransition: false,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: statusFlowStep(
+                status: 'rejected',
+                label: 'Rechazado',
+                isActive: status == 'rejected',
+                canTransition: false,
+                isRejection: true,
+              ),
+            ),
+          ],
+        );
   }
 
   Widget statusFlowStep({
@@ -763,11 +1012,13 @@ class RequestDetailView extends StatelessWidget {
     required bool canTransition,
     bool isRejection = false,
   }) {
+    final isSmallScreen = ResponsiveWidget.isSmallScreen(Get.context!);
+
     return Column(
       children: [
         Container(
-          width: 40,
-          height: 40,
+          width: isSmallScreen ? 36 : 40,
+          height: isSmallScreen ? 36 : 40,
           decoration: BoxDecoration(
             color:
                 isActive
@@ -785,14 +1036,14 @@ class RequestDetailView extends StatelessWidget {
           child: Icon(
             isActive ? Icons.check : Icons.circle,
             color: isActive ? Colors.white : Colors.grey.shade600,
-            size: 20,
+            size: isSmallScreen ? 18 : 20,
           ),
         ),
-        const SizedBox(height: 8),
+        SizedBox(height: isSmallScreen ? 6 : 8),
         Text(
           label,
           style: TextStyle(
-            fontSize: 12,
+            fontSize: isSmallScreen ? 11 : 12,
             fontWeight: FontWeight.w600,
             color:
                 isActive
@@ -800,6 +1051,8 @@ class RequestDetailView extends StatelessWidget {
                     : Colors.grey.shade600,
           ),
           textAlign: TextAlign.center,
+          overflow: TextOverflow.ellipsis,
+          maxLines: 2,
         ),
       ],
     );
@@ -813,30 +1066,55 @@ class RequestDetailView extends StatelessWidget {
   }
 
   Widget infoRow({required String label, required String value}) {
+    final isSmallScreen = ResponsiveWidget.isSmallScreen(Get.context!);
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: 150,
-            child: Text(
-              '$label:',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: Colors.grey.shade700,
+      child:
+          isSmallScreen
+              ? Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey.shade700,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    value,
+                    style: TextStyle(fontSize: 16, color: Colors.grey.shade800),
+                  ),
+                ],
+              )
+              : Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    width: 150,
+                    child: Text(
+                      '$label:',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.grey.shade700,
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Text(
+                      value,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.grey.shade800,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ),
-          Expanded(
-            child: Text(
-              value,
-              style: TextStyle(fontSize: 14, color: Colors.grey.shade800),
-            ),
-          ),
-        ],
-      ),
     );
   }
 
@@ -865,6 +1143,7 @@ class _StatusChangeButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final canChange = RequestStatus.canChangeTo(currentStatus, newStatus);
+    final isSmallScreen = ResponsiveWidget.isSmallScreen(context);
 
     return Container(
       decoration: BoxDecoration(
@@ -882,23 +1161,49 @@ class _StatusChangeButton extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           backgroundColor: RequestStatus.getColor(newStatus),
           foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          padding: EdgeInsets.symmetric(
+            horizontal: isSmallScreen ? 16 : 20,
+            vertical: isSmallScreen ? 10 : 12,
+          ),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
           elevation: 0,
         ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.update, size: 18, color: Colors.white),
-            const SizedBox(width: 8),
-            Text(
-              RequestStatus.getLabel(newStatus),
-              style: const TextStyle(fontWeight: FontWeight.w600),
-            ),
-          ],
-        ),
+        child:
+            isSmallScreen
+                ? Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.update, size: 16, color: Colors.white),
+                    const SizedBox(height: 4),
+                    Flexible(
+                      child: Text(
+                        RequestStatus.getLabel(newStatus),
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 12,
+                        ),
+                        textAlign: TextAlign.center,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                )
+                : Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.update, size: 18, color: Colors.white),
+                    const SizedBox(width: 8),
+                    Flexible(
+                      child: Text(
+                        RequestStatus.getLabel(newStatus),
+                        style: const TextStyle(fontWeight: FontWeight.w600),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
       ),
     );
   }
@@ -919,8 +1224,10 @@ class _InfoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isSmallScreen = ResponsiveWidget.isSmallScreen(context);
+
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
@@ -931,26 +1238,31 @@ class _InfoCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(icon, color: color, size: 18),
+              Icon(icon, color: color, size: isSmallScreen ? 16 : 18),
               const SizedBox(width: 8),
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: color,
+              Expanded(
+                child: Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: isSmallScreen ? 11 : 12,
+                    fontWeight: FontWeight.w600,
+                    color: color,
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: isSmallScreen ? 6 : 8),
           Text(
             value,
             style: TextStyle(
-              fontSize: 16,
+              fontSize: isSmallScreen ? 14 : 16,
               fontWeight: FontWeight.bold,
               color: color,
             ),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 2,
           ),
         ],
       ),

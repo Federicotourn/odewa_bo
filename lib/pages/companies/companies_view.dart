@@ -3,6 +3,8 @@ import 'package:odewa_bo/pages/companies/models/company_model.dart';
 // import 'package:odewa_bo/controllers/logged_user_controller.dart';
 import 'package:odewa_bo/widgets/confirmation_dialog.dart';
 import 'package:odewa_bo/widgets/loading.dart';
+import 'package:odewa_bo/helpers/responsiveness.dart';
+import 'package:odewa_bo/helpers/scaffold_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -110,91 +112,172 @@ class CompaniesView extends StatelessWidget {
                 const SizedBox(height: 16),
 
                 // Información adicional de la empresa
-                Row(
-                  children: [
-                    Expanded(
-                      child: _InfoCard(
-                        icon: Icons.people,
-                        label: 'Empleados',
-                        value: '${company.employeeCount}',
-                        color: Colors.green.shade400,
-                      ),
+                ResponsiveWidget.isSmallScreen(Get.context!)
+                    ? Column(
+                      children: [
+                        _InfoCard(
+                          icon: Icons.people,
+                          label: 'Empleados',
+                          value: '${company.employeeCount}',
+                          color: Colors.green.shade400,
+                        ),
+                        const SizedBox(height: 12),
+                        _InfoCard(
+                          icon: Icons.percent,
+                          label: 'Max Salario',
+                          value:
+                              '${company.maxSalaryPercentage.toStringAsFixed(1)}%',
+                          color: Colors.orange.shade400,
+                        ),
+                        const SizedBox(height: 12),
+                        _InfoCard(
+                          icon: Icons.account_balance_wallet,
+                          label: 'Promedio balance',
+                          value:
+                              company.averageMonthlyBalance != null
+                                  ? '\$${company.averageMonthlyBalance!.toStringAsFixed(0)}'
+                                  : 'N/A',
+                          color: Colors.blue.shade400,
+                        ),
+                      ],
+                    )
+                    : Row(
+                      children: [
+                        Expanded(
+                          child: _InfoCard(
+                            icon: Icons.people,
+                            label: 'Empleados',
+                            value: '${company.employeeCount}',
+                            color: Colors.green.shade400,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: _InfoCard(
+                            icon: Icons.percent,
+                            label: 'Max Salario',
+                            value:
+                                '${company.maxSalaryPercentage.toStringAsFixed(1)}%',
+                            color: Colors.orange.shade400,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: _InfoCard(
+                            icon: Icons.account_balance_wallet,
+                            label: 'Promedio balance',
+                            value:
+                                company.averageMonthlyBalance != null
+                                    ? '\$${company.averageMonthlyBalance!.toStringAsFixed(0)}'
+                                    : 'N/A',
+                            color: Colors.blue.shade400,
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: _InfoCard(
-                        icon: Icons.percent,
-                        label: 'Max Salario',
-                        value:
-                            '${company.maxSalaryPercentage.toStringAsFixed(1)}%',
-                        color: Colors.orange.shade400,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: _InfoCard(
-                        icon: Icons.account_balance_wallet,
-                        label: 'Promedio balance',
-                        value:
-                            company.averageMonthlyBalance != null
-                                ? '\$${company.averageMonthlyBalance!.toStringAsFixed(0)}'
-                                : 'N/A',
-                        color: Colors.blue.shade400,
-                      ),
-                    ),
-                  ],
-                ),
 
                 const SizedBox(height: 16),
 
                 // Acciones
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    // if (loggedUserController.hasPermission('COMPANY_UPDATE'))
-                    _CompactActionButton(
-                      icon: Icons.edit,
-                      label: 'Editar',
-                      color: Colors.blue.shade400,
-                      onPressed: () async {
-                        loading(context);
-                        Get.back();
-                        _showCompanyModal(
-                          context,
-                          controller,
-                          company: company,
-                        );
-                      },
-                    ),
-                    // if (loggedUserController.hasPermission('COMPANY_UPDATE') &&
-                    // loggedUserController.hasPermission('COMPANY_DELETE'))
-                    const SizedBox(width: 12),
-                    // if (loggedUserController.hasPermission('COMPANY_DELETE'))
-                    _CompactActionButton(
-                      icon: Icons.delete,
-                      label: 'Eliminar',
-                      color: Colors.red.shade400,
-                      onPressed:
-                          () => _showDeleteConfirmation(
-                            context,
-                            company,
-                            controller,
+                ResponsiveWidget.isSmallScreen(Get.context!)
+                    ? Column(
+                      children: [
+                        SizedBox(
+                          width: double.infinity,
+                          child: _CompactActionButton(
+                            icon: Icons.edit,
+                            label: 'Editar',
+                            color: Colors.blue.shade400,
+                            onPressed: () async {
+                              loading(context);
+                              Get.back();
+                              _showCompanyModal(
+                                context,
+                                controller,
+                                company: company,
+                              );
+                            },
                           ),
+                        ),
+                        const SizedBox(height: 8),
+                        SizedBox(
+                          width: double.infinity,
+                          child: _CompactActionButton(
+                            icon: Icons.delete,
+                            label: 'Eliminar',
+                            color: Colors.red.shade400,
+                            onPressed:
+                                () => _showDeleteConfirmation(
+                                  context,
+                                  company,
+                                  controller,
+                                ),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        SizedBox(
+                          width: double.infinity,
+                          child: _CompactActionButton(
+                            icon:
+                                company.isActive
+                                    ? Icons.block
+                                    : Icons.check_circle,
+                            label: company.isActive ? 'Desactivar' : 'Activar',
+                            color:
+                                company.isActive
+                                    ? Colors.orange.shade400
+                                    : Colors.green.shade400,
+                            onPressed:
+                                () => controller.toggleCompanyStatus(company),
+                          ),
+                        ),
+                      ],
+                    )
+                    : Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        _CompactActionButton(
+                          icon: Icons.edit,
+                          label: 'Editar',
+                          color: Colors.blue.shade400,
+                          onPressed: () async {
+                            loading(context);
+                            Get.back();
+                            _showCompanyModal(
+                              context,
+                              controller,
+                              company: company,
+                            );
+                          },
+                        ),
+                        const SizedBox(width: 12),
+                        _CompactActionButton(
+                          icon: Icons.delete,
+                          label: 'Eliminar',
+                          color: Colors.red.shade400,
+                          onPressed:
+                              () => _showDeleteConfirmation(
+                                context,
+                                company,
+                                controller,
+                              ),
+                        ),
+                        const SizedBox(width: 12),
+                        _CompactActionButton(
+                          icon:
+                              company.isActive
+                                  ? Icons.block
+                                  : Icons.check_circle,
+                          label: company.isActive ? 'Desactivar' : 'Activar',
+                          color:
+                              company.isActive
+                                  ? Colors.orange.shade400
+                                  : Colors.green.shade400,
+                          onPressed:
+                              () => controller.toggleCompanyStatus(company),
+                        ),
+                      ],
                     ),
-                    // if (loggedUserController.hasPermission('COMPANY_UPDATE'))
-                    const SizedBox(width: 12),
-                    // if (loggedUserController.hasPermission('COMPANY_UPDATE'))
-                    _CompactActionButton(
-                      icon: company.isActive ? Icons.block : Icons.check_circle,
-                      label: company.isActive ? 'Desactivar' : 'Activar',
-                      color:
-                          company.isActive
-                              ? Colors.orange.shade400
-                              : Colors.green.shade400,
-                      onPressed: () => controller.toggleCompanyStatus(company),
-                    ),
-                  ],
-                ),
               ],
             ),
           ),
@@ -517,41 +600,73 @@ class CompaniesView extends StatelessWidget {
                     backgroundColor: Colors.transparent,
                     elevation: 0,
                     automaticallyImplyLeading: false,
+                    leading:
+                        ResponsiveWidget.isSmallScreen(context)
+                            ? IconButton(
+                              icon: const Icon(Icons.menu),
+                              color: Colors.indigo.shade800,
+                              onPressed: () {
+                                ScaffoldHelper.openParentDrawer(context);
+                              },
+                            )
+                            : null,
                     flexibleSpace: FlexibleSpaceBar(
                       title: Text(
                         'Empresas del Sistema',
                         style: TextStyle(
                           color: Colors.indigo.shade800,
                           fontWeight: FontWeight.bold,
-                          fontSize: 24,
+                          fontSize:
+                              ResponsiveWidget.isSmallScreen(context) ? 18 : 24,
                         ),
                       ),
                       centerTitle: true,
                     ),
                     actions: [
-                      _ModernActionButton(
-                        icon: Icons.refresh,
-                        label: 'Actualizar',
-                        color: Colors.indigo.shade400,
-                        onPressed: () {
-                          companiesController.loadCompanies();
-                        },
-                      ),
-                      const SizedBox(width: 12),
-                      _ModernActionButton(
-                        icon: Icons.add,
-                        label: 'Agregar Empresa',
-                        color: Colors.green.shade400,
-                        onPressed: () {
-                          _showCompanyModal(context, companiesController);
-                        },
-                      ),
-                      const SizedBox(width: 16),
+                      ResponsiveWidget.isSmallScreen(context)
+                          ? IconButton(
+                            icon: const Icon(Icons.refresh),
+                            onPressed:
+                                () => companiesController.loadCompanies(),
+                            tooltip: 'Actualizar',
+                          )
+                          : _ModernActionButton(
+                            icon: Icons.refresh,
+                            label: 'Actualizar',
+                            color: Colors.indigo.shade400,
+                            onPressed: () {
+                              companiesController.loadCompanies();
+                            },
+                          ),
+                      if (!ResponsiveWidget.isSmallScreen(context))
+                        const SizedBox(width: 12),
+                      ResponsiveWidget.isSmallScreen(context)
+                          ? IconButton(
+                            icon: const Icon(Icons.add),
+                            onPressed:
+                                () => _showCompanyModal(
+                                  context,
+                                  companiesController,
+                                ),
+                            tooltip: 'Agregar Empresa',
+                          )
+                          : _ModernActionButton(
+                            icon: Icons.add,
+                            label: 'Agregar Empresa',
+                            color: Colors.green.shade400,
+                            onPressed: () {
+                              _showCompanyModal(context, companiesController);
+                            },
+                          ),
+                      if (!ResponsiveWidget.isSmallScreen(context))
+                        const SizedBox(width: 16),
                     ],
                   ),
                   SliverToBoxAdapter(
                     child: Padding(
-                      padding: const EdgeInsets.all(24),
+                      padding: EdgeInsets.all(
+                        ResponsiveWidget.isSmallScreen(context) ? 12 : 24,
+                      ),
                       child: Column(
                         children: [
                           // Lista de empresas
@@ -726,97 +841,196 @@ class CompaniesView extends StatelessWidget {
   }
 
   Widget _buildPaginationControls(CompanyController controller) {
+    final isSmallScreen = ResponsiveWidget.isSmallScreen(Get.context!);
+
     return Obx(() {
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
+      return isSmallScreen
+          ? Column(
             children: [
-              const Text('Mostrar'),
-              const SizedBox(width: 8),
-              Container(
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey.shade300),
-                  borderRadius: BorderRadius.circular(8),
-                  color: Colors.grey.shade50,
-                ),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<int>(
-                    value: controller.limit.value,
-                    items:
-                        [10, 25, 50, 100].map((int value) {
-                          return DropdownMenuItem<int>(
-                            value: value,
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                              ),
-                              child: Text('$value'),
-                            ),
-                          );
-                        }).toList(),
-                    onChanged: (int? newValue) {
-                      if (newValue != null) {
-                        controller.limit.value = newValue;
-                        controller.loadCompanies();
-                      }
-                    },
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text('Mostrar'),
+                  const SizedBox(width: 8),
+                  Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey.shade300),
+                      borderRadius: BorderRadius.circular(8),
+                      color: Colors.grey.shade50,
+                    ),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<int>(
+                        value: controller.limit.value,
+                        items:
+                            [10, 25, 50, 100].map((int value) {
+                              return DropdownMenuItem<int>(
+                                value: value,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                  ),
+                                  child: Text('$value'),
+                                ),
+                              );
+                            }).toList(),
+                        onChanged: (int? newValue) {
+                          if (newValue != null) {
+                            controller.limit.value = newValue;
+                            controller.loadCompanies();
+                          }
+                        },
+                      ),
+                    ),
                   ),
-                ),
+                  const SizedBox(width: 8),
+                  const Text('por página'),
+                ],
               ),
-              const SizedBox(width: 8),
-              const Text('registros por página'),
+              const SizedBox(height: 12),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                    icon: Icon(
+                      Icons.chevron_left,
+                      color:
+                          controller.currentPage.value > 1
+                              ? Colors.indigo.shade600
+                              : Colors.grey.shade400,
+                    ),
+                    onPressed:
+                        controller.currentPage.value > 1
+                            ? controller.previousPage
+                            : null,
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.indigo.shade100,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      '${controller.currentPage.value}/${controller.totalPages.value}',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.indigo.shade700,
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    icon: Icon(
+                      Icons.chevron_right,
+                      color:
+                          controller.currentPage.value <
+                                  controller.totalPages.value
+                              ? Colors.indigo.shade600
+                              : Colors.grey.shade400,
+                    ),
+                    onPressed:
+                        controller.currentPage.value <
+                                controller.totalPages.value
+                            ? controller.nextPage
+                            : null,
+                  ),
+                ],
+              ),
             ],
-          ),
-          Row(
+          )
+          : Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              IconButton(
-                icon: Icon(
-                  Icons.chevron_left,
-                  color:
-                      controller.currentPage.value > 1
-                          ? Colors.indigo.shade600
-                          : Colors.grey.shade400,
-                ),
-                onPressed:
-                    controller.currentPage.value > 1
-                        ? controller.previousPage
-                        : null,
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 6,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.indigo.shade100,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  'Página ${controller.currentPage.value} de ${controller.totalPages.value}',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.indigo.shade700,
+              Row(
+                children: [
+                  const Text('Mostrar'),
+                  const SizedBox(width: 8),
+                  Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey.shade300),
+                      borderRadius: BorderRadius.circular(8),
+                      color: Colors.grey.shade50,
+                    ),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<int>(
+                        value: controller.limit.value,
+                        items:
+                            [10, 25, 50, 100].map((int value) {
+                              return DropdownMenuItem<int>(
+                                value: value,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                  ),
+                                  child: Text('$value'),
+                                ),
+                              );
+                            }).toList(),
+                        onChanged: (int? newValue) {
+                          if (newValue != null) {
+                            controller.limit.value = newValue;
+                            controller.loadCompanies();
+                          }
+                        },
+                      ),
+                    ),
                   ),
-                ),
+                  const SizedBox(width: 8),
+                  const Text('registros por página'),
+                ],
               ),
-              IconButton(
-                icon: Icon(
-                  Icons.chevron_right,
-                  color:
-                      controller.currentPage.value < controller.totalPages.value
-                          ? Colors.indigo.shade600
-                          : Colors.grey.shade400,
-                ),
-                onPressed:
-                    controller.currentPage.value < controller.totalPages.value
-                        ? controller.nextPage
-                        : null,
+              Row(
+                children: [
+                  IconButton(
+                    icon: Icon(
+                      Icons.chevron_left,
+                      color:
+                          controller.currentPage.value > 1
+                              ? Colors.indigo.shade600
+                              : Colors.grey.shade400,
+                    ),
+                    onPressed:
+                        controller.currentPage.value > 1
+                            ? controller.previousPage
+                            : null,
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.indigo.shade100,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      'Página ${controller.currentPage.value} de ${controller.totalPages.value}',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.indigo.shade700,
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    icon: Icon(
+                      Icons.chevron_right,
+                      color:
+                          controller.currentPage.value <
+                                  controller.totalPages.value
+                              ? Colors.indigo.shade600
+                              : Colors.grey.shade400,
+                    ),
+                    onPressed:
+                        controller.currentPage.value <
+                                controller.totalPages.value
+                            ? controller.nextPage
+                            : null,
+                  ),
+                ],
               ),
             ],
-          ),
-        ],
-      );
+          );
     });
   }
 }

@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import '../models/client_model.dart';
 import '../controllers/client_controller.dart';
 import '../../companies/models/company_model.dart';
+import '../../../helpers/responsiveness.dart';
 
 class ClientFormModal extends StatefulWidget {
   final Client? client;
@@ -128,11 +129,15 @@ class _ClientFormModalState extends State<ClientFormModal> {
 
   @override
   Widget build(BuildContext context) {
+    final isSmallScreen = ResponsiveWidget.isSmallScreen(context);
+
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       child: Container(
-        width: Get.width * 0.5,
-        constraints: BoxConstraints(maxHeight: Get.height * 0.8),
+        width: isSmallScreen ? Get.width * 0.95 : Get.width * 0.5,
+        constraints: BoxConstraints(
+          maxHeight: isSmallScreen ? Get.height * 0.9 : Get.height * 0.8,
+        ),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(24),
           gradient: LinearGradient(
@@ -158,55 +163,105 @@ class _ClientFormModalState extends State<ClientFormModal> {
                   colors: [Colors.blue.shade400, Colors.purple.shade400],
                 ),
               ),
-              child: Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.2),
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Icon(
-                      widget.client == null ? Icons.person_add : Icons.edit,
-                      color: Colors.white,
-                      size: 28,
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          widget.client == null
-                              ? 'Crear Nuevo Usuario'
-                              : 'Editar Usuario',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
+              child:
+                  isSmallScreen
+                      ? Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withValues(alpha: 0.2),
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                child: Icon(
+                                  widget.client == null
+                                      ? Icons.person_add
+                                      : Icons.edit,
+                                  color: Colors.white,
+                                  size: 28,
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: Text(
+                                  widget.client == null
+                                      ? 'Crear Nuevo Usuario'
+                                      : 'Editar Usuario',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                        Text(
-                          widget.client == null
-                              ? 'Define un nuevo usuario con sus datos'
-                              : 'Modifica la información del usuario existente',
-                          style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.9),
-                            fontSize: 14,
+                          const SizedBox(height: 8),
+                          Text(
+                            widget.client == null
+                                ? 'Define un nuevo usuario con sus datos'
+                                : 'Modifica la información del usuario existente',
+                            style: TextStyle(
+                              color: Colors.white.withValues(alpha: 0.9),
+                              fontSize: 12,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+                        ],
+                      )
+                      : Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.2),
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: Icon(
+                              widget.client == null
+                                  ? Icons.person_add
+                                  : Icons.edit,
+                              color: Colors.white,
+                              size: 28,
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  widget.client == null
+                                      ? 'Crear Nuevo Usuario'
+                                      : 'Editar Usuario',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Text(
+                                  widget.client == null
+                                      ? 'Define un nuevo usuario con sus datos'
+                                      : 'Modifica la información del usuario existente',
+                                  style: TextStyle(
+                                    color: Colors.white.withValues(alpha: 0.9),
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
             ),
 
             // Contenido del modal
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.all(24),
+                padding: EdgeInsets.all(isSmallScreen ? 16 : 24),
                 child: Form(
                   key: _formKey,
                   child: Column(
@@ -313,7 +368,7 @@ class _ClientFormModalState extends State<ClientFormModal> {
 
             // Footer con acciones
             Container(
-              padding: const EdgeInsets.all(24),
+              padding: EdgeInsets.all(isSmallScreen ? 16 : 24),
               decoration: BoxDecoration(
                 color: Colors.grey.shade50,
                 borderRadius: const BorderRadius.only(
@@ -321,123 +376,296 @@ class _ClientFormModalState extends State<ClientFormModal> {
                   bottomRight: Radius.circular(24),
                 ),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  _ModernOutlinedButton(
-                    label: 'Cancelar',
-                    icon: Icons.close,
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                  const SizedBox(width: 16),
-                  _ModernElevatedButton(
-                    label:
-                        widget.client == null
-                            ? 'Crear Usuario'
-                            : 'Actualizar Usuario',
-                    icon: widget.client == null ? Icons.add : Icons.save,
-                    onPressed: () async {
-                      if (_firstNameController.text.trim().isEmpty ||
-                          _lastNameController.text.trim().isEmpty ||
-                          _documentController.text.trim().isEmpty ||
-                          _emailController.text.trim().isEmpty ||
-                          _selectedCompanyId == null ||
-                          _selectedCompanyId!.isEmpty ||
-                          (widget.client == null &&
-                              _passwordController.text.trim().isEmpty)) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Row(
-                              children: [
-                                Icon(Icons.warning, color: Colors.white),
-                                const SizedBox(width: 8),
-                                const Text(
-                                  'Completa todos los campos obligatorios',
-                                ),
-                              ],
-                            ),
-                            backgroundColor: Colors.orange,
-                            behavior: SnackBarBehavior.floating,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+              child:
+                  isSmallScreen
+                      ? Column(
+                        children: [
+                          SizedBox(
+                            width: double.infinity,
+                            child: _ModernOutlinedButton(
+                              label: 'Cancelar',
+                              icon: Icons.close,
+                              onPressed: () => Navigator.pop(context),
                             ),
                           ),
-                        );
-                        return;
-                      }
+                          const SizedBox(height: 12),
+                          SizedBox(
+                            width: double.infinity,
+                            child: _ModernElevatedButton(
+                              label:
+                                  widget.client == null
+                                      ? 'Crear Usuario'
+                                      : 'Actualizar Usuario',
+                              icon:
+                                  widget.client == null
+                                      ? Icons.add
+                                      : Icons.save,
+                              onPressed: () async {
+                                if (_firstNameController.text.trim().isEmpty ||
+                                    _lastNameController.text.trim().isEmpty ||
+                                    _documentController.text.trim().isEmpty ||
+                                    _emailController.text.trim().isEmpty ||
+                                    _selectedCompanyId == null ||
+                                    _selectedCompanyId!.isEmpty ||
+                                    (widget.client == null &&
+                                        _passwordController.text
+                                            .trim()
+                                            .isEmpty)) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Row(
+                                        children: [
+                                          Icon(
+                                            Icons.warning,
+                                            color: Colors.white,
+                                          ),
+                                          const SizedBox(width: 8),
+                                          const Text(
+                                            'Completa todos los campos obligatorios',
+                                          ),
+                                        ],
+                                      ),
+                                      backgroundColor: Colors.orange,
+                                      behavior: SnackBarBehavior.floating,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                    ),
+                                  );
+                                  return;
+                                }
 
-                      if (!GetUtils.isEmail(_emailController.text.trim())) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Row(
-                              children: [
-                                Icon(Icons.warning, color: Colors.white),
-                                const SizedBox(width: 8),
-                                const Text('Ingresa un email válido'),
-                              ],
-                            ),
-                            backgroundColor: Colors.orange,
-                            behavior: SnackBarBehavior.floating,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                                if (!GetUtils.isEmail(
+                                  _emailController.text.trim(),
+                                )) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Row(
+                                        children: [
+                                          Icon(
+                                            Icons.warning,
+                                            color: Colors.white,
+                                          ),
+                                          const SizedBox(width: 8),
+                                          const Text('Ingresa un email válido'),
+                                        ],
+                                      ),
+                                      backgroundColor: Colors.orange,
+                                      behavior: SnackBarBehavior.floating,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                    ),
+                                  );
+                                  return;
+                                }
+
+                                // Validar balance mensual si no está vacío
+                                if (_monthlyBalanceController.text
+                                        .trim()
+                                        .isNotEmpty &&
+                                    int.tryParse(
+                                          _monthlyBalanceController.text.trim(),
+                                        ) ==
+                                        null) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Row(
+                                        children: [
+                                          Icon(
+                                            Icons.warning,
+                                            color: Colors.white,
+                                          ),
+                                          const SizedBox(width: 8),
+                                          const Text(
+                                            'Ingresa un balance mensual válido',
+                                          ),
+                                        ],
+                                      ),
+                                      backgroundColor: Colors.orange,
+                                      behavior: SnackBarBehavior.floating,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                    ),
+                                  );
+                                  return;
+                                }
+
+                                // Validar contraseña si se está creando un nuevo cliente
+                                if (widget.client == null &&
+                                    _passwordController.text.trim().length <
+                                        6) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Row(
+                                        children: [
+                                          Icon(
+                                            Icons.warning,
+                                            color: Colors.white,
+                                          ),
+                                          const SizedBox(width: 8),
+                                          const Text(
+                                            'La contraseña debe tener al menos 6 caracteres',
+                                          ),
+                                        ],
+                                      ),
+                                      backgroundColor: Colors.orange,
+                                      behavior: SnackBarBehavior.floating,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                    ),
+                                  );
+                                  return;
+                                }
+
+                                _submitForm();
+                              },
                             ),
                           ),
-                        );
-                        return;
-                      }
-
-                      // Validar balance mensual si no está vacío
-                      if (_monthlyBalanceController.text.trim().isNotEmpty &&
-                          int.tryParse(_monthlyBalanceController.text.trim()) ==
-                              null) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Row(
-                              children: [
-                                Icon(Icons.warning, color: Colors.white),
-                                const SizedBox(width: 8),
-                                const Text('Ingresa un balance mensual válido'),
-                              ],
-                            ),
-                            backgroundColor: Colors.orange,
-                            behavior: SnackBarBehavior.floating,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
+                        ],
+                      )
+                      : Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          _ModernOutlinedButton(
+                            label: 'Cancelar',
+                            icon: Icons.close,
+                            onPressed: () => Navigator.pop(context),
                           ),
-                        );
-                        return;
-                      }
+                          const SizedBox(width: 16),
+                          _ModernElevatedButton(
+                            label:
+                                widget.client == null
+                                    ? 'Crear Usuario'
+                                    : 'Actualizar Usuario',
+                            icon:
+                                widget.client == null ? Icons.add : Icons.save,
+                            onPressed: () async {
+                              if (_firstNameController.text.trim().isEmpty ||
+                                  _lastNameController.text.trim().isEmpty ||
+                                  _documentController.text.trim().isEmpty ||
+                                  _emailController.text.trim().isEmpty ||
+                                  _selectedCompanyId == null ||
+                                  _selectedCompanyId!.isEmpty ||
+                                  (widget.client == null &&
+                                      _passwordController.text
+                                          .trim()
+                                          .isEmpty)) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.warning,
+                                          color: Colors.white,
+                                        ),
+                                        const SizedBox(width: 8),
+                                        const Text(
+                                          'Completa todos los campos obligatorios',
+                                        ),
+                                      ],
+                                    ),
+                                    backgroundColor: Colors.orange,
+                                    behavior: SnackBarBehavior.floating,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                );
+                                return;
+                              }
 
-                      // Validar contraseña si se está creando un nuevo cliente
-                      if (widget.client == null &&
-                          _passwordController.text.trim().length < 6) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Row(
-                              children: [
-                                Icon(Icons.warning, color: Colors.white),
-                                const SizedBox(width: 8),
-                                const Text(
-                                  'La contraseña debe tener al menos 6 caracteres',
-                                ),
-                              ],
-                            ),
-                            backgroundColor: Colors.orange,
-                            behavior: SnackBarBehavior.floating,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
+                              if (!GetUtils.isEmail(
+                                _emailController.text.trim(),
+                              )) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.warning,
+                                          color: Colors.white,
+                                        ),
+                                        const SizedBox(width: 8),
+                                        const Text('Ingresa un email válido'),
+                                      ],
+                                    ),
+                                    backgroundColor: Colors.orange,
+                                    behavior: SnackBarBehavior.floating,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                );
+                                return;
+                              }
+
+                              // Validar balance mensual si no está vacío
+                              if (_monthlyBalanceController.text
+                                      .trim()
+                                      .isNotEmpty &&
+                                  int.tryParse(
+                                        _monthlyBalanceController.text.trim(),
+                                      ) ==
+                                      null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.warning,
+                                          color: Colors.white,
+                                        ),
+                                        const SizedBox(width: 8),
+                                        const Text(
+                                          'Ingresa un balance mensual válido',
+                                        ),
+                                      ],
+                                    ),
+                                    backgroundColor: Colors.orange,
+                                    behavior: SnackBarBehavior.floating,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                );
+                                return;
+                              }
+
+                              // Validar contraseña si se está creando un nuevo cliente
+                              if (widget.client == null &&
+                                  _passwordController.text.trim().length < 6) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.warning,
+                                          color: Colors.white,
+                                        ),
+                                        const SizedBox(width: 8),
+                                        const Text(
+                                          'La contraseña debe tener al menos 6 caracteres',
+                                        ),
+                                      ],
+                                    ),
+                                    backgroundColor: Colors.orange,
+                                    behavior: SnackBarBehavior.floating,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                );
+                                return;
+                              }
+
+                              _submitForm();
+                            },
                           ),
-                        );
-                        return;
-                      }
-
-                      _submitForm();
-                    },
-                  ),
-                ],
-              ),
+                        ],
+                      ),
             ),
           ],
         ),

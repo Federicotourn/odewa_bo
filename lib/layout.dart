@@ -15,11 +15,14 @@ class SiteLayout extends StatelessWidget {
     // final loggedUserController = Get.put(LoggedUserController());
     return Scaffold(
       key: scaffoldKey,
-      drawer: const Drawer(child: SideMenu()),
-      body: const ResponsiveWidget(
+      drawer:
+          ResponsiveWidget.isSmallScreen(context)
+              ? const Drawer(child: SideMenu())
+              : null,
+      body: ResponsiveWidget(
         largeScreen: LargeScreen(),
         mediumScreen: LargeScreen(),
-        smallScreen: SmallScreen(),
+        smallScreen: SmallScreen(scaffoldKey: scaffoldKey),
       ),
     );
   }

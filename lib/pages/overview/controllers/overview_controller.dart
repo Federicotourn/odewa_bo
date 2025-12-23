@@ -44,9 +44,14 @@ class OverviewController extends GetxController {
     DateTime? newEndDate,
     List<String>? newCompanyIds,
   }) {
-    if (newStartDate != null) startDate.value = newStartDate;
-    if (newEndDate != null) endDate.value = newEndDate;
-    if (newCompanyIds != null) selectedCompanyIds.value = newCompanyIds;
+    // Siempre actualizar startDate (puede ser null para limpiar)
+    startDate.value = newStartDate;
+    // Siempre actualizar endDate (puede ser null para limpiar)
+    endDate.value = newEndDate;
+    // Actualizar companyIds si se proporciona
+    if (newCompanyIds != null) {
+      selectedCompanyIds.value = newCompanyIds;
+    }
 
     // Recargar datos con los nuevos filtros
     getKpisData();

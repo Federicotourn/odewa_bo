@@ -4,6 +4,8 @@ import 'package:odewa_bo/pages/users/models/user_model.dart';
 import 'package:odewa_bo/pages/users/components/company_selection_components.dart';
 import 'package:odewa_bo/widgets/confirmation_dialog.dart';
 import 'package:odewa_bo/widgets/loading.dart';
+import 'package:odewa_bo/helpers/responsiveness.dart';
+import 'package:odewa_bo/helpers/scaffold_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -89,43 +91,81 @@ class UsersView extends StatelessWidget {
                 const SizedBox(height: 16),
 
                 // Información adicional del usuario
-                Row(
-                  children: [
-                    Expanded(
-                      child: _InfoCard(
-                        icon: Icons.email,
-                        label: 'Email',
-                        value: user.email,
-                        color: Colors.blue.shade400,
-                      ),
+                ResponsiveWidget.isSmallScreen(Get.context!)
+                    ? Column(
+                      children: [
+                        _InfoCard(
+                          icon: Icons.email,
+                          label: 'Email',
+                          value: user.email,
+                          color: Colors.blue.shade400,
+                        ),
+                        const SizedBox(height: 12),
+                        _InfoCard(
+                          icon: Icons.security,
+                          label: 'Rol',
+                          value:
+                              user.role == 'admin'
+                                  ? 'Administrador'
+                                  : 'Cliente',
+                          color:
+                              user.role == 'admin'
+                                  ? Colors.purple.shade400
+                                  : Colors.orange.shade400,
+                        ),
+                        const SizedBox(height: 12),
+                        _InfoCard(
+                          icon: Icons.business,
+                          label: 'Empresas',
+                          value:
+                              user.companies != null &&
+                                      user.companies!.isNotEmpty
+                                  ? '${user.companies!.length} empresa${user.companies!.length > 1 ? 's' : ''}'
+                                  : 'Sin empresas',
+                          color: Colors.green.shade400,
+                        ),
+                      ],
+                    )
+                    : Row(
+                      children: [
+                        Expanded(
+                          child: _InfoCard(
+                            icon: Icons.email,
+                            label: 'Email',
+                            value: user.email,
+                            color: Colors.blue.shade400,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: _InfoCard(
+                            icon: Icons.security,
+                            label: 'Rol',
+                            value:
+                                user.role == 'admin'
+                                    ? 'Administrador'
+                                    : 'Cliente',
+                            color:
+                                user.role == 'admin'
+                                    ? Colors.purple.shade400
+                                    : Colors.orange.shade400,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: _InfoCard(
+                            icon: Icons.business,
+                            label: 'Empresas',
+                            value:
+                                user.companies != null &&
+                                        user.companies!.isNotEmpty
+                                    ? '${user.companies!.length} empresa${user.companies!.length > 1 ? 's' : ''}'
+                                    : 'Sin empresas',
+                            color: Colors.green.shade400,
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: _InfoCard(
-                        icon: Icons.security,
-                        label: 'Rol',
-                        value:
-                            user.role == 'admin' ? 'Administrador' : 'Cliente',
-                        color:
-                            user.role == 'admin'
-                                ? Colors.purple.shade400
-                                : Colors.orange.shade400,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: _InfoCard(
-                        icon: Icons.business,
-                        label: 'Empresas',
-                        value:
-                            user.companies != null && user.companies!.isNotEmpty
-                                ? '${user.companies!.length} empresa${user.companies!.length > 1 ? 's' : ''}'
-                                : 'Sin empresas',
-                        color: Colors.green.shade400,
-                      ),
-                    ),
-                  ],
-                ),
 
                 // Lista de empresas si existen
                 if (user.companies != null && user.companies!.isNotEmpty) ...[
@@ -182,51 +222,93 @@ class UsersView extends StatelessWidget {
                 const SizedBox(height: 16),
 
                 // Acciones
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    // if (loggedUserController.hasPermission('USER_UPDATE'))
-                    _CompactActionButton(
-                      icon: Icons.edit,
-                      label: 'Editar',
-                      color: Colors.blue.shade400,
-                      onPressed: () async {
-                        loading(context);
-                        Get.back();
-                        _showUserModal(context, controller, user: user);
-                      },
-                    ),
-                    // if (loggedUserController.hasPermission('USER_UPDATE') &&
-                    // loggedUserController.hasPermission('USER_DELETE'))
-                    const SizedBox(width: 12),
-                    // if (loggedUserController.hasPermission('USER_DELETE'))
-                    _CompactActionButton(
-                      icon: Icons.delete,
-                      label: 'Eliminar',
-                      color: Colors.red.shade400,
-                      onPressed:
-                          () => _showDeleteConfirmation(
-                            context,
-                            user,
-                            controller,
+                ResponsiveWidget.isSmallScreen(Get.context!)
+                    ? Column(
+                      children: [
+                        SizedBox(
+                          width: double.infinity,
+                          child: _CompactActionButton(
+                            icon: Icons.edit,
+                            label: 'Editar',
+                            color: Colors.blue.shade400,
+                            onPressed: () async {
+                              loading(context);
+                              Get.back();
+                              _showUserModal(context, controller, user: user);
+                            },
                           ),
-                    ),
-                    // if (loggedUserController.hasPermission('USER_UPDATE'))
-                    const SizedBox(width: 12),
-                    // if (loggedUserController.hasPermission('USER_UPDATE'))
-                    _CompactActionButton(
-                      icon: Icons.lock,
-                      label: 'Cambiar Contraseña',
-                      color: Colors.orange.shade400,
-                      onPressed:
-                          () => _showChangePasswordModal(
-                            context,
-                            user,
-                            controller,
+                        ),
+                        const SizedBox(height: 8),
+                        SizedBox(
+                          width: double.infinity,
+                          child: _CompactActionButton(
+                            icon: Icons.delete,
+                            label: 'Eliminar',
+                            color: Colors.red.shade400,
+                            onPressed:
+                                () => _showDeleteConfirmation(
+                                  context,
+                                  user,
+                                  controller,
+                                ),
                           ),
+                        ),
+                        const SizedBox(height: 8),
+                        SizedBox(
+                          width: double.infinity,
+                          child: _CompactActionButton(
+                            icon: Icons.lock,
+                            label: 'Cambiar Contraseña',
+                            color: Colors.orange.shade400,
+                            onPressed:
+                                () => _showChangePasswordModal(
+                                  context,
+                                  user,
+                                  controller,
+                                ),
+                          ),
+                        ),
+                      ],
+                    )
+                    : Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        _CompactActionButton(
+                          icon: Icons.edit,
+                          label: 'Editar',
+                          color: Colors.blue.shade400,
+                          onPressed: () async {
+                            loading(context);
+                            Get.back();
+                            _showUserModal(context, controller, user: user);
+                          },
+                        ),
+                        const SizedBox(width: 12),
+                        _CompactActionButton(
+                          icon: Icons.delete,
+                          label: 'Eliminar',
+                          color: Colors.red.shade400,
+                          onPressed:
+                              () => _showDeleteConfirmation(
+                                context,
+                                user,
+                                controller,
+                              ),
+                        ),
+                        const SizedBox(width: 12),
+                        _CompactActionButton(
+                          icon: Icons.lock,
+                          label: 'Cambiar Contraseña',
+                          color: Colors.orange.shade400,
+                          onPressed:
+                              () => _showChangePasswordModal(
+                                context,
+                                user,
+                                controller,
+                              ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
               ],
             ),
           ),
@@ -264,6 +346,8 @@ class UsersView extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) {
+        final isSmallScreen = ResponsiveWidget.isSmallScreen(context);
+
         return StatefulBuilder(
           builder: (context, setState) {
             return Dialog(
@@ -271,8 +355,11 @@ class UsersView extends StatelessWidget {
                 borderRadius: BorderRadius.circular(24),
               ),
               child: Container(
-                width: Get.width * 0.5,
-                constraints: BoxConstraints(maxHeight: Get.height * 0.8),
+                width: isSmallScreen ? Get.width * 0.95 : Get.width * 0.5,
+                constraints: BoxConstraints(
+                  maxHeight:
+                      isSmallScreen ? Get.height * 0.9 : Get.height * 0.8,
+                ),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(24),
                   gradient: LinearGradient(
@@ -286,7 +373,7 @@ class UsersView extends StatelessWidget {
                   children: [
                     // Header moderno con gradiente
                     Container(
-                      padding: const EdgeInsets.all(24),
+                      padding: EdgeInsets.all(isSmallScreen ? 16 : 24),
                       decoration: BoxDecoration(
                         borderRadius: const BorderRadius.only(
                           topLeft: Radius.circular(24),
@@ -301,59 +388,124 @@ class UsersView extends StatelessWidget {
                           ],
                         ),
                       ),
-                      child: Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.2),
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            child: Icon(
-                              user == null ? Icons.person_add : Icons.edit,
-                              color: Colors.white,
-                              size: 28,
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  user == null
-                                      ? (isLoggedUserAdmin
-                                          ? 'Crear Nuevo Usuario'
-                                          : 'Crear Nuevo Cliente')
-                                      : 'Editar Usuario',
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.bold,
+                      child:
+                          isSmallScreen
+                              ? Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.all(12),
+                                        decoration: BoxDecoration(
+                                          color: Colors.white.withValues(
+                                            alpha: 0.2,
+                                          ),
+                                          borderRadius: BorderRadius.circular(
+                                            16,
+                                          ),
+                                        ),
+                                        child: Icon(
+                                          user == null
+                                              ? Icons.person_add
+                                              : Icons.edit,
+                                          color: Colors.white,
+                                          size: 28,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 16),
+                                      Expanded(
+                                        child: Text(
+                                          user == null
+                                              ? (isLoggedUserAdmin
+                                                  ? 'Crear Nuevo Usuario'
+                                                  : 'Crear Nuevo Cliente')
+                                              : 'Editar Usuario',
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ),
-                                Text(
-                                  user == null
-                                      ? (isLoggedUserAdmin
-                                          ? 'Define un nuevo usuario con sus permisos'
-                                          : 'Define un nuevo cliente para tu empresa')
-                                      : 'Modifica la información del usuario existente',
-                                  style: TextStyle(
-                                    color: Colors.white.withValues(alpha: 0.9),
-                                    fontSize: 14,
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    user == null
+                                        ? (isLoggedUserAdmin
+                                            ? 'Define un nuevo usuario con sus permisos'
+                                            : 'Define un nuevo cliente para tu empresa')
+                                        : 'Modifica la información del usuario existente',
+                                    style: TextStyle(
+                                      color: Colors.white.withValues(
+                                        alpha: 0.9,
+                                      ),
+                                      fontSize: 12,
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
+                                ],
+                              )
+                              : Row(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.all(12),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white.withValues(
+                                        alpha: 0.2,
+                                      ),
+                                      borderRadius: BorderRadius.circular(16),
+                                    ),
+                                    child: Icon(
+                                      user == null
+                                          ? Icons.person_add
+                                          : Icons.edit,
+                                      color: Colors.white,
+                                      size: 28,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 16),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          user == null
+                                              ? (isLoggedUserAdmin
+                                                  ? 'Crear Nuevo Usuario'
+                                                  : 'Crear Nuevo Cliente')
+                                              : 'Editar Usuario',
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 24,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        Text(
+                                          user == null
+                                              ? (isLoggedUserAdmin
+                                                  ? 'Define un nuevo usuario con sus permisos'
+                                                  : 'Define un nuevo cliente para tu empresa')
+                                              : 'Modifica la información del usuario existente',
+                                          style: TextStyle(
+                                            color: Colors.white.withValues(
+                                              alpha: 0.9,
+                                            ),
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
                     ),
 
                     // Contenido del modal
                     Expanded(
                       child: SingleChildScrollView(
-                        padding: const EdgeInsets.all(24),
+                        padding: EdgeInsets.all(isSmallScreen ? 16 : 24),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -436,7 +588,7 @@ class UsersView extends StatelessWidget {
 
                     // Footer con acciones
                     Container(
-                      padding: const EdgeInsets.all(24),
+                      padding: EdgeInsets.all(isSmallScreen ? 16 : 24),
                       decoration: BoxDecoration(
                         color: Colors.grey.shade50,
                         borderRadius: const BorderRadius.only(
@@ -444,249 +596,592 @@ class UsersView extends StatelessWidget {
                           bottomRight: Radius.circular(24),
                         ),
                       ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          _ModernOutlinedButton(
-                            label: 'Cancelar',
-                            icon: Icons.close,
-                            onPressed: () => Navigator.pop(context),
-                          ),
-                          const SizedBox(width: 16),
-                          _ModernElevatedButton(
-                            label:
-                                user == null
-                                    ? (isLoggedUserAdmin
-                                        ? 'Crear Usuario'
-                                        : 'Crear Cliente')
-                                    : 'Actualizar Usuario',
-                            icon: user == null ? Icons.add : Icons.save,
-                            onPressed: () async {
-                              // Validaciones básicas
-                              if (nameController.text.trim().isEmpty ||
-                                  emailController.text.trim().isEmpty ||
-                                  lastNameController.text.trim().isEmpty ||
-                                  (user == null &&
-                                      passwordController.text.isEmpty)) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Row(
-                                      children: [
-                                        Icon(
-                                          Icons.warning,
-                                          color: Colors.white,
-                                        ),
-                                        const SizedBox(width: 8),
-                                        const Text(
-                                          'Completa todos los campos obligatorios',
-                                        ),
-                                      ],
-                                    ),
-                                    backgroundColor: Colors.orange,
-                                    behavior: SnackBarBehavior.floating,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
+                      child:
+                          isSmallScreen
+                              ? Column(
+                                children: [
+                                  SizedBox(
+                                    width: double.infinity,
+                                    child: _ModernOutlinedButton(
+                                      label: 'Cancelar',
+                                      icon: Icons.close,
+                                      onPressed: () => Navigator.pop(context),
                                     ),
                                   ),
-                                );
-                                return;
-                              }
+                                  const SizedBox(height: 12),
+                                  SizedBox(
+                                    width: double.infinity,
+                                    child: _ModernElevatedButton(
+                                      label:
+                                          user == null
+                                              ? (isLoggedUserAdmin
+                                                  ? 'Crear Usuario'
+                                                  : 'Crear Cliente')
+                                              : 'Actualizar Usuario',
+                                      icon:
+                                          user == null ? Icons.add : Icons.save,
+                                      onPressed: () async {
+                                        // Mover toda la lógica de validación aquí
+                                        if (nameController.text
+                                                .trim()
+                                                .isEmpty ||
+                                            emailController.text
+                                                .trim()
+                                                .isEmpty ||
+                                            lastNameController.text
+                                                .trim()
+                                                .isEmpty ||
+                                            (user == null &&
+                                                passwordController
+                                                    .text
+                                                    .isEmpty)) {
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
+                                            SnackBar(
+                                              content: Row(
+                                                children: [
+                                                  Icon(
+                                                    Icons.warning,
+                                                    color: Colors.white,
+                                                  ),
+                                                  const SizedBox(width: 8),
+                                                  const Text(
+                                                    'Completa todos los campos obligatorios',
+                                                  ),
+                                                ],
+                                              ),
+                                              backgroundColor: Colors.orange,
+                                              behavior:
+                                                  SnackBarBehavior.floating,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                              ),
+                                            ),
+                                          );
+                                          return;
+                                        }
 
-                              // Validar selección de empresas (solo para admin o si se crea admin)
-                              if ((isLoggedUserAdmin ||
-                                      selectedRole == 'admin') &&
-                                  !controller.hasSelectedCompanies) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Row(
-                                      children: [
-                                        Icon(
-                                          Icons.warning,
-                                          color: Colors.white,
-                                        ),
-                                        const SizedBox(width: 8),
-                                        const Text(
-                                          'Debes seleccionar al menos una empresa',
-                                        ),
-                                      ],
-                                    ),
-                                    backgroundColor: Colors.orange,
-                                    behavior: SnackBarBehavior.floating,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
+                                        // Validar selección de empresas (solo para admin o si se crea admin)
+                                        if ((isLoggedUserAdmin ||
+                                                selectedRole == 'admin') &&
+                                            !controller.hasSelectedCompanies) {
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
+                                            SnackBar(
+                                              content: Row(
+                                                children: [
+                                                  Icon(
+                                                    Icons.warning,
+                                                    color: Colors.white,
+                                                  ),
+                                                  const SizedBox(width: 8),
+                                                  const Text(
+                                                    'Debes seleccionar al menos una empresa',
+                                                  ),
+                                                ],
+                                              ),
+                                              backgroundColor: Colors.orange,
+                                              behavior:
+                                                  SnackBarBehavior.floating,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                              ),
+                                            ),
+                                          );
+                                          return;
+                                        }
+
+                                        // Continuar con la lógica de creación/actualización
+                                        if (user == null) {
+                                          // Add new user
+                                          loading(context);
+
+                                          // Preparar datos del usuario
+                                          final Map<String, dynamic>
+                                          userData = {
+                                            'email':
+                                                emailController.text.trim(),
+                                            'firstName':
+                                                nameController.text.trim(),
+                                            'lastName':
+                                                lastNameController.text.trim(),
+                                            'password': passwordController.text,
+                                            'role': selectedRole,
+                                          };
+
+                                          // Agregar companyIds según el role del usuario logueado
+                                          if (isLoggedUserAdmin ||
+                                              selectedRole == 'admin') {
+                                            // Admin puede seleccionar empresas
+                                            userData['companyIds'] =
+                                                controller.selectedCompanyIds
+                                                    .toList();
+                                          } else if (isLoggedUserClient &&
+                                              selectedRole == 'client') {
+                                            // Client solo puede crear en su propia empresa
+                                            final loggedUser =
+                                                loggedUserController.user.value;
+                                            final companies =
+                                                loggedUser?.companies;
+
+                                            if (companies != null &&
+                                                companies.isNotEmpty) {
+                                              userData['companyIds'] = [
+                                                companies.first.id,
+                                              ];
+                                            } else {
+                                              Get.back();
+                                              ScaffoldMessenger.of(
+                                                context,
+                                              ).showSnackBar(
+                                                SnackBar(
+                                                  content: Row(
+                                                    children: [
+                                                      Icon(
+                                                        Icons.error,
+                                                        color: Colors.white,
+                                                      ),
+                                                      const SizedBox(width: 8),
+                                                      const Text(
+                                                        'No se pudo determinar la empresa del usuario',
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  backgroundColor: Colors.red,
+                                                  behavior:
+                                                      SnackBarBehavior.floating,
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          12,
+                                                        ),
+                                                  ),
+                                                ),
+                                              );
+                                              return;
+                                            }
+                                          }
+
+                                          final (
+                                            success,
+                                            message,
+                                          ) = await controller.addUser(
+                                            userData,
+                                          );
+                                          Get.back();
+                                          if (success) {
+                                            Navigator.of(context).pop();
+                                            ScaffoldMessenger.of(
+                                              context,
+                                            ).showSnackBar(
+                                              SnackBar(
+                                                content: Row(
+                                                  children: [
+                                                    Icon(
+                                                      Icons.check_circle,
+                                                      color: Colors.white,
+                                                    ),
+                                                    const SizedBox(width: 8),
+                                                    Text(message),
+                                                  ],
+                                                ),
+                                                backgroundColor: Colors.green,
+                                                behavior:
+                                                    SnackBarBehavior.floating,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(12),
+                                                ),
+                                              ),
+                                            );
+                                          } else {
+                                            ScaffoldMessenger.of(
+                                              context,
+                                            ).showSnackBar(
+                                              SnackBar(
+                                                content: Row(
+                                                  children: [
+                                                    Icon(
+                                                      Icons.error,
+                                                      color: Colors.white,
+                                                    ),
+                                                    const SizedBox(width: 8),
+                                                    Text(message),
+                                                  ],
+                                                ),
+                                                backgroundColor: Colors.red,
+                                                behavior:
+                                                    SnackBarBehavior.floating,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(12),
+                                                ),
+                                              ),
+                                            );
+                                          }
+                                        } else {
+                                          // Update existing user
+                                          loading(context);
+                                          // Get selected companies
+                                          final selectedCompanies =
+                                              controller.getSelectedCompanies();
+                                          final updatedUser = user.copyWith(
+                                            email: emailController.text.trim(),
+                                            firstName:
+                                                nameController.text.trim(),
+                                            lastName:
+                                                lastNameController.text.trim(),
+                                            companies: selectedCompanies,
+                                          );
+                                          final (
+                                            success,
+                                            message,
+                                          ) = await controller.updateUser(
+                                            updatedUser,
+                                          );
+                                          Get.back();
+                                          if (success) {
+                                            Navigator.of(context).pop();
+                                            ScaffoldMessenger.of(
+                                              context,
+                                            ).showSnackBar(
+                                              SnackBar(
+                                                content: Row(
+                                                  children: [
+                                                    Icon(
+                                                      Icons.check_circle,
+                                                      color: Colors.white,
+                                                    ),
+                                                    const SizedBox(width: 8),
+                                                    Text(message),
+                                                  ],
+                                                ),
+                                                backgroundColor: Colors.green,
+                                                behavior:
+                                                    SnackBarBehavior.floating,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(12),
+                                                ),
+                                              ),
+                                            );
+                                          } else {
+                                            ScaffoldMessenger.of(
+                                              context,
+                                            ).showSnackBar(
+                                              SnackBar(
+                                                content: Row(
+                                                  children: [
+                                                    Icon(
+                                                      Icons.error,
+                                                      color: Colors.white,
+                                                    ),
+                                                    const SizedBox(width: 8),
+                                                    Text(message),
+                                                  ],
+                                                ),
+                                                backgroundColor: Colors.red,
+                                                behavior:
+                                                    SnackBarBehavior.floating,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(12),
+                                                ),
+                                              ),
+                                            );
+                                          }
+                                        }
+                                      },
                                     ),
                                   ),
-                                );
-                                return;
-                              }
-
-                              if (user == null) {
-                                // Add new user
-                                loading(context);
-
-                                // Preparar datos del usuario
-                                final Map<String, dynamic> userData = {
-                                  'email': emailController.text.trim(),
-                                  'firstName': nameController.text.trim(),
-                                  'lastName': lastNameController.text.trim(),
-                                  'password': passwordController.text,
-                                  'role': selectedRole,
-                                };
-
-                                // Agregar companyIds según el role del usuario logueado
-                                if (isLoggedUserAdmin ||
-                                    selectedRole == 'admin') {
-                                  // Admin puede seleccionar empresas
-                                  userData['companyIds'] =
-                                      controller.selectedCompanyIds.toList();
-                                } else if (isLoggedUserClient &&
-                                    selectedRole == 'client') {
-                                  // Client solo puede crear en su propia empresa
-                                  final loggedUser =
-                                      loggedUserController.user.value;
-                                  final companies = loggedUser?.companies;
-
-                                  if (companies != null &&
-                                      companies.isNotEmpty) {
-                                    userData['companyIds'] = [
-                                      companies.first.id,
-                                    ];
-                                  } else {
-                                    Get.back();
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Row(
-                                          children: [
-                                            Icon(
-                                              Icons.error,
-                                              color: Colors.white,
+                                ],
+                              )
+                              : Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  _ModernOutlinedButton(
+                                    label: 'Cancelar',
+                                    icon: Icons.close,
+                                    onPressed: () => Navigator.pop(context),
+                                  ),
+                                  const SizedBox(width: 16),
+                                  _ModernElevatedButton(
+                                    label:
+                                        user == null
+                                            ? (isLoggedUserAdmin
+                                                ? 'Crear Usuario'
+                                                : 'Crear Cliente')
+                                            : 'Actualizar Usuario',
+                                    icon: user == null ? Icons.add : Icons.save,
+                                    onPressed: () async {
+                                      // Validaciones básicas
+                                      if (nameController.text.trim().isEmpty ||
+                                          emailController.text.trim().isEmpty ||
+                                          lastNameController.text
+                                              .trim()
+                                              .isEmpty ||
+                                          (user == null &&
+                                              passwordController
+                                                  .text
+                                                  .isEmpty)) {
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          SnackBar(
+                                            content: Row(
+                                              children: [
+                                                Icon(
+                                                  Icons.warning,
+                                                  color: Colors.white,
+                                                ),
+                                                const SizedBox(width: 8),
+                                                const Text(
+                                                  'Completa todos los campos obligatorios',
+                                                ),
+                                              ],
                                             ),
-                                            const SizedBox(width: 8),
-                                            const Text(
-                                              'No se pudo determinar la empresa del usuario',
+                                            backgroundColor: Colors.orange,
+                                            behavior: SnackBarBehavior.floating,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
                                             ),
-                                          ],
-                                        ),
-                                        backgroundColor: Colors.red,
-                                        behavior: SnackBarBehavior.floating,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            12,
                                           ),
-                                        ),
-                                      ),
-                                    );
-                                    return;
-                                  }
-                                }
+                                        );
+                                        return;
+                                      }
 
-                                final (success, message) = await controller
-                                    .addUser(userData);
-                                Get.back();
-                                if (success) {
-                                  Navigator.of(context).pop();
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Row(
-                                        children: [
-                                          Icon(
-                                            Icons.check_circle,
-                                            color: Colors.white,
+                                      // Validar selección de empresas (solo para admin o si se crea admin)
+                                      if ((isLoggedUserAdmin ||
+                                              selectedRole == 'admin') &&
+                                          !controller.hasSelectedCompanies) {
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          SnackBar(
+                                            content: Row(
+                                              children: [
+                                                Icon(
+                                                  Icons.warning,
+                                                  color: Colors.white,
+                                                ),
+                                                const SizedBox(width: 8),
+                                                const Text(
+                                                  'Debes seleccionar al menos una empresa',
+                                                ),
+                                              ],
+                                            ),
+                                            backgroundColor: Colors.orange,
+                                            behavior: SnackBarBehavior.floating,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                            ),
                                           ),
-                                          const SizedBox(width: 8),
-                                          Text(message),
-                                        ],
-                                      ),
-                                      backgroundColor: Colors.green,
-                                      behavior: SnackBarBehavior.floating,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                    ),
-                                  );
-                                } else {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Row(
-                                        children: [
-                                          Icon(
-                                            Icons.error,
-                                            color: Colors.white,
-                                          ),
-                                          const SizedBox(width: 8),
-                                          Text(message),
-                                        ],
-                                      ),
-                                      backgroundColor: Colors.red,
-                                      behavior: SnackBarBehavior.floating,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                    ),
-                                  );
-                                }
-                              } else {
-                                // Update existing user
-                                loading(context);
-                                // Get selected companies
-                                final selectedCompanies =
-                                    controller.getSelectedCompanies();
-                                final updatedUser = user.copyWith(
-                                  email: emailController.text.trim(),
-                                  firstName: nameController.text.trim(),
-                                  lastName: lastNameController.text.trim(),
-                                  companies: selectedCompanies,
-                                );
-                                final (success, message) = await controller
-                                    .updateUser(updatedUser);
-                                Get.back();
-                                if (success) {
-                                  Navigator.of(context).pop();
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Row(
-                                        children: [
-                                          Icon(
-                                            Icons.check_circle,
-                                            color: Colors.white,
-                                          ),
-                                          const SizedBox(width: 8),
-                                          Text(message),
-                                        ],
-                                      ),
-                                      backgroundColor: Colors.green,
-                                      behavior: SnackBarBehavior.floating,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                    ),
-                                  );
-                                } else {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Row(
-                                        children: [
-                                          Icon(
-                                            Icons.error,
-                                            color: Colors.white,
-                                          ),
-                                          const SizedBox(width: 8),
-                                          Text(message),
-                                        ],
-                                      ),
-                                      backgroundColor: Colors.red,
-                                      behavior: SnackBarBehavior.floating,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                    ),
-                                  );
-                                }
-                              }
-                            },
-                          ),
-                        ],
-                      ),
+                                        );
+                                        return;
+                                      }
+
+                                      if (user == null) {
+                                        // Add new user
+                                        loading(context);
+
+                                        // Preparar datos del usuario
+                                        final Map<String, dynamic> userData = {
+                                          'email': emailController.text.trim(),
+                                          'firstName':
+                                              nameController.text.trim(),
+                                          'lastName':
+                                              lastNameController.text.trim(),
+                                          'password': passwordController.text,
+                                          'role': selectedRole,
+                                        };
+
+                                        // Agregar companyIds según el role del usuario logueado
+                                        if (isLoggedUserAdmin ||
+                                            selectedRole == 'admin') {
+                                          // Admin puede seleccionar empresas
+                                          userData['companyIds'] =
+                                              controller.selectedCompanyIds
+                                                  .toList();
+                                        } else if (isLoggedUserClient &&
+                                            selectedRole == 'client') {
+                                          // Client solo puede crear en su propia empresa
+                                          final loggedUser =
+                                              loggedUserController.user.value;
+                                          final companies =
+                                              loggedUser?.companies;
+
+                                          if (companies != null &&
+                                              companies.isNotEmpty) {
+                                            userData['companyIds'] = [
+                                              companies.first.id,
+                                            ];
+                                          } else {
+                                            Get.back();
+                                            ScaffoldMessenger.of(
+                                              context,
+                                            ).showSnackBar(
+                                              SnackBar(
+                                                content: Row(
+                                                  children: [
+                                                    Icon(
+                                                      Icons.error,
+                                                      color: Colors.white,
+                                                    ),
+                                                    const SizedBox(width: 8),
+                                                    const Text(
+                                                      'No se pudo determinar la empresa del usuario',
+                                                    ),
+                                                  ],
+                                                ),
+                                                backgroundColor: Colors.red,
+                                                behavior:
+                                                    SnackBarBehavior.floating,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(12),
+                                                ),
+                                              ),
+                                            );
+                                            return;
+                                          }
+                                        }
+
+                                        final (
+                                          success,
+                                          message,
+                                        ) = await controller.addUser(userData);
+                                        Get.back();
+                                        if (success) {
+                                          Navigator.of(context).pop();
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
+                                            SnackBar(
+                                              content: Row(
+                                                children: [
+                                                  Icon(
+                                                    Icons.check_circle,
+                                                    color: Colors.white,
+                                                  ),
+                                                  const SizedBox(width: 8),
+                                                  Text(message),
+                                                ],
+                                              ),
+                                              backgroundColor: Colors.green,
+                                              behavior:
+                                                  SnackBarBehavior.floating,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                              ),
+                                            ),
+                                          );
+                                        } else {
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
+                                            SnackBar(
+                                              content: Row(
+                                                children: [
+                                                  Icon(
+                                                    Icons.error,
+                                                    color: Colors.white,
+                                                  ),
+                                                  const SizedBox(width: 8),
+                                                  Text(message),
+                                                ],
+                                              ),
+                                              backgroundColor: Colors.red,
+                                              behavior:
+                                                  SnackBarBehavior.floating,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                              ),
+                                            ),
+                                          );
+                                        }
+                                      } else {
+                                        // Update existing user
+                                        loading(context);
+                                        // Get selected companies
+                                        final selectedCompanies =
+                                            controller.getSelectedCompanies();
+                                        final updatedUser = user.copyWith(
+                                          email: emailController.text.trim(),
+                                          firstName: nameController.text.trim(),
+                                          lastName:
+                                              lastNameController.text.trim(),
+                                          companies: selectedCompanies,
+                                        );
+                                        final (
+                                          success,
+                                          message,
+                                        ) = await controller.updateUser(
+                                          updatedUser,
+                                        );
+                                        Get.back();
+                                        if (success) {
+                                          Navigator.of(context).pop();
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
+                                            SnackBar(
+                                              content: Row(
+                                                children: [
+                                                  Icon(
+                                                    Icons.check_circle,
+                                                    color: Colors.white,
+                                                  ),
+                                                  const SizedBox(width: 8),
+                                                  Text(message),
+                                                ],
+                                              ),
+                                              backgroundColor: Colors.green,
+                                              behavior:
+                                                  SnackBarBehavior.floating,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                              ),
+                                            ),
+                                          );
+                                        } else {
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
+                                            SnackBar(
+                                              content: Row(
+                                                children: [
+                                                  Icon(
+                                                    Icons.error,
+                                                    color: Colors.white,
+                                                  ),
+                                                  const SizedBox(width: 8),
+                                                  Text(message),
+                                                ],
+                                              ),
+                                              backgroundColor: Colors.red,
+                                              behavior:
+                                                  SnackBarBehavior.floating,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                              ),
+                                            ),
+                                          );
+                                        }
+                                      }
+                                    },
+                                  ),
+                                ],
+                              ),
                     ),
                   ],
                 ),
@@ -913,41 +1408,69 @@ class UsersView extends StatelessWidget {
                     backgroundColor: Colors.transparent,
                     elevation: 0,
                     automaticallyImplyLeading: false,
+                    leading:
+                        ResponsiveWidget.isSmallScreen(context)
+                            ? IconButton(
+                              icon: const Icon(Icons.menu),
+                              color: Colors.blue.shade800,
+                              onPressed: () {
+                                ScaffoldHelper.openParentDrawer(context);
+                              },
+                            )
+                            : null,
                     flexibleSpace: FlexibleSpaceBar(
                       title: Text(
                         'Administradores del Sistema',
                         style: TextStyle(
                           color: Colors.blue.shade800,
                           fontWeight: FontWeight.bold,
-                          fontSize: 24,
+                          fontSize:
+                              ResponsiveWidget.isSmallScreen(context) ? 18 : 24,
                         ),
                       ),
                       centerTitle: true,
                     ),
                     actions: [
-                      _ModernActionButton(
-                        icon: Icons.refresh,
-                        label: 'Actualizar',
-                        color: Colors.blue.shade400,
-                        onPressed: () {
-                          usersController.getUsers();
-                        },
-                      ),
-                      const SizedBox(width: 12),
-                      _ModernActionButton(
-                        icon: Icons.add,
-                        label: 'Agregar Administrador',
-                        color: Colors.green.shade400,
-                        onPressed: () {
-                          _showUserModal(context, usersController);
-                        },
-                      ),
-                      const SizedBox(width: 16),
+                      ResponsiveWidget.isSmallScreen(context)
+                          ? IconButton(
+                            icon: const Icon(Icons.refresh),
+                            onPressed: () => usersController.getUsers(),
+                            tooltip: 'Actualizar',
+                          )
+                          : _ModernActionButton(
+                            icon: Icons.refresh,
+                            label: 'Actualizar',
+                            color: Colors.blue.shade400,
+                            onPressed: () {
+                              usersController.getUsers();
+                            },
+                          ),
+                      if (!ResponsiveWidget.isSmallScreen(context))
+                        const SizedBox(width: 12),
+                      ResponsiveWidget.isSmallScreen(context)
+                          ? IconButton(
+                            icon: const Icon(Icons.add),
+                            onPressed:
+                                () => _showUserModal(context, usersController),
+                            tooltip: 'Agregar Administrador',
+                          )
+                          : _ModernActionButton(
+                            icon: Icons.add,
+                            label: 'Agregar Administrador',
+                            color: Colors.green.shade400,
+                            onPressed: () {
+                              _showUserModal(context, usersController);
+                            },
+                          ),
+                      if (!ResponsiveWidget.isSmallScreen(context))
+                        const SizedBox(width: 16),
                     ],
                   ),
                   SliverToBoxAdapter(
                     child: Padding(
-                      padding: const EdgeInsets.all(24),
+                      padding: EdgeInsets.all(
+                        ResponsiveWidget.isSmallScreen(context) ? 12 : 24,
+                      ),
                       child: Column(
                         children: [
                           // Lista de usuarios
@@ -1029,45 +1552,97 @@ class UsersView extends StatelessWidget {
                               );
                             }
 
+                            final isSmallScreen =
+                                ResponsiveWidget.isSmallScreen(Get.context!);
+
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Row(
-                                  children: [
-                                    Icon(
-                                      Icons.list,
-                                      color: Colors.blue.shade600,
-                                      size: 24,
-                                    ),
-                                    const SizedBox(width: 12),
-                                    Text(
-                                      'Administradores Registrados',
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.blue.shade800,
-                                      ),
-                                    ),
-                                    const Spacer(),
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 12,
-                                        vertical: 6,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: Colors.blue.shade100,
-                                        borderRadius: BorderRadius.circular(20),
-                                      ),
-                                      child: Text(
-                                        '${users.length} administradores',
-                                        style: TextStyle(
-                                          color: Colors.blue.shade700,
-                                          fontWeight: FontWeight.w600,
+                                isSmallScreen
+                                    ? Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Icon(
+                                              Icons.list,
+                                              color: Colors.blue.shade600,
+                                              size: 24,
+                                            ),
+                                            const SizedBox(width: 12),
+                                            Expanded(
+                                              child: Text(
+                                                'Administradores Registrados',
+                                                style: TextStyle(
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.blue.shade800,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                      ),
+                                        const SizedBox(height: 8),
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 12,
+                                            vertical: 6,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: Colors.blue.shade100,
+                                            borderRadius: BorderRadius.circular(
+                                              20,
+                                            ),
+                                          ),
+                                          child: Text(
+                                            '${users.length} administradores',
+                                            style: TextStyle(
+                                              color: Colors.blue.shade700,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                    : Row(
+                                      children: [
+                                        Icon(
+                                          Icons.list,
+                                          color: Colors.blue.shade600,
+                                          size: 24,
+                                        ),
+                                        const SizedBox(width: 12),
+                                        Text(
+                                          'Administradores Registrados',
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.blue.shade800,
+                                          ),
+                                        ),
+                                        const Spacer(),
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 12,
+                                            vertical: 6,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: Colors.blue.shade100,
+                                            borderRadius: BorderRadius.circular(
+                                              20,
+                                            ),
+                                          ),
+                                          child: Text(
+                                            '${users.length} administradores',
+                                            style: TextStyle(
+                                              color: Colors.blue.shade700,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ],
-                                ),
                                 const SizedBox(height: 20),
                                 ...users.map(
                                   (user) => _buildUserCard(
@@ -1119,96 +1694,190 @@ class UsersView extends StatelessWidget {
   }
 
   Widget _buildPaginationControls(UsersController controller) {
+    final isSmallScreen = ResponsiveWidget.isSmallScreen(Get.context!);
+
     return Obx(() {
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
+      return isSmallScreen
+          ? Column(
             children: [
-              const Text('Mostrar'),
-              const SizedBox(width: 8),
-              Container(
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey.shade300),
-                  borderRadius: BorderRadius.circular(8),
-                  color: Colors.grey.shade50,
-                ),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<int>(
-                    value: controller.itemsPerPage.value,
-                    items:
-                        [10, 25, 50, 100].map((int value) {
-                          return DropdownMenuItem<int>(
-                            value: value,
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                              ),
-                              child: Text('$value'),
-                            ),
-                          );
-                        }).toList(),
-                    onChanged: (int? newValue) {
-                      if (newValue != null) {
-                        controller.setItemsPerPage(newValue);
-                      }
-                    },
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text('Mostrar'),
+                  const SizedBox(width: 8),
+                  Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey.shade300),
+                      borderRadius: BorderRadius.circular(8),
+                      color: Colors.grey.shade50,
+                    ),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<int>(
+                        value: controller.itemsPerPage.value,
+                        items:
+                            [10, 25, 50, 100].map((int value) {
+                              return DropdownMenuItem<int>(
+                                value: value,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                  ),
+                                  child: Text('$value'),
+                                ),
+                              );
+                            }).toList(),
+                        onChanged: (int? newValue) {
+                          if (newValue != null) {
+                            controller.setItemsPerPage(newValue);
+                          }
+                        },
+                      ),
+                    ),
                   ),
-                ),
+                  const SizedBox(width: 8),
+                  const Text('por página'),
+                ],
               ),
-              const SizedBox(width: 8),
-              const Text('registros por página'),
+              const SizedBox(height: 12),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                    icon: Icon(
+                      Icons.chevron_left,
+                      color:
+                          controller.currentPage.value > 1
+                              ? Colors.blue.shade600
+                              : Colors.grey.shade400,
+                    ),
+                    onPressed:
+                        controller.currentPage.value > 1
+                            ? controller.previousPage
+                            : null,
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.blue.shade100,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      '${controller.currentPage.value}/${controller.totalPages}',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue.shade700,
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    icon: Icon(
+                      Icons.chevron_right,
+                      color:
+                          controller.currentPage.value < controller.totalPages
+                              ? Colors.blue.shade600
+                              : Colors.grey.shade400,
+                    ),
+                    onPressed:
+                        controller.currentPage.value < controller.totalPages
+                            ? controller.nextPage
+                            : null,
+                  ),
+                ],
+              ),
             ],
-          ),
-          Row(
+          )
+          : Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              IconButton(
-                icon: Icon(
-                  Icons.chevron_left,
-                  color:
-                      controller.currentPage.value > 1
-                          ? Colors.blue.shade600
-                          : Colors.grey.shade400,
-                ),
-                onPressed:
-                    controller.currentPage.value > 1
-                        ? controller.previousPage
-                        : null,
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 6,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.blue.shade100,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  'Página ${controller.currentPage.value} de ${controller.totalPages}',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blue.shade700,
+              Row(
+                children: [
+                  const Text('Mostrar'),
+                  const SizedBox(width: 8),
+                  Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey.shade300),
+                      borderRadius: BorderRadius.circular(8),
+                      color: Colors.grey.shade50,
+                    ),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<int>(
+                        value: controller.itemsPerPage.value,
+                        items:
+                            [10, 25, 50, 100].map((int value) {
+                              return DropdownMenuItem<int>(
+                                value: value,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                  ),
+                                  child: Text('$value'),
+                                ),
+                              );
+                            }).toList(),
+                        onChanged: (int? newValue) {
+                          if (newValue != null) {
+                            controller.setItemsPerPage(newValue);
+                          }
+                        },
+                      ),
+                    ),
                   ),
-                ),
+                  const SizedBox(width: 8),
+                  const Text('registros por página'),
+                ],
               ),
-              IconButton(
-                icon: Icon(
-                  Icons.chevron_right,
-                  color:
-                      controller.currentPage.value < controller.totalPages
-                          ? Colors.blue.shade600
-                          : Colors.grey.shade400,
-                ),
-                onPressed:
-                    controller.currentPage.value < controller.totalPages
-                        ? controller.nextPage
-                        : null,
+              Row(
+                children: [
+                  IconButton(
+                    icon: Icon(
+                      Icons.chevron_left,
+                      color:
+                          controller.currentPage.value > 1
+                              ? Colors.blue.shade600
+                              : Colors.grey.shade400,
+                    ),
+                    onPressed:
+                        controller.currentPage.value > 1
+                            ? controller.previousPage
+                            : null,
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.blue.shade100,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      'Página ${controller.currentPage.value} de ${controller.totalPages}',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue.shade700,
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    icon: Icon(
+                      Icons.chevron_right,
+                      color:
+                          controller.currentPage.value < controller.totalPages
+                              ? Colors.blue.shade600
+                              : Colors.grey.shade400,
+                    ),
+                    onPressed:
+                        controller.currentPage.value < controller.totalPages
+                            ? controller.nextPage
+                            : null,
+                  ),
+                ],
               ),
             ],
-          ),
-        ],
-      );
+          );
     });
   }
 

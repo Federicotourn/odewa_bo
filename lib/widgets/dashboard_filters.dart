@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:odewa_bo/pages/companies/models/company_model.dart';
 import 'package:odewa_bo/pages/companies/services/company_service.dart';
+import 'package:odewa_bo/helpers/responsiveness.dart';
 
 class DashboardFilters extends StatefulWidget {
   final DateTime? startDate;
@@ -38,6 +39,21 @@ class _DashboardFiltersState extends State<DashboardFilters> {
     _endDate = widget.endDate;
     _selectedCompanyIds = List.from(widget.selectedCompanyIds);
     _loadCompanies();
+  }
+
+  @override
+  void didUpdateWidget(DashboardFilters oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Sincronizar las variables locales con las props del widget cuando cambian
+    if (widget.startDate != oldWidget.startDate) {
+      _startDate = widget.startDate;
+    }
+    if (widget.endDate != oldWidget.endDate) {
+      _endDate = widget.endDate;
+    }
+    if (widget.selectedCompanyIds != oldWidget.selectedCompanyIds) {
+      _selectedCompanyIds = List.from(widget.selectedCompanyIds);
+    }
   }
 
   Future<void> _loadCompanies() async {
@@ -464,35 +480,73 @@ class _DashboardFiltersState extends State<DashboardFilters> {
   }
 
   Widget _buildActionButtons() {
-    return Row(
-      children: [
-        Expanded(
-          child: OutlinedButton.icon(
-            onPressed: _clearAllFilters,
-            icon: const Icon(Icons.clear_all, size: 18),
-            label: const Text('Limpiar todos'),
-            style: OutlinedButton.styleFrom(
-              foregroundColor: Colors.red.shade600,
-              side: BorderSide(color: Colors.red.shade300),
-              padding: const EdgeInsets.symmetric(vertical: 12),
+    final isSmallScreen = ResponsiveWidget.isSmallScreen(context);
+
+    return isSmallScreen
+        ? Column(
+          children: [
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                onPressed: _clearAllFilters,
+                icon: Icon(
+                  Icons.clear_all,
+                  size: 18,
+                  color: Colors.red.shade600,
+                ),
+                label: const Text('Limpiar todos'),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: Colors.red.shade600,
+                  side: BorderSide(color: Colors.red.shade300),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                ),
+              ),
             ),
-          ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: ElevatedButton.icon(
-            onPressed: _applyFilters,
-            icon: const Icon(Icons.search, size: 18),
-            label: const Text('Aplicar filtros'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.teal.shade600,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(vertical: 12),
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: _applyFilters,
+                icon: const Icon(Icons.search, size: 18, color: Colors.white),
+                label: const Text('Aplicar filtros'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.teal.shade600,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                ),
+              ),
             ),
-          ),
-        ),
-      ],
-    );
+          ],
+        )
+        : Row(
+          children: [
+            Expanded(
+              child: OutlinedButton.icon(
+                onPressed: _clearAllFilters,
+                icon: const Icon(Icons.clear_all, size: 18),
+                label: const Text('Limpiar todos'),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: Colors.red.shade600,
+                  side: BorderSide(color: Colors.red.shade300),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: ElevatedButton.icon(
+                onPressed: _applyFilters,
+                icon: const Icon(Icons.search, size: 18),
+                label: const Text('Aplicar filtros'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.teal.shade600,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                ),
+              ),
+            ),
+          ],
+        );
   }
 
   bool _hasActiveFilters() {
