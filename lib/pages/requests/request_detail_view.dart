@@ -9,6 +9,7 @@ import 'package:intl/intl.dart';
 // import 'package:odewa_bo/controllers/logged_user_controller.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 class RequestDetailView extends StatelessWidget {
@@ -109,26 +110,26 @@ class RequestDetailView extends StatelessWidget {
                         const SizedBox(height: 24),
 
                         // Información de la empresa del cliente
-                        if (requestController
-                                .selectedRequest
-                                .value!
-                                .client!
-                                .company !=
-                            null)
-                          _buildCompanyInfo(
-                            requestController
-                                .selectedRequest
-                                .value!
-                                .client!
-                                .company!,
-                          ),
-                        if (requestController
-                                .selectedRequest
-                                .value!
-                                .client!
-                                .company !=
-                            null)
-                          const SizedBox(height: 24),
+                        // if (requestController
+                        //         .selectedRequest
+                        //         .value!
+                        //         .client!
+                        //         .company !=
+                        //     null)
+                        //   _buildCompanyInfo(
+                        //     requestController
+                        //         .selectedRequest
+                        //         .value!
+                        //         .client!
+                        //         .company!,
+                        //   ),
+                        // if (requestController
+                        //         .selectedRequest
+                        //         .value!
+                        //         .client!
+                        //         .company !=
+                        //     null)
+                        //   const SizedBox(height: 24),
                       ],
 
                       // Sección de cambio de estado
@@ -403,7 +404,6 @@ class RequestDetailView extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 20),
-          infoRow(label: 'ID', value: request.id),
           infoRow(
             label: 'Estado',
             value: RequestStatus.getLabel(request.status),
@@ -414,19 +414,6 @@ class RequestDetailView extends StatelessWidget {
             value: DateFormat(
               'dd/MM/yyyy',
             ).format(DateTime.parse(request.date)),
-          ),
-          infoRow(label: 'Cliente ID', value: request.clientId),
-          infoRow(
-            label: 'Creada',
-            value: DateFormat(
-              'dd/MM/yyyy HH:mm',
-            ).format(request.createdAt.toLocal()),
-          ),
-          infoRow(
-            label: 'Actualizada',
-            value: DateFormat(
-              'dd/MM/yyyy HH:mm',
-            ).format(request.updatedAt.toLocal()),
           ),
           if (request.deletedAt != null)
             infoRow(
@@ -556,28 +543,7 @@ class RequestDetailView extends StatelessWidget {
                 ],
               ),
           const SizedBox(height: 20),
-          infoRow(label: 'ID', value: client.id),
-          infoRow(
-            label: 'Teléfono',
-            value:
-                client.phone != null && client.phone!.isNotEmpty
-                    ? client.phone!
-                    : 'No especificado',
-          ),
-          infoRow(
-            label: 'Dirección',
-            value:
-                client.address != null && client.address!.isNotEmpty
-                    ? client.address!
-                    : 'No especificada',
-          ),
-          infoRow(
-            label: 'Ciudad',
-            value:
-                client.city != null && client.city!.isNotEmpty
-                    ? client.city!
-                    : 'No especificada',
-          ),
+
           infoRow(
             label: 'Banco',
             value:
@@ -598,6 +564,9 @@ class RequestDetailView extends StatelessWidget {
                 client.accountNumber != null && client.accountNumber!.isNotEmpty
                     ? client.accountNumber!
                     : 'No especificado',
+            enableCopy:
+                client.accountNumber != null &&
+                client.accountNumber!.isNotEmpty,
           ),
           // infoRow(
           //   label: 'Sucursal',
@@ -619,11 +588,6 @@ class RequestDetailView extends StatelessWidget {
                 client.monthlyBalance != null
                     ? '\$${client.monthlyBalance}'
                     : 'No especificado',
-          ),
-          infoRow(label: 'Creado', value: _formatDateTime(client.createdAt)),
-          infoRow(
-            label: 'Actualizado',
-            value: _formatDateTime(client.updatedAt),
           ),
         ],
       ),
@@ -1065,8 +1029,35 @@ class RequestDetailView extends StatelessWidget {
     );
   }
 
-  Widget infoRow({required String label, required String value}) {
+  Widget infoRow({
+    required String label,
+    required String value,
+    bool enableCopy = false,
+  }) {
     final isSmallScreen = ResponsiveWidget.isSmallScreen(Get.context!);
+
+    Future<void> _copyToClipboard(String text) async {
+      await Clipboard.setData(ClipboardData(text: text));
+      if (Get.context != null && Get.context!.mounted) {
+        ScaffoldMessenger.of(Get.context!).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                Icon(Icons.check_circle, color: Colors.white, size: 20),
+                const SizedBox(width: 8),
+                const Text('Copiado al portapapeles'),
+              ],
+            ),
+            backgroundColor: Colors.green,
+            behavior: SnackBarBehavior.floating,
+            duration: const Duration(seconds: 2),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        );
+      }
+    }
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
@@ -1084,10 +1075,40 @@ class RequestDetailView extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Text(
-                    value,
-                    style: TextStyle(fontSize: 16, color: Colors.grey.shade800),
-                  ),
+                  enableCopy
+                      ? Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              value,
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.grey.shade800,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          InkWell(
+                            onTap: () => _copyToClipboard(value),
+                            borderRadius: BorderRadius.circular(8),
+                            child: Padding(
+                              padding: const EdgeInsets.all(4),
+                              child: Icon(
+                                Icons.copy,
+                                size: 18,
+                                color: Colors.teal.shade600,
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
+                      : Text(
+                        value,
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey.shade800,
+                        ),
+                      ),
                 ],
               )
               : Row(
@@ -1105,13 +1126,41 @@ class RequestDetailView extends StatelessWidget {
                     ),
                   ),
                   Expanded(
-                    child: Text(
-                      value,
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey.shade800,
-                      ),
-                    ),
+                    child:
+                        enableCopy
+                            ? Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    value,
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.grey.shade800,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                InkWell(
+                                  onTap: () => _copyToClipboard(value),
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(4),
+                                    child: Icon(
+                                      Icons.copy,
+                                      size: 18,
+                                      color: Colors.teal.shade600,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            )
+                            : Text(
+                              value,
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.grey.shade800,
+                              ),
+                            ),
                   ),
                 ],
               ),

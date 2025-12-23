@@ -309,7 +309,7 @@ class OverviewPageNew extends StatelessWidget {
             color: Colors.teal.shade800,
           ),
         ),
-        SizedBox(height: isSmallScreen ? 12 : 16),
+        SizedBox(height: isSmallScreen ? 8 : 16),
         isSmallScreen
             ? Column(
               children: [
@@ -320,7 +320,7 @@ class OverviewPageNew extends StatelessWidget {
                   color: Colors.blue.shade400,
                   subtitle: 'Este mes',
                 ),
-                SizedBox(height: isSmallScreen ? 12 : 16),
+                SizedBox(height: isSmallScreen ? 8 : 16),
                 _KpiCard(
                   title: 'Volumen Total',
                   value: controller.formatCurrency(data.totalVolume),
@@ -329,7 +329,7 @@ class OverviewPageNew extends StatelessWidget {
                   subtitle: 'Monto procesado',
                 ),
                 if (!isClient) ...[
-                  SizedBox(height: isSmallScreen ? 12 : 16),
+                  SizedBox(height: isSmallScreen ? 8 : 16),
                   _KpiCard(
                     title: 'Pendientes',
                     value: controller.formatNumber(data.pendingRequests),
@@ -337,7 +337,7 @@ class OverviewPageNew extends StatelessWidget {
                     color: Colors.orange.shade400,
                     subtitle: 'Por revisar',
                   ),
-                  SizedBox(height: isSmallScreen ? 12 : 16),
+                  SizedBox(height: isSmallScreen ? 8 : 16),
                   _KpiCard(
                     title: 'Completadas',
                     value: controller.formatNumber(data.completedRequests),
@@ -411,7 +411,7 @@ class OverviewPageNew extends StatelessWidget {
             color: Colors.purple.shade800,
           ),
         ),
-        SizedBox(height: isSmallScreen ? 12 : 16),
+        SizedBox(height: isSmallScreen ? 8 : 16),
         isSmallScreen
             ? Column(
               children: [
@@ -422,7 +422,7 @@ class OverviewPageNew extends StatelessWidget {
                   color: Colors.purple.shade400,
                   subtitle: 'Total registrados',
                 ),
-                SizedBox(height: isSmallScreen ? 12 : 16),
+                SizedBox(height: isSmallScreen ? 8 : 16),
                 _StatisticsCard(
                   title: 'Sueldo Promedio',
                   value: controller.formatCurrency(
@@ -432,7 +432,7 @@ class OverviewPageNew extends StatelessWidget {
                   color: Colors.indigo.shade400,
                   subtitle: 'Balance mensual',
                 ),
-                SizedBox(height: isSmallScreen ? 12 : 16),
+                SizedBox(height: isSmallScreen ? 8 : 16),
                 _StatisticsCard(
                   title: 'Descargas estimadas',
                   value: controller.formatNumber(
@@ -442,7 +442,7 @@ class OverviewPageNew extends StatelessWidget {
                   color: Colors.cyan.shade400,
                   subtitle: 'Aplicaciones',
                 ),
-                SizedBox(height: isSmallScreen ? 12 : 16),
+                SizedBox(height: isSmallScreen ? 8 : 16),
                 _StatisticsCard(
                   title: 'Usuarios activos por mes',
                   value: controller.formatNumber(
@@ -452,7 +452,7 @@ class OverviewPageNew extends StatelessWidget {
                   color: Colors.green.shade400,
                   subtitle: 'Activos mensualmente',
                 ),
-                SizedBox(height: isSmallScreen ? 12 : 16),
+                SizedBox(height: isSmallScreen ? 8 : 16),
                 _StatisticsCard(
                   title: 'Monto solicitado por persona',
                   value: controller.formatCurrency(
@@ -462,7 +462,7 @@ class OverviewPageNew extends StatelessWidget {
                   color: Colors.orange.shade400,
                   subtitle: 'Promedio por usuario',
                 ),
-                SizedBox(height: isSmallScreen ? 12 : 16),
+                SizedBox(height: isSmallScreen ? 8 : 16),
                 _StatisticsCard(
                   title: 'Liquidez necesaria',
                   value: controller.formatCurrency(
@@ -878,8 +878,10 @@ class _KpiCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isSmallScreen = ResponsiveWidget.isSmallScreen(context);
+
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.all(isSmallScreen ? 12 : 20),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -897,39 +899,40 @@ class _KpiCard extends StatelessWidget {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(12),
+                padding: EdgeInsets.all(isSmallScreen ? 8 : 12),
                 decoration: BoxDecoration(
                   color: color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(icon, color: color, size: 24),
+                child: Icon(icon, color: color, size: isSmallScreen ? 20 : 24),
               ),
-              const Spacer(),
-              Icon(Icons.trending_up, color: Colors.green.shade400, size: 16),
             ],
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: isSmallScreen ? 10 : 16),
           Text(
             value,
             style: TextStyle(
-              fontSize: 24,
+              fontSize: isSmallScreen ? 20 : 24,
               fontWeight: FontWeight.bold,
               color: Colors.grey.shade800,
             ),
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: isSmallScreen ? 2 : 4),
           Text(
             title,
             style: TextStyle(
-              fontSize: 14,
+              fontSize: isSmallScreen ? 12 : 14,
               fontWeight: FontWeight.w600,
               color: Colors.grey.shade700,
             ),
           ),
-          const SizedBox(height: 2),
+          SizedBox(height: isSmallScreen ? 1 : 2),
           Text(
             subtitle,
-            style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
+            style: TextStyle(
+              fontSize: isSmallScreen ? 10 : 12,
+              color: Colors.grey.shade500,
+            ),
           ),
         ],
       ),
@@ -954,8 +957,10 @@ class _StatisticsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isSmallScreen = ResponsiveWidget.isSmallScreen(context);
+
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.all(isSmallScreen ? 12 : 20),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -973,39 +978,46 @@ class _StatisticsCard extends StatelessWidget {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(12),
+                padding: EdgeInsets.all(isSmallScreen ? 8 : 12),
                 decoration: BoxDecoration(
                   color: color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(icon, color: color, size: 24),
+                child: Icon(icon, color: color, size: isSmallScreen ? 20 : 24),
               ),
               const Spacer(),
-              Icon(Icons.analytics, color: color, size: 16),
+              Icon(
+                Icons.analytics,
+                color: color,
+                size: isSmallScreen ? 14 : 16,
+              ),
             ],
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: isSmallScreen ? 10 : 16),
           Text(
             value,
             style: TextStyle(
-              fontSize: 24,
+              fontSize: isSmallScreen ? 20 : 24,
               fontWeight: FontWeight.bold,
               color: Colors.grey.shade800,
             ),
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: isSmallScreen ? 2 : 4),
           Text(
             title,
             style: TextStyle(
-              fontSize: 14,
+              fontSize: isSmallScreen ? 12 : 14,
               fontWeight: FontWeight.w600,
               color: Colors.grey.shade700,
             ),
           ),
-          const SizedBox(height: 2),
+          SizedBox(height: isSmallScreen ? 1 : 2),
           Text(
             subtitle,
-            style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
+            style: TextStyle(
+              fontSize: isSmallScreen ? 10 : 12,
+              color: Colors.grey.shade500,
+            ),
           ),
         ],
       ),
