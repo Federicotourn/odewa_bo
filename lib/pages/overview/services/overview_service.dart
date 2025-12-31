@@ -3,9 +3,11 @@ import 'package:odewa_bo/constants/constants.dart';
 import 'package:odewa_bo/constants/urls.dart';
 import 'package:odewa_bo/pages/overview/models/dashboard_model.dart';
 import 'package:odewa_bo/pages/overview/models/kpis_model.dart';
+import 'package:odewa_bo/pages/overview/models/request_summary_model.dart';
 import 'package:odewa_bo/services/token_validation_service.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'dart:convert';
 
 class OverviewService extends GetxService {
   final TokenValidationService _tokenValidationService =
@@ -78,6 +80,36 @@ class OverviewService extends GetxService {
     }
 
     return params;
+  }
+
+  Future<RequestSummary?> getRequestSummary(String clientDocument) async {
+    try {
+      final Uri url = Uri.parse(
+        Urls.backofficeClientRequestSummary(clientDocument),
+      );
+
+      Map<String, String> headers = {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${box.read('token')}',
+      };
+
+      var response = await _tokenValidationService.client.get(
+        url,
+        headers: headers,
+      );
+
+      if (response.statusCode == Constants.HTTP_200_OK) {
+        final jsonData = json.decode(response.body);
+        return RequestSummary.fromJson(jsonData);
+      } else {
+        debugPrint('Error response: ${response.statusCode} - ${response.body}');
+        return null;
+      }
+    } catch (e) {
+      debugPrint('Exception occurred: $e');
+      return null;
+    }
   }
 
   DashboardData dashboardDataExample = DashboardData(

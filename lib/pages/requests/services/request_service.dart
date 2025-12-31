@@ -293,6 +293,7 @@ class RequestService extends GetxService {
     DateTime? endDate,
     String? search,
     String? status,
+    List<String>? companyIds,
   }) async {
     try {
       // Construir los parámetros de consulta
@@ -301,6 +302,7 @@ class RequestService extends GetxService {
         endDate: endDate,
         search: search,
         status: status,
+        companyIds: companyIds,
       );
 
       // Construir la URL solo si hay parámetros
@@ -349,6 +351,7 @@ class RequestService extends GetxService {
     DateTime? endDate,
     String? search,
     String? status,
+    List<String>? companyIds,
   }) {
     final Map<String, String> params = {};
 
@@ -366,6 +369,10 @@ class RequestService extends GetxService {
 
     if (status != null && status.isNotEmpty) {
       params['status'] = status;
+    }
+
+    if (companyIds != null && companyIds.isNotEmpty) {
+      params['company_ids'] = companyIds.join(',');
     }
 
     return params;

@@ -10,6 +10,8 @@ class Urls {
   static String backofficeUsers = '$baseUrl/backoffice/users';
   static String backofficeClients = '$baseUrl/backoffice/clients';
   static String backofficeRequests = '$baseUrl/backoffice/requests';
+  static String backofficeClientRequestSummary(String clientDocument) =>
+      '$baseUrl/backoffice/clients/request-summary/$clientDocument';
 
   // Companies endpoints
   static String companies = '$baseUrl/companies';

@@ -93,6 +93,11 @@ class OverviewController extends GetxController {
     return NumberFormat.currency(locale: 'es_ES', symbol: '\$').format(amount);
   }
 
+  String formatCurrencyWithoutDecimals(double amount) {
+    // Formatear con comas pero sin decimales
+    return '\$${NumberFormat('#,##0', 'es_ES').format(amount.toInt())}';
+  }
+
   String formatNumber(int number) {
     return NumberFormat('###,##0', 'es_ES').format(number);
   }

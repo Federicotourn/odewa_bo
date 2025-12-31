@@ -95,11 +95,11 @@ class RequestDetailView extends StatelessWidget {
                       const SizedBox(height: 24),
 
                       // Información de la solicitud
-                      _buildRequestInfo(
-                        requestController.selectedRequest.value!,
-                      ),
+                      // _buildRequestInfo(
+                      //   requestController.selectedRequest.value!,
+                      // ),
 
-                      const SizedBox(height: 24),
+                      // const SizedBox(height: 24),
 
                       // Información del cliente
                       if (requestController.selectedRequest.value!.client !=

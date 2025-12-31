@@ -504,6 +504,8 @@ class RequestController extends GetxController {
         endDate: endDate.value,
         search: searchQuery.value.isNotEmpty ? searchQuery.value : null,
         status: statusFilter.value != 'all' ? statusFilter.value : null,
+        companyIds:
+            selectedCompanyIds.isNotEmpty ? selectedCompanyIds.toList() : null,
       );
 
       if (result.$1) {
