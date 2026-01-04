@@ -444,21 +444,23 @@ class OverviewPageNew extends StatelessWidget {
                 Row(
                   children: [
                     Expanded(
-                      child: _StatisticsCard(
+                      child: _StatisticsCardWithRatio(
                         title: 'Cantidad de empleados',
-                        value: controller.formatNumber(
-                          data.clientKPIs.totalClients,
-                        ),
+                        numerator:
+                            data.clientKPIs.employeesCount.active.toDouble(),
+                        denominator:
+                            data.clientKPIs.employeesCount.total.toDouble(),
+                        percentage: data.clientKPIs.employeesCount.percentage,
                         icon: Icons.people,
                         color: Colors.purple.shade400,
-                        subtitle: 'Total registrados',
+                        subtitle: 'Activos/Total',
                       ),
                     ),
                     const SizedBox(width: 8),
                     Expanded(
                       child: _StatisticsCard(
                         title: 'Sueldo Promedio',
-                        value: controller.formatCurrency(
+                        value: controller.formatCurrencyWithoutDecimals(
                           data.clientKPIs.averageMonthlyBalance,
                         ),
                         icon: Icons.account_balance_wallet,
@@ -469,59 +471,70 @@ class OverviewPageNew extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 8),
-                // Segunda fila: Descargas estimadas y Usuarios activos por mes
+                // Segunda fila: Usuarios activos del mes y Monto promedio por transacción
                 Row(
                   children: [
                     Expanded(
                       child: _StatisticsCard(
-                        title: 'Descargas estimadas',
+                        title: 'Usuarios activos del mes',
                         value: controller.formatNumber(
-                          data.clientKPIs.estimatedDownloads,
+                          data.clientKPIs.activeUsersThisMonth,
                         ),
-                        icon: Icons.download,
-                        color: Colors.cyan.shade400,
-                        subtitle: 'Aplicaciones',
+                        icon: Icons.trending_up,
+                        color: Colors.green.shade400,
+                        subtitle: 'Con solicitudes este mes',
                       ),
                     ),
                     const SizedBox(width: 8),
                     Expanded(
                       child: _StatisticsCard(
-                        title: 'Usuarios activos por mes',
-                        value: controller.formatNumber(
-                          data.clientKPIs.estimatedActiveClients,
+                        title: 'Monto promedio por transacción',
+                        value: controller.formatCurrencyWithoutDecimals(
+                          data.clientKPIs.averageRequestAmount,
                         ),
-                        icon: Icons.trending_up,
-                        color: Colors.green.shade400,
-                        subtitle: 'Activos mensualmente',
+                        icon: Icons.person_pin,
+                        color: Colors.orange.shade400,
+                        subtitle: 'Promedio por transacción',
                       ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 8),
-                // Tercera fila: Monto solicitado por persona y Liquidez necesaria
+                // Tercera fila: Monto solicitado vs posible (activos) y (todos)
                 Row(
                   children: [
                     Expanded(
-                      child: _StatisticsCard(
-                        title: 'Monto solicitado por persona',
-                        value: controller.formatCurrency(
-                          data.clientKPIs.averageRequestAmount,
-                        ),
-                        icon: Icons.person_pin,
-                        color: Colors.orange.shade400,
-                        subtitle: 'Promedio por usuario',
+                      child: _StatisticsCardWithRatio(
+                        title: 'Monto solicitado vs posible',
+                        numerator:
+                            data.clientKPIs.requestedVsPossibleActive.requested,
+                        denominator:
+                            data.clientKPIs.requestedVsPossibleActive.possible,
+                        percentage:
+                            data
+                                .clientKPIs
+                                .requestedVsPossibleActive
+                                .percentage,
+                        icon: Icons.compare_arrows,
+                        color: Colors.teal.shade400,
+                        subtitle: 'Usuarios activos',
+                        isCurrency: true,
                       ),
                     ),
                     const SizedBox(width: 8),
                     Expanded(
-                      child: _StatisticsCard(
-                        title: 'Liquidez necesaria',
-                        value: controller.formatCurrency(
-                          data.clientKPIs.amountToCover,
-                        ),
-                        icon: Icons.account_balance,
-                        color: Colors.red.shade400,
-                        subtitle: 'Fondos requeridos',
+                      child: _StatisticsCardWithRatio(
+                        title: 'Monto solicitado vs posible',
+                        numerator:
+                            data.clientKPIs.requestedVsPossibleAll.requested,
+                        denominator:
+                            data.clientKPIs.requestedVsPossibleAll.possible,
+                        percentage:
+                            data.clientKPIs.requestedVsPossibleAll.percentage,
+                        icon: Icons.compare_arrows,
+                        color: Colors.blue.shade400,
+                        subtitle: 'Todos los usuarios',
+                        isCurrency: true,
                       ),
                     ),
                   ],
@@ -533,21 +546,23 @@ class OverviewPageNew extends StatelessWidget {
                 Row(
                   children: [
                     Expanded(
-                      child: _StatisticsCard(
+                      child: _StatisticsCardWithRatio(
                         title: 'Cantidad de empleados',
-                        value: controller.formatNumber(
-                          data.clientKPIs.totalClients,
-                        ),
+                        numerator:
+                            data.clientKPIs.employeesCount.active.toDouble(),
+                        denominator:
+                            data.clientKPIs.employeesCount.total.toDouble(),
+                        percentage: data.clientKPIs.employeesCount.percentage,
                         icon: Icons.people,
                         color: Colors.purple.shade400,
-                        subtitle: 'Total registrados',
+                        subtitle: 'Activos/Total',
                       ),
                     ),
                     const SizedBox(width: 16),
                     Expanded(
                       child: _StatisticsCard(
                         title: 'Sueldo Promedio',
-                        value: controller.formatCurrency(
+                        value: controller.formatCurrencyWithoutDecimals(
                           data.clientKPIs.averageMonthlyBalance,
                         ),
                         icon: Icons.account_balance_wallet,
@@ -558,13 +573,13 @@ class OverviewPageNew extends StatelessWidget {
                     const SizedBox(width: 16),
                     Expanded(
                       child: _StatisticsCard(
-                        title: 'Descargas estimadas',
+                        title: 'Usuarios activos del mes',
                         value: controller.formatNumber(
-                          data.clientKPIs.estimatedDownloads,
+                          data.clientKPIs.activeUsersThisMonth,
                         ),
-                        icon: Icons.download,
-                        color: Colors.cyan.shade400,
-                        subtitle: 'Aplicaciones',
+                        icon: Icons.trending_up,
+                        color: Colors.green.shade400,
+                        subtitle: 'Con solicitudes este mes',
                       ),
                     ),
                   ],
@@ -574,37 +589,48 @@ class OverviewPageNew extends StatelessWidget {
                   children: [
                     Expanded(
                       child: _StatisticsCard(
-                        title: 'Usuarios activos por mes',
-                        value: controller.formatNumber(
-                          data.clientKPIs.estimatedActiveClients,
-                        ),
-                        icon: Icons.trending_up,
-                        color: Colors.green.shade400,
-                        subtitle: 'Activos mensualmente',
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: _StatisticsCard(
-                        title: 'Monto solicitado por persona',
-                        value: controller.formatCurrency(
+                        title: 'Monto promedio por transacción',
+                        value: controller.formatCurrencyWithoutDecimals(
                           data.clientKPIs.averageRequestAmount,
                         ),
                         icon: Icons.person_pin,
                         color: Colors.orange.shade400,
-                        subtitle: 'Promedio por usuario',
+                        subtitle: 'Promedio por transacción',
                       ),
                     ),
                     const SizedBox(width: 16),
                     Expanded(
-                      child: _StatisticsCard(
-                        title: 'Liquidez necesaria',
-                        value: controller.formatCurrency(
-                          data.clientKPIs.amountToCover,
-                        ),
-                        icon: Icons.account_balance,
-                        color: Colors.red.shade400,
-                        subtitle: 'Fondos requeridos',
+                      child: _StatisticsCardWithRatio(
+                        title: 'Monto solicitado vs posible',
+                        numerator:
+                            data.clientKPIs.requestedVsPossibleActive.requested,
+                        denominator:
+                            data.clientKPIs.requestedVsPossibleActive.possible,
+                        percentage:
+                            data
+                                .clientKPIs
+                                .requestedVsPossibleActive
+                                .percentage,
+                        icon: Icons.compare_arrows,
+                        color: Colors.teal.shade400,
+                        subtitle: 'Usuarios activos',
+                        isCurrency: true,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: _StatisticsCardWithRatio(
+                        title: 'Monto solicitado vs posible',
+                        numerator:
+                            data.clientKPIs.requestedVsPossibleAll.requested,
+                        denominator:
+                            data.clientKPIs.requestedVsPossibleAll.possible,
+                        percentage:
+                            data.clientKPIs.requestedVsPossibleAll.percentage,
+                        icon: Icons.compare_arrows,
+                        color: Colors.blue.shade400,
+                        subtitle: 'Todos los usuarios',
+                        isCurrency: true,
                       ),
                     ),
                   ],
@@ -1185,6 +1211,7 @@ class _KpiCard extends StatelessWidget {
     final isSmallScreen = ResponsiveWidget.isSmallScreen(context);
 
     return Container(
+      height: isSmallScreen ? 160 : 190,
       padding: EdgeInsets.all(isSmallScreen ? 12 : 20),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -1199,6 +1226,7 @@ class _KpiCard extends StatelessWidget {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Row(
             children: [
@@ -1210,18 +1238,28 @@ class _KpiCard extends StatelessWidget {
                 ),
                 child: Icon(icon, color: color, size: isSmallScreen ? 20 : 24),
               ),
+              const Spacer(),
+              Icon(
+                Icons.analytics,
+                color: color,
+                size: isSmallScreen ? 14 : 16,
+              ),
             ],
           ),
           SizedBox(height: isSmallScreen ? 10 : 16),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: isSmallScreen ? 20 : 24,
-              fontWeight: FontWeight.bold,
-              color: Colors.grey.shade800,
+          Flexible(
+            child: Text(
+              value,
+              style: TextStyle(
+                fontSize: isSmallScreen ? 18 : 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey.shade800,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
-          SizedBox(height: isSmallScreen ? 2 : 4),
+          const Spacer(),
           Text(
             title,
             style: TextStyle(
@@ -1229,6 +1267,8 @@ class _KpiCard extends StatelessWidget {
               fontWeight: FontWeight.w600,
               color: Colors.grey.shade700,
             ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
           ),
           SizedBox(height: isSmallScreen ? 1 : 2),
           Text(
@@ -1237,6 +1277,135 @@ class _KpiCard extends StatelessWidget {
               fontSize: isSmallScreen ? 10 : 12,
               color: Colors.grey.shade500,
             ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _StatisticsCardWithRatio extends StatelessWidget {
+  final String title;
+  final double numerator;
+  final double denominator;
+  final double percentage;
+  final IconData icon;
+  final Color color;
+  final String subtitle;
+  final bool isCurrency;
+
+  const _StatisticsCardWithRatio({
+    required this.title,
+    required this.numerator,
+    required this.denominator,
+    required this.percentage,
+    required this.icon,
+    required this.color,
+    required this.subtitle,
+    this.isCurrency = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isSmallScreen = ResponsiveWidget.isSmallScreen(context);
+    final controller = Get.find<OverviewController>();
+
+    final numeratorText =
+        isCurrency
+            ? controller.formatCurrencyWithoutDecimals(numerator)
+            : controller.formatNumber(numerator.toInt());
+    final denominatorText =
+        isCurrency
+            ? controller.formatCurrencyWithoutDecimals(denominator)
+            : controller.formatNumber(denominator.toInt());
+
+    return Container(
+      height: isSmallScreen ? 160 : 190,
+      padding: EdgeInsets.all(isSmallScreen ? 12 : 20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: EdgeInsets.all(isSmallScreen ? 8 : 12),
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(icon, color: color, size: isSmallScreen ? 20 : 24),
+              ),
+              const Spacer(),
+              Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: isSmallScreen ? 8 : 10,
+                  vertical: isSmallScreen ? 4 : 6,
+                ),
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  '${percentage.toStringAsFixed(1)}%',
+                  style: TextStyle(
+                    fontSize: isSmallScreen ? 12 : 14,
+                    fontWeight: FontWeight.bold,
+                    color: color,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: isSmallScreen ? 10 : 16),
+          Flexible(
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                '$numeratorText / $denominatorText',
+                style: TextStyle(
+                  fontSize: isSmallScreen ? 16 : 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey.shade800,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ),
+          const Spacer(),
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: isSmallScreen ? 12 : 14,
+              fontWeight: FontWeight.w600,
+              color: Colors.grey.shade700,
+            ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+          SizedBox(height: isSmallScreen ? 1 : 2),
+          Text(
+            subtitle,
+            style: TextStyle(
+              fontSize: isSmallScreen ? 10 : 12,
+              color: Colors.grey.shade500,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
         ],
       ),
@@ -1264,6 +1433,7 @@ class _StatisticsCard extends StatelessWidget {
     final isSmallScreen = ResponsiveWidget.isSmallScreen(context);
 
     return Container(
+      height: isSmallScreen ? 160 : 190,
       padding: EdgeInsets.all(isSmallScreen ? 12 : 20),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -1278,6 +1448,7 @@ class _StatisticsCard extends StatelessWidget {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Row(
             children: [
@@ -1297,16 +1468,20 @@ class _StatisticsCard extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: isSmallScreen ? 10 : 16),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: isSmallScreen ? 20 : 24,
-              fontWeight: FontWeight.bold,
-              color: Colors.grey.shade800,
+          SizedBox(height: isSmallScreen ? 6 : 8),
+          Flexible(
+            child: Text(
+              value,
+              style: TextStyle(
+                fontSize: isSmallScreen ? 18 : 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey.shade800,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
-          SizedBox(height: isSmallScreen ? 2 : 4),
+          const Spacer(),
           Text(
             title,
             style: TextStyle(
@@ -1314,6 +1489,8 @@ class _StatisticsCard extends StatelessWidget {
               fontWeight: FontWeight.w600,
               color: Colors.grey.shade700,
             ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
           ),
           SizedBox(height: isSmallScreen ? 1 : 2),
           Text(
@@ -1322,6 +1499,8 @@ class _StatisticsCard extends StatelessWidget {
               fontSize: isSmallScreen ? 10 : 12,
               color: Colors.grey.shade500,
             ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
         ],
       ),

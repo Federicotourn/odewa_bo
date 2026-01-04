@@ -857,6 +857,8 @@ class RequestsView extends StatelessWidget {
                                   children: [
                                     // Búsqueda
                                     TextField(
+                                      controller:
+                                          requestsController.searchController,
                                       onChanged:
                                           requestsController.updateSearchQuery,
                                       decoration: InputDecoration(

@@ -135,12 +135,20 @@ class OverviewService extends GetxService {
       cancelled: 0,
     ),
     clientKPIs: ClientKPIs(
-      totalClients: 0,
+      employeesCount: EmployeesCount(active: 0, total: 0, percentage: 0),
       averageMonthlyBalance: 0,
-      estimatedDownloads: 0,
-      estimatedActiveClients: 0,
+      activeUsersThisMonth: 0,
       averageRequestAmount: 0,
-      amountToCover: 0,
+      requestedVsPossibleActive: RequestedVsPossible(
+        requested: 0,
+        possible: 0,
+        percentage: 0,
+      ),
+      requestedVsPossibleAll: RequestedVsPossible(
+        requested: 0,
+        possible: 0,
+        percentage: 0,
+      ),
     ),
   );
 }

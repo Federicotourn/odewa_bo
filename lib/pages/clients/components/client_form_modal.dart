@@ -84,8 +84,7 @@ class _ClientFormModalState extends State<ClientFormModal> {
             _monthlyBalanceController.text.isEmpty
                 ? null
                 : double.tryParse(_monthlyBalanceController.text),
-        password:
-            _passwordController.text.isEmpty ? null : _passwordController.text,
+
         employeeNumber:
             _employeeNumberController.text.isEmpty
                 ? null
@@ -291,8 +290,8 @@ class _ClientFormModalState extends State<ClientFormModal> {
 
                       // Campo de documento
                       _ModernTextField(
-                        label: 'Documento',
-                        hint: 'Ej: 52577647',
+                        label: 'Documento (Sin puntos, guiones ni espacios)',
+                        hint: 'Ej: 12345678',
                         controller: _documentController,
                         icon: Icons.badge,
                         isRequired: true,
@@ -344,22 +343,11 @@ class _ClientFormModalState extends State<ClientFormModal> {
                         hint: 'Ej: 50000',
                         controller: _monthlyBalanceController,
                         icon: Icons.monetization_on,
-                        isRequired: false,
+                        isRequired: true,
                         keyboardType: TextInputType.number,
                       ),
 
                       const SizedBox(height: 20),
-
-                      // Campo de contraseña (solo para crear)
-                      if (widget.client == null)
-                        _ModernTextField(
-                          label: 'Contraseña',
-                          hint: 'Ej: miContraseña123',
-                          controller: _passwordController,
-                          icon: Icons.lock,
-                          isRequired: true,
-                          isPassword: true,
-                        ),
                     ],
                   ),
                 ),
@@ -407,10 +395,9 @@ class _ClientFormModalState extends State<ClientFormModal> {
                                     _emailController.text.trim().isEmpty ||
                                     _selectedCompanyId == null ||
                                     _selectedCompanyId!.isEmpty ||
-                                    (widget.client == null &&
-                                        _passwordController.text
-                                            .trim()
-                                            .isEmpty)) {
+                                    _monthlyBalanceController.text
+                                        .trim()
+                                        .isEmpty) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                       content: Row(
@@ -492,34 +479,6 @@ class _ClientFormModalState extends State<ClientFormModal> {
                                   return;
                                 }
 
-                                // Validar contraseña si se está creando un nuevo cliente
-                                if (widget.client == null &&
-                                    _passwordController.text.trim().length <
-                                        6) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Row(
-                                        children: [
-                                          Icon(
-                                            Icons.warning,
-                                            color: Colors.white,
-                                          ),
-                                          const SizedBox(width: 8),
-                                          const Text(
-                                            'La contraseña debe tener al menos 6 caracteres',
-                                          ),
-                                        ],
-                                      ),
-                                      backgroundColor: Colors.orange,
-                                      behavior: SnackBarBehavior.floating,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                    ),
-                                  );
-                                  return;
-                                }
-
                                 _submitForm();
                               },
                             ),
@@ -548,11 +507,7 @@ class _ClientFormModalState extends State<ClientFormModal> {
                                   _documentController.text.trim().isEmpty ||
                                   _emailController.text.trim().isEmpty ||
                                   _selectedCompanyId == null ||
-                                  _selectedCompanyId!.isEmpty ||
-                                  (widget.client == null &&
-                                      _passwordController.text
-                                          .trim()
-                                          .isEmpty)) {
+                                  _selectedCompanyId!.isEmpty) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                     content: Row(
@@ -621,33 +576,6 @@ class _ClientFormModalState extends State<ClientFormModal> {
                                         const SizedBox(width: 8),
                                         const Text(
                                           'Ingresa un balance mensual válido',
-                                        ),
-                                      ],
-                                    ),
-                                    backgroundColor: Colors.orange,
-                                    behavior: SnackBarBehavior.floating,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                  ),
-                                );
-                                return;
-                              }
-
-                              // Validar contraseña si se está creando un nuevo cliente
-                              if (widget.client == null &&
-                                  _passwordController.text.trim().length < 6) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Row(
-                                      children: [
-                                        Icon(
-                                          Icons.warning,
-                                          color: Colors.white,
-                                        ),
-                                        const SizedBox(width: 8),
-                                        const Text(
-                                          'La contraseña debe tener al menos 6 caracteres',
                                         ),
                                       ],
                                     ),

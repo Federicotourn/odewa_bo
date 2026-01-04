@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:odewa_bo/pages/requests/models/request_model.dart';
 import 'package:odewa_bo/pages/requests/services/request_service.dart';
 import 'package:odewa_bo/controllers/logged_user_controller.dart';
@@ -6,6 +7,7 @@ import 'package:get/get.dart';
 
 class RequestController extends GetxController {
   final RequestService _requestService = Get.find<RequestService>();
+  Timer? _searchDebounce;
 
   // Observables
   var requests = <OdewaRequest>[].obs;
@@ -34,6 +36,7 @@ class RequestController extends GetxController {
   final amountController = TextEditingController();
   final dateController = TextEditingController();
   final clientIdController = TextEditingController();
+  final searchController = TextEditingController();
 
   @override
   void onInit() {
@@ -58,10 +61,13 @@ class RequestController extends GetxController {
   }
 
   @override
+  @override
   void onClose() {
+    _searchDebounce?.cancel();
     amountController.dispose();
     dateController.dispose();
     clientIdController.dispose();
+    searchController.dispose();
     super.onClose();
   }
 
@@ -79,6 +85,10 @@ class RequestController extends GetxController {
       limit: limit.value,
       startDate: startDate.value,
       endDate: endDate.value,
+      search: searchQuery.value.isNotEmpty ? searchQuery.value : null,
+      status: statusFilter.value != 'all' ? statusFilter.value : null,
+      companyIds:
+          selectedCompanyIds.isNotEmpty ? selectedCompanyIds.toList() : null,
     );
 
     if (result.$1) {
@@ -119,34 +129,9 @@ class RequestController extends GetxController {
     isLoading.value = false;
   }
 
+  // Los filtros ahora se aplican en el servidor, así que retornamos directamente las requests
   List<OdewaRequest> get filteredRequests {
-    var filtered =
-        requests.where((request) {
-          // Search filter
-          final searchMatch =
-              searchQuery.value.isEmpty ||
-              (request.client?.fullName.toLowerCase().contains(
-                    searchQuery.value.toLowerCase(),
-                  ) ??
-                  false) ||
-              request.amount.contains(searchQuery.value) ||
-              request.date.contains(searchQuery.value);
-
-          // Status filter
-          final statusMatch =
-              statusFilter.value == 'all' ||
-              request.status == statusFilter.value;
-
-          // Company filter
-          final companyMatch =
-              selectedCompanyIds.isEmpty ||
-              (request.client?.companyId != null &&
-                  selectedCompanyIds.contains(request.client!.companyId));
-
-          return searchMatch && statusMatch && companyMatch;
-        }).toList();
-
-    return filtered;
+    return requests;
   }
 
   Future<void> createRequest() async {
@@ -411,10 +396,21 @@ class RequestController extends GetxController {
 
   void updateSearchQuery(String query) {
     searchQuery.value = query;
+    // Cancelar el timer anterior si existe
+    _searchDebounce?.cancel();
+    // Resetear a la primera página cuando se busca
+    currentPage.value = 1;
+    // Crear un nuevo timer con debounce de 500ms
+    _searchDebounce = Timer(const Duration(milliseconds: 500), () {
+      loadRequests();
+    });
   }
 
   void updateStatusFilter(String filter) {
     statusFilter.value = filter;
+    // Resetear a la primera página cuando se cambia el filtro
+    currentPage.value = 1;
+    loadRequests();
   }
 
   void updateDateFilters(DateTime? start, DateTime? end) {
@@ -431,6 +427,7 @@ class RequestController extends GetxController {
 
   void clearAllFilters() {
     searchQuery.value = '';
+    searchController.clear();
     statusFilter.value = 'all';
     startDate.value = null;
     endDate.value = null;
@@ -481,6 +478,9 @@ class RequestController extends GetxController {
   // Company filter methods
   void updateCompanyFilters(List<String> companyIds) {
     selectedCompanyIds.value = companyIds;
+    // Resetear a la primera página cuando se cambia el filtro
+    currentPage.value = 1;
+    loadRequests();
   }
 
   void toggleCompany(String companyId) {
@@ -489,6 +489,9 @@ class RequestController extends GetxController {
     } else {
       selectedCompanyIds.add(companyId);
     }
+    // Resetear a la primera página cuando se cambia el filtro
+    currentPage.value = 1;
+    loadRequests();
   }
 
   void clearCompanyFilters() {

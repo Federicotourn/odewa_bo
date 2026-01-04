@@ -24,6 +24,9 @@ class RequestService extends GetxService {
     int limit = 10,
     DateTime? startDate,
     DateTime? endDate,
+    String? search,
+    String? status,
+    List<String>? companyIds,
   }) async {
     try {
       // Construir los parámetros de consulta
@@ -32,6 +35,9 @@ class RequestService extends GetxService {
         limit: limit,
         startDate: startDate,
         endDate: endDate,
+        search: search,
+        status: status,
+        companyIds: companyIds,
       );
 
       // Construir la URL solo si hay parámetros
@@ -66,6 +72,9 @@ class RequestService extends GetxService {
     required int limit,
     DateTime? startDate,
     DateTime? endDate,
+    String? search,
+    String? status,
+    List<String>? companyIds,
   }) {
     final Map<String, String> params = {
       'page': page.toString(),
@@ -78,6 +87,18 @@ class RequestService extends GetxService {
 
     if (endDate != null) {
       params['end_date'] = endDate.toIso8601String().split('T')[0];
+    }
+
+    if (search != null && search.isNotEmpty) {
+      params['search'] = search;
+    }
+
+    if (status != null && status.isNotEmpty && status != 'all') {
+      params['status'] = status;
+    }
+
+    if (companyIds != null && companyIds.isNotEmpty) {
+      params['company_ids'] = companyIds.join(',');
     }
 
     return params;

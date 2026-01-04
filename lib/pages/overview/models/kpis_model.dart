@@ -51,39 +51,92 @@ class KpisData {
   };
 }
 
-class ClientKPIs {
-  int totalClients;
-  double averageMonthlyBalance;
-  int estimatedDownloads;
-  int estimatedActiveClients;
-  double averageRequestAmount;
-  double amountToCover;
+class EmployeesCount {
+  int active;
+  int total;
+  double percentage;
 
-  ClientKPIs({
-    required this.totalClients,
-    required this.averageMonthlyBalance,
-    required this.estimatedDownloads,
-    required this.estimatedActiveClients,
-    required this.averageRequestAmount,
-    required this.amountToCover,
+  EmployeesCount({
+    required this.active,
+    required this.total,
+    required this.percentage,
   });
 
-  factory ClientKPIs.fromJson(Map<String, dynamic> json) => ClientKPIs(
-    totalClients: json["totalClients"],
-    averageMonthlyBalance: json["averageMonthlyBalance"],
-    estimatedDownloads: json["estimatedDownloads"],
-    estimatedActiveClients: json["estimatedActiveClients"],
-    averageRequestAmount: json["averageRequestAmount"],
-    amountToCover: json["amountToCover"],
+  factory EmployeesCount.fromJson(Map<String, dynamic> json) => EmployeesCount(
+    active: json["active"],
+    total: json["total"],
+    percentage: (json["percentage"] as num).toDouble(),
   );
 
   Map<String, dynamic> toJson() => {
-    "totalClients": totalClients,
+    "active": active,
+    "total": total,
+    "percentage": percentage,
+  };
+}
+
+class RequestedVsPossible {
+  double requested;
+  double possible;
+  double percentage;
+
+  RequestedVsPossible({
+    required this.requested,
+    required this.possible,
+    required this.percentage,
+  });
+
+  factory RequestedVsPossible.fromJson(Map<String, dynamic> json) =>
+      RequestedVsPossible(
+        requested: (json["requested"] as num).toDouble(),
+        possible: (json["possible"] as num).toDouble(),
+        percentage: (json["percentage"] as num).toDouble(),
+      );
+
+  Map<String, dynamic> toJson() => {
+    "requested": requested,
+    "possible": possible,
+    "percentage": percentage,
+  };
+}
+
+class ClientKPIs {
+  EmployeesCount employeesCount;
+  double averageMonthlyBalance;
+  int activeUsersThisMonth;
+  double averageRequestAmount;
+  RequestedVsPossible requestedVsPossibleActive;
+  RequestedVsPossible requestedVsPossibleAll;
+
+  ClientKPIs({
+    required this.employeesCount,
+    required this.averageMonthlyBalance,
+    required this.activeUsersThisMonth,
+    required this.averageRequestAmount,
+    required this.requestedVsPossibleActive,
+    required this.requestedVsPossibleAll,
+  });
+
+  factory ClientKPIs.fromJson(Map<String, dynamic> json) => ClientKPIs(
+    employeesCount: EmployeesCount.fromJson(json["employeesCount"]),
+    averageMonthlyBalance: (json["averageMonthlyBalance"] as num).toDouble(),
+    activeUsersThisMonth: json["activeUsersThisMonth"],
+    averageRequestAmount: (json["averageRequestAmount"] as num).toDouble(),
+    requestedVsPossibleActive: RequestedVsPossible.fromJson(
+      json["requestedVsPossibleActive"],
+    ),
+    requestedVsPossibleAll: RequestedVsPossible.fromJson(
+      json["requestedVsPossibleAll"],
+    ),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "employeesCount": employeesCount.toJson(),
     "averageMonthlyBalance": averageMonthlyBalance,
-    "estimatedDownloads": estimatedDownloads,
-    "estimatedActiveClients": estimatedActiveClients,
+    "activeUsersThisMonth": activeUsersThisMonth,
     "averageRequestAmount": averageRequestAmount,
-    "amountToCover": amountToCover,
+    "requestedVsPossibleActive": requestedVsPossibleActive.toJson(),
+    "requestedVsPossibleAll": requestedVsPossibleAll.toJson(),
   };
 }
 
@@ -189,7 +242,7 @@ class RequestsByStatus {
     ),
   ];
 
-  int get total => pending + approved + rejected + completed;
+  int get total => pending + approved + rejected + completed + cancelled;
 }
 
 class StatusData {
