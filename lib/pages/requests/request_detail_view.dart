@@ -11,6 +11,8 @@ import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+// ignore: avoid_web_libraries_in_flutter
+import 'dart:html' as html;
 
 class RequestDetailView extends StatelessWidget {
   const RequestDetailView({super.key});
@@ -93,6 +95,32 @@ class RequestDetailView extends StatelessWidget {
                       ),
 
                       const SizedBox(height: 24),
+
+                      // Mostrar PDF del recibo si el status es completed y existe receiptUrl
+                      if (requestController.selectedRequest.value!.status ==
+                              'completed' &&
+                          requestController.selectedRequest.value!.receiptUrl !=
+                              null &&
+                          requestController
+                              .selectedRequest
+                              .value!
+                              .receiptUrl!
+                              .isNotEmpty)
+                        _buildReceiptViewer(
+                          requestController.selectedRequest.value!,
+                          context,
+                        ),
+
+                      if (requestController.selectedRequest.value!.status ==
+                              'completed' &&
+                          requestController.selectedRequest.value!.receiptUrl !=
+                              null &&
+                          requestController
+                              .selectedRequest
+                              .value!
+                              .receiptUrl!
+                              .isNotEmpty)
+                        const SizedBox(height: 24),
 
                       // Información de la solicitud
                       // _buildRequestInfo(
@@ -1317,4 +1345,116 @@ class _InfoCard extends StatelessWidget {
       ),
     );
   }
+}
+
+Widget _buildReceiptViewer(OdewaRequest request, BuildContext context) {
+  final isSmallScreen = ResponsiveWidget.isSmallScreen(context);
+
+  return Container(
+    padding: const EdgeInsets.all(24),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(16),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withValues(alpha: 0.05),
+          blurRadius: 10,
+          offset: const Offset(0, 5),
+        ),
+      ],
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(Icons.receipt_long, color: Colors.green.shade600, size: 24),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                'Comprobante de Pago',
+                style: TextStyle(
+                  fontSize: isSmallScreen ? 18 : 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey.shade800,
+                ),
+              ),
+            ),
+            // Botón para abrir en nueva pestaña
+            // ElevatedButton.icon(
+            //   onPressed: () {
+            //     // Abrir el PDF en una nueva pestaña (solo funciona en web)
+            //     html.window.open(request.receiptUrl!, '_blank');
+            //   },
+            //   icon: const Icon(
+            //     Icons.open_in_new,
+            //     size: 18,
+            //     color: Colors.white,
+            //   ),
+            //   label: Text(isSmallScreen ? 'Abrir' : 'Abrir en nueva pestaña'),
+            //   style: ElevatedButton.styleFrom(
+            //     backgroundColor: Colors.green.shade600,
+            //     foregroundColor: Colors.white,
+            //     padding: EdgeInsets.symmetric(
+            //       horizontal: isSmallScreen ? 12 : 16,
+            //       vertical: isSmallScreen ? 8 : 12,
+            //     ),
+            //     shape: RoundedRectangleBorder(
+            //       borderRadius: BorderRadius.circular(8),
+            //     ),
+            //   ),
+            // ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        // Link directo al PDF
+        InkWell(
+          onTap: () {
+            html.window.open(request.receiptUrl!, '_blank');
+          },
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.green.shade50,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.green.shade200),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.picture_as_pdf, color: Colors.green.shade700),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Comprobante de Pago - Solicitud ${request.id.substring(0, 8)}',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: Colors.grey.shade800,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Haz clic para ver el PDF',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey.shade600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(
+                  Icons.arrow_forward_ios,
+                  size: 16,
+                  color: Colors.green.shade600,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
 }
