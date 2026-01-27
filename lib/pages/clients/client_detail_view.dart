@@ -7,6 +7,7 @@ import 'package:odewa_bo/helpers/responsiveness.dart';
 import 'package:odewa_bo/helpers/scaffold_helper.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 class ClientDetailView extends StatelessWidget {
@@ -415,6 +416,14 @@ class ClientDetailView extends StatelessWidget {
                     : 'No especificado',
           ),
           infoRow(label: 'Email', value: client.email ?? 'No especificado'),
+          infoRow(
+            label: 'Teléfono',
+            value:
+                client.phone != null && client.phone!.isNotEmpty
+                    ? client.phone!
+                    : 'No especificado',
+            enableCopy: client.phone != null && client.phone!.isNotEmpty,
+          ),
           infoRow(
             label: 'Estado',
             value: client.isActive ? 'Activo' : 'Inactivo',
@@ -919,18 +928,6 @@ class ClientDetailView extends StatelessWidget {
                 },
               ),
               _ActionButton(
-                icon: client.isActive ? Icons.block : Icons.check_circle,
-                label:
-                    client.isActive
-                        ? 'Desactivar Empleado'
-                        : 'Activar Empleado',
-                color:
-                    client.isActive
-                        ? Colors.orange.shade400
-                        : Colors.green.shade400,
-                onPressed: () => controller.toggleClientStatus(client),
-              ),
-              _ActionButton(
                 icon: Icons.delete,
                 label: 'Eliminar Empleado',
                 color: Colors.red.shade400,
@@ -993,8 +990,32 @@ class ClientDetailView extends StatelessWidget {
     );
   }
 
-  Widget infoRow({required String label, required String value}) {
+  Widget infoRow({
+    required String label,
+    required String value,
+    bool enableCopy = false,
+  }) {
     final isSmallScreen = ResponsiveWidget.isSmallScreen(Get.context!);
+
+    Future<void> _copyToClipboard(String text) async {
+      await Clipboard.setData(ClipboardData(text: text));
+      if (Get.context != null && Get.context!.mounted) {
+        ScaffoldMessenger.of(Get.context!).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                Icon(Icons.check_circle, color: Colors.white, size: 20),
+                const SizedBox(width: 8),
+                const Text('Copiado al portapapeles'),
+              ],
+            ),
+            backgroundColor: Colors.green.shade600,
+            duration: const Duration(seconds: 2),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    }
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
@@ -1012,10 +1033,40 @@ class ClientDetailView extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Text(
-                    value,
-                    style: TextStyle(fontSize: 16, color: Colors.grey.shade800),
-                  ),
+                  enableCopy
+                      ? Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              value,
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.grey.shade800,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          InkWell(
+                            onTap: () => _copyToClipboard(value),
+                            borderRadius: BorderRadius.circular(8),
+                            child: Padding(
+                              padding: const EdgeInsets.all(4),
+                              child: Icon(
+                                Icons.copy,
+                                size: 18,
+                                color: Colors.blue.shade600,
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
+                      : Text(
+                        value,
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey.shade800,
+                        ),
+                      ),
                 ],
               )
               : Row(
@@ -1034,13 +1085,41 @@ class ClientDetailView extends StatelessWidget {
                   ),
                   const SizedBox(width: 12),
                   Expanded(
-                    child: Text(
-                      value,
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey.shade800,
-                      ),
-                    ),
+                    child:
+                        enableCopy
+                            ? Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    value,
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.grey.shade800,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                InkWell(
+                                  onTap: () => _copyToClipboard(value),
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(4),
+                                    child: Icon(
+                                      Icons.copy,
+                                      size: 18,
+                                      color: Colors.blue.shade600,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            )
+                            : Text(
+                              value,
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.grey.shade800,
+                              ),
+                            ),
                   ),
                 ],
               ),

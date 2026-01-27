@@ -201,26 +201,34 @@ class OverviewPageNew extends StatelessWidget {
                 children: [
                   _buildStatusChart(data),
                   const SizedBox(height: 24),
+                  _buildDayOfWeekChart(data),
+                  const SizedBox(height: 24),
                   _buildLatestRequests(data),
                 ],
               )
-              : Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              : Column(
                 children: [
-                  // Pie Chart
-                  Expanded(
-                    flex: 1,
-                    child: Column(
-                      children: [
-                        _buildStatusChart(data),
-                        const SizedBox(height: 24),
-                        Container(),
-                      ],
-                    ),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Pie Chart
+                      Expanded(
+                        flex: 1,
+                        child: Column(
+                          children: [
+                            _buildStatusChart(data),
+                            const SizedBox(height: 24),
+                            Container(),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 20),
+                      // Latest Requests
+                      Expanded(flex: 2, child: _buildLatestRequests(data)),
+                    ],
                   ),
-                  const SizedBox(width: 20),
-                  // Latest Requests
-                  Expanded(flex: 2, child: _buildLatestRequests(data)),
+                  const SizedBox(height: 24),
+                  _buildDayOfWeekChart(data),
                 ],
               ),
         ] else ...[
@@ -738,6 +746,281 @@ class OverviewPageNew extends StatelessWidget {
               ],
             );
           }).toList(),
+    );
+  }
+
+  Widget _buildDayOfWeekChart(KpisData data) {
+    final isSmallScreen = ResponsiveWidget.isSmallScreen(Get.context!);
+    final daysList = data.requestsByDayOfWeek.daysList;
+
+    // Encontrar el máximo para normalizar los valores
+    final maxCount = daysList
+        .map((d) => d.data.count)
+        .reduce((a, b) => a > b ? a : b);
+    final maxAmount = daysList
+        .map((d) => d.data.amount)
+        .reduce((a, b) => a > b ? a : b);
+    final maxValue = maxCount > maxAmount ? maxCount.toDouble() : maxAmount;
+
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.calendar_today,
+                color: Colors.purple.shade600,
+                size: 24,
+              ),
+              const SizedBox(width: 12),
+              Text(
+                'Solicitudes por Día de la Semana',
+                style: TextStyle(
+                  fontSize: isSmallScreen ? 16 : 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.purple.shade800,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
+          SizedBox(
+            height: isSmallScreen ? 250 : 300,
+            child: BarChart(
+              BarChartData(
+                alignment: BarChartAlignment.spaceAround,
+                maxY: maxValue > 0 ? maxValue * 1.2 : 10,
+                barTouchData: BarTouchData(
+                  enabled: true,
+                  touchTooltipData: BarTouchTooltipData(
+                    getTooltipColor: (group) => Colors.grey.shade800,
+                    tooltipPadding: const EdgeInsets.all(8),
+                  ),
+                ),
+                titlesData: FlTitlesData(
+                  show: true,
+                  rightTitles: const AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
+                  topTitles: const AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
+                  bottomTitles: AxisTitles(
+                    sideTitles: SideTitles(
+                      showTitles: true,
+                      getTitlesWidget: (value, meta) {
+                        if (value.toInt() >= 0 &&
+                            value.toInt() < daysList.length) {
+                          return Padding(
+                            padding: const EdgeInsets.only(top: 8),
+                            child: Text(
+                              daysList[value.toInt()].day.substring(0, 3),
+                              style: TextStyle(
+                                fontSize: isSmallScreen ? 10 : 12,
+                                color: Colors.grey.shade700,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          );
+                        }
+                        return const Text('');
+                      },
+                      reservedSize: 40,
+                    ),
+                  ),
+                  leftTitles: AxisTitles(
+                    sideTitles: SideTitles(
+                      showTitles: true,
+                      reservedSize: isSmallScreen ? 40 : 50,
+                      getTitlesWidget: (value, meta) {
+                        if (value % (maxValue / 5).ceil() == 0 ||
+                            value == maxValue) {
+                          return Text(
+                            value.toInt().toString(),
+                            style: TextStyle(
+                              fontSize: isSmallScreen ? 10 : 12,
+                              color: Colors.grey.shade700,
+                            ),
+                          );
+                        }
+                        return const Text('');
+                      },
+                    ),
+                  ),
+                ),
+                gridData: FlGridData(
+                  show: true,
+                  drawVerticalLine: false,
+                  horizontalInterval: maxValue > 0 ? maxValue / 5 : 1,
+                  getDrawingHorizontalLine: (value) {
+                    return FlLine(color: Colors.grey.shade200, strokeWidth: 1);
+                  },
+                ),
+                borderData: FlBorderData(
+                  show: true,
+                  border: Border(
+                    bottom: BorderSide(color: Colors.grey.shade300),
+                    left: BorderSide(color: Colors.grey.shade300),
+                  ),
+                ),
+                barGroups:
+                    daysList.asMap().entries.map((entry) {
+                      final index = entry.key;
+                      final dayData = entry.value;
+
+                      // Normalizar el monto para que use la misma escala que el count
+                      // Si maxAmount es 0, usar maxValue directamente
+                      final normalizedAmount =
+                          maxAmount > 0 && maxValue > 0
+                              ? (dayData.data.amount / maxAmount) * maxValue
+                              : 0.0;
+
+                      return BarChartGroupData(
+                        x: index,
+                        barRods: [
+                          // Barra para cantidad (count)
+                          BarChartRodData(
+                            toY: dayData.data.count.toDouble(),
+                            color: Colors.blue.shade400,
+                            width: isSmallScreen ? 16 : 20,
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(4),
+                              topRight: Radius.circular(4),
+                            ),
+                          ),
+                          // Barra para monto (amount) - normalizada
+                          BarChartRodData(
+                            toY: normalizedAmount,
+                            color: Colors.purple.shade400,
+                            width: isSmallScreen ? 16 : 20,
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(4),
+                              topRight: Radius.circular(4),
+                            ),
+                          ),
+                        ],
+                        barsSpace: 4,
+                      );
+                    }).toList(),
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          // Leyenda
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 16,
+                    height: 16,
+                    decoration: BoxDecoration(
+                      color: Colors.blue.shade400,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Cantidad',
+                    style: TextStyle(
+                      fontSize: isSmallScreen ? 12 : 14,
+                      color: Colors.grey.shade700,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(width: 24),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 16,
+                    height: 16,
+                    decoration: BoxDecoration(
+                      color: Colors.purple.shade400,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Monto',
+                    style: TextStyle(
+                      fontSize: isSmallScreen ? 12 : 14,
+                      color: Colors.grey.shade700,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          // Tabla con valores detallados
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade50,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Column(
+              children:
+                  daysList.map((dayData) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 4),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              dayData.day,
+                              style: TextStyle(
+                                fontSize: isSmallScreen ? 12 : 14,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.grey.shade800,
+                              ),
+                            ),
+                          ),
+                          Text(
+                            '${dayData.data.count} solicitudes',
+                            style: TextStyle(
+                              fontSize: isSmallScreen ? 11 : 13,
+                              color: Colors.blue.shade700,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Text(
+                            NumberFormat.currency(
+                              symbol: '\$',
+                              decimalDigits: 0,
+                            ).format(dayData.data.amount),
+                            style: TextStyle(
+                              fontSize: isSmallScreen ? 11 : 13,
+                              color: Colors.purple.shade700,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+            ),
+          ),
+        ],
+      ),
     );
   }
 

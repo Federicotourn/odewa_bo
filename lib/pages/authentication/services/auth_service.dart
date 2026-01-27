@@ -95,9 +95,14 @@ class AuthService extends GetxService {
       box.remove('user');
       box.remove('token');
 
-      // Limpiar cookies
-      _loggedUserController.clearCookies();
-      _loggedUserController.clearUser();
+      // Limpiar cookies y usuario del controlador
+      try {
+        _loggedUserController.clearCookies();
+        _loggedUserController.clearUser();
+        _loggedUserController.user.value = null;
+      } catch (e) {
+        debugPrint('Error clearing logged user controller: $e');
+      }
 
       // Limpiar controladores
       try {
@@ -107,7 +112,7 @@ class AuthService extends GetxService {
       }
 
       // Cerrar cualquier diálogo abierto
-      if (Get.isDialogOpen == true) {
+      while (Get.isDialogOpen == true) {
         Get.back();
       }
 

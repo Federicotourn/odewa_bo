@@ -14,6 +14,7 @@ import 'package:http/retry.dart';
 class AuthInterceptorClient extends http.BaseClient {
   final http.Client _inner;
   final TokenValidationService _tokenService;
+  bool _isLoggingOut = false;
 
   AuthInterceptorClient(this._inner, this._tokenService);
 
@@ -25,7 +26,10 @@ class AuthInterceptorClient extends http.BaseClient {
     if (response.statusCode == 401) {
       // Verificar si es una ruta de autenticación para evitar loops
       final uri = request.url.toString();
-      if (!uri.contains('/auth/login') && !uri.contains('/auth/client/login')) {
+      if (!uri.contains('/auth/login') &&
+          !uri.contains('/auth/client/login') &&
+          !uri.contains('/auth/logout') &&
+          !_isLoggingOut) {
         // Llamar al logout de forma asíncrona para no bloquear
         _handleUnauthorized();
       }
@@ -35,10 +39,21 @@ class AuthInterceptorClient extends http.BaseClient {
   }
 
   void _handleUnauthorized() {
+    // Evitar múltiples llamadas simultáneas
+    if (_isLoggingOut) return;
+    _isLoggingOut = true;
+
     // Usar un microtask para evitar problemas de contexto y no bloquear la respuesta
     Future.microtask(() async {
-      // Llamar al método de logout mejorado que maneja todos los casos
-      await _tokenService.handleUnauthorized();
+      try {
+        // Llamar al método de logout mejorado que maneja todos los casos
+        await _tokenService.handleUnauthorized();
+      } finally {
+        // Resetear la bandera después de un delay para permitir nuevas llamadas
+        Future.delayed(const Duration(seconds: 2), () {
+          _isLoggingOut = false;
+        });
+      }
     });
   }
 
@@ -109,34 +124,30 @@ class TokenValidationService extends GetxService {
       box.remove('token');
       CookieManager().removeCookie(Constants.cookieName);
 
-      // Intentar hacer logout en el servidor (puede fallar si ya no hay sesión)
+      // Limpiar controladores de forma más agresiva
       try {
-        final authService = Get.find<AuthService>();
-        await authService.clearAllSessionData();
-      } catch (e) {
-        // Si no se puede encontrar AuthService, limpiar manualmente
-        try {
-          final loggedUserController = Get.find<LoggedUserController>();
-          loggedUserController.clearCookies();
-          loggedUserController.clearUser();
-          Get.delete<LoggedUserController>(force: true);
-        } catch (e2) {
-          // Ignorar si el controlador no existe
-        }
-      }
-
-      // Limpiar controladores adicionales
-      try {
+        final loggedUserController = Get.find<LoggedUserController>();
+        loggedUserController.clearCookies();
+        loggedUserController.clearUser();
+        loggedUserController.user.value = null;
         Get.delete<LoggedUserController>(force: true);
       } catch (e) {
         // Ignorar si el controlador no existe
       }
 
+      // Intentar hacer logout en el servidor (puede fallar si ya no hay sesión)
       try {
-        final menuController = Get.find<MenuController>();
-        menuController.changeActiveItemTo(overViewPageDisplayName);
+        final authService = Get.find<AuthService>();
+        await authService.clearAllSessionData();
       } catch (e) {
-        // Ignorar si el controlador no existe
+        // Ignorar errores del servidor
+      }
+
+      // Limpiar controladores adicionales que puedan tener estado
+      try {
+        Get.delete<MenuController>(force: true);
+      } catch (e) {
+        // Ignorar si no existe
       }
 
       // Cerrar cualquier diálogo abierto
@@ -148,6 +159,9 @@ class TokenValidationService extends GetxService {
       if (Get.isSnackbarOpen == true) {
         Get.closeAllSnackbars();
       }
+
+      // Esperar un momento para asegurar que todo se limpió
+      await Future.delayed(const Duration(milliseconds: 100));
 
       // Redirigir al login y limpiar todas las rutas
       Get.offAllNamed(authenticationPageRoute);

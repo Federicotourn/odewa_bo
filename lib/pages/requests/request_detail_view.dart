@@ -504,13 +504,6 @@ class RequestDetailView extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
                   _InfoCard(
-                    icon: Icons.email,
-                    label: 'Email',
-                    value: client.email,
-                    color: Colors.blue.shade600,
-                  ),
-                  const SizedBox(height: 12),
-                  _InfoCard(
                     icon: Icons.credit_card,
                     label: 'Documento',
                     value: client.document,
@@ -541,15 +534,6 @@ class RequestDetailView extends StatelessWidget {
                   const SizedBox(width: 16),
                   Expanded(
                     child: _InfoCard(
-                      icon: Icons.email,
-                      label: 'Email',
-                      value: client.email,
-                      color: Colors.blue.shade600,
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: _InfoCard(
                       icon: Icons.credit_card,
                       label: 'Documento',
                       value: client.document,
@@ -572,6 +556,19 @@ class RequestDetailView extends StatelessWidget {
               ),
           const SizedBox(height: 20),
 
+          infoRow(
+            label: 'Email',
+            value: client.email,
+            enableCopy: client.email.isNotEmpty,
+          ),
+          infoRow(
+            label: 'Teléfono',
+            value:
+                client.phone != null && client.phone!.isNotEmpty
+                    ? client.phone!
+                    : 'No especificado',
+            enableCopy: client.phone != null && client.phone!.isNotEmpty,
+          ),
           infoRow(
             label: 'Banco',
             value:

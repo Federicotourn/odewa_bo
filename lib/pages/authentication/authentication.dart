@@ -23,26 +23,28 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
     // Limpiar cualquier sesión previa al cargar la página de login
     _cleanupPreviousSession();
 
+    // Asegurar que el LoggedUserController esté limpio
+    try {
+      loggedUserController = Get.find<LoggedUserController>();
+      // Forzar limpieza completa
+      loggedUserController.clearUser();
+      loggedUserController.user.value = null;
+    } catch (e) {
+      // Si no existe, crear uno nuevo
+      loggedUserController = Get.put(LoggedUserController());
+      loggedUserController.user.value = null;
+    }
+
     // Inicializar controladores de forma segura
     try {
       authController = Get.find<AuthController>();
+      // Limpiar los campos del formulario
+      authController.emailController.clear();
+      authController.passwordController.clear();
+      authController.isLoggingIn.value = false;
     } catch (e) {
       authController = Get.put(AuthController());
     }
-
-    try {
-      loggedUserController = Get.find<LoggedUserController>();
-      // Si existe pero tiene datos, limpiarlo
-      if (loggedUserController.user.value != null) {
-        loggedUserController.clearUser();
-      }
-    } catch (e) {
-      loggedUserController = Get.put(LoggedUserController());
-    }
-
-    // Limpiar los campos del formulario
-    authController.emailController.clear();
-    authController.passwordController.clear();
   }
 
   Future<void> _cleanupPreviousSession() async {
@@ -165,13 +167,21 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                       final (success, message) = await authController.login();
                       if (success) {
                         // Esperar un poco para asegurar que los datos se guardaron
-                        await Future.delayed(const Duration(milliseconds: 100));
+                        await Future.delayed(const Duration(milliseconds: 200));
 
-                        // Recargar el usuario
+                        // Forzar recarga del usuario
+                        loggedUserController.user.value = null;
                         final userLoaded =
                             await loggedUserController.getLoggedUser();
+
+                        // Verificar que el usuario se cargó correctamente
                         if (userLoaded &&
                             loggedUserController.user.value != null) {
+                          // Esperar un momento adicional para asegurar que todo está listo
+                          await Future.delayed(
+                            const Duration(milliseconds: 100),
+                          );
+
                           // Limpiar cualquier diálogo o snackbar antes de navegar
                           while (Get.isDialogOpen == true) {
                             Get.back();
@@ -179,9 +189,12 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                           if (Get.isSnackbarOpen == true) {
                             Get.closeAllSnackbars();
                           }
+
                           // Navegar al home y limpiar el stack de navegación
                           Get.offAllNamed('/home');
                         } else {
+                          // Si no se pudo cargar el usuario, limpiar todo y mostrar error
+                          loggedUserController.clearUser();
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                               content: Text(
@@ -201,6 +214,8 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                       }
                     } catch (e) {
                       debugPrint('Error en login: $e');
+                      // Limpiar en caso de error
+                      loggedUserController.clearUser();
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text(

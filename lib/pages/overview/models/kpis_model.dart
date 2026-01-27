@@ -17,6 +17,7 @@ class KpisData {
   List<LatestRequest> latestRequests;
   RequestsByStatus requestsByStatus;
   ClientKPIs clientKPIs;
+  RequestsByDayOfWeek requestsByDayOfWeek;
 
   KpisData({
     required this.totalRequests,
@@ -26,6 +27,7 @@ class KpisData {
     required this.latestRequests,
     required this.requestsByStatus,
     required this.clientKPIs,
+    required this.requestsByDayOfWeek,
   });
 
   factory KpisData.fromJson(Map<String, dynamic> json) => KpisData(
@@ -38,6 +40,9 @@ class KpisData {
     ),
     requestsByStatus: RequestsByStatus.fromJson(json["requestsByStatus"]),
     clientKPIs: ClientKPIs.fromJson(json["clientKPIs"]),
+    requestsByDayOfWeek: RequestsByDayOfWeek.fromJson(
+      json["requestsByDayOfWeek"] ?? {},
+    ),
   );
 
   Map<String, dynamic> toJson() => {
@@ -48,6 +53,7 @@ class KpisData {
     "latestRequests": List<dynamic>.from(latestRequests.map((x) => x.toJson())),
     "requestsByStatus": requestsByStatus.toJson(),
     "clientKPIs": clientKPIs.toJson(),
+    "requestsByDayOfWeek": requestsByDayOfWeek.toJson(),
   };
 }
 
@@ -259,4 +265,78 @@ class StatusData {
   });
 
   double getPercentage(int total) => total > 0 ? (count / total) * 100 : 0;
+}
+
+class RequestsByDayOfWeek {
+  DayData lunes;
+  DayData martes;
+  DayData miercoles;
+  DayData jueves;
+  DayData viernes;
+  DayData sabado;
+  DayData domingo;
+
+  RequestsByDayOfWeek({
+    required this.lunes,
+    required this.martes,
+    required this.miercoles,
+    required this.jueves,
+    required this.viernes,
+    required this.sabado,
+    required this.domingo,
+  });
+
+  factory RequestsByDayOfWeek.fromJson(Map<String, dynamic> json) =>
+      RequestsByDayOfWeek(
+        lunes: DayData.fromJson(json["lunes"] ?? {"count": 0, "amount": 0}),
+        martes: DayData.fromJson(json["martes"] ?? {"count": 0, "amount": 0}),
+        miercoles: DayData.fromJson(
+          json["miercoles"] ?? {"count": 0, "amount": 0},
+        ),
+        jueves: DayData.fromJson(json["jueves"] ?? {"count": 0, "amount": 0}),
+        viernes: DayData.fromJson(json["viernes"] ?? {"count": 0, "amount": 0}),
+        sabado: DayData.fromJson(json["sabado"] ?? {"count": 0, "amount": 0}),
+        domingo: DayData.fromJson(json["domingo"] ?? {"count": 0, "amount": 0}),
+      );
+
+  Map<String, dynamic> toJson() => {
+    "lunes": lunes.toJson(),
+    "martes": martes.toJson(),
+    "miercoles": miercoles.toJson(),
+    "jueves": jueves.toJson(),
+    "viernes": viernes.toJson(),
+    "sabado": sabado.toJson(),
+    "domingo": domingo.toJson(),
+  };
+
+  List<DayDataWithLabel> get daysList => [
+    DayDataWithLabel(day: 'Lunes', data: lunes),
+    DayDataWithLabel(day: 'Martes', data: martes),
+    DayDataWithLabel(day: 'Miércoles', data: miercoles),
+    DayDataWithLabel(day: 'Jueves', data: jueves),
+    DayDataWithLabel(day: 'Viernes', data: viernes),
+    DayDataWithLabel(day: 'Sábado', data: sabado),
+    DayDataWithLabel(day: 'Domingo', data: domingo),
+  ];
+}
+
+class DayData {
+  int count;
+  double amount;
+
+  DayData({required this.count, required this.amount});
+
+  factory DayData.fromJson(Map<String, dynamic> json) => DayData(
+    count: json["count"] ?? 0,
+    amount: (json["amount"] ?? 0).toDouble(),
+  );
+
+  Map<String, dynamic> toJson() => {"count": count, "amount": amount};
+}
+
+class DayDataWithLabel {
+  final String day;
+  final DayData data;
+
+  DayDataWithLabel({required this.day, required this.data});
 }

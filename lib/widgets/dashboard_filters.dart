@@ -523,7 +523,11 @@ class _DashboardFiltersState extends State<DashboardFilters> {
             Expanded(
               child: OutlinedButton.icon(
                 onPressed: _clearAllFilters,
-                icon: const Icon(Icons.clear_all, size: 18),
+                icon: Icon(
+                  Icons.clear_all,
+                  size: 18,
+                  color: Colors.red.shade600,
+                ),
                 label: const Text('Limpiar todos'),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: Colors.red.shade600,
@@ -536,7 +540,7 @@ class _DashboardFiltersState extends State<DashboardFilters> {
             Expanded(
               child: ElevatedButton.icon(
                 onPressed: _applyFilters,
-                icon: const Icon(Icons.search, size: 18),
+                icon: const Icon(Icons.search, size: 18, color: Colors.white),
                 label: const Text('Aplicar filtros'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.teal.shade600,
