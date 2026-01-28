@@ -151,13 +151,48 @@ class OverviewService extends GetxService {
       ),
     ),
     requestsByDayOfWeek: RequestsByDayOfWeek(
-      lunes: DayData(count: 0, amount: 0),
-      martes: DayData(count: 0, amount: 0),
-      miercoles: DayData(count: 0, amount: 0),
-      jueves: DayData(count: 0, amount: 0),
-      viernes: DayData(count: 0, amount: 0),
-      sabado: DayData(count: 0, amount: 0),
-      domingo: DayData(count: 0, amount: 0),
+      lunes: DayData(
+        count: 0,
+        amount: 0,
+        averageCount: 0.0,
+        averageAmount: 0.0,
+      ),
+      martes: DayData(
+        count: 0,
+        amount: 0,
+        averageCount: 0.0,
+        averageAmount: 0.0,
+      ),
+      miercoles: DayData(
+        count: 0,
+        amount: 0,
+        averageCount: 0.0,
+        averageAmount: 0.0,
+      ),
+      jueves: DayData(
+        count: 0,
+        amount: 0,
+        averageCount: 0.0,
+        averageAmount: 0.0,
+      ),
+      viernes: DayData(
+        count: 0,
+        amount: 0,
+        averageCount: 0.0,
+        averageAmount: 0.0,
+      ),
+      sabado: DayData(
+        count: 0,
+        amount: 0,
+        averageCount: 0.0,
+        averageAmount: 0.0,
+      ),
+      domingo: DayData(
+        count: 0,
+        amount: 0,
+        averageCount: 0.0,
+        averageAmount: 0.0,
+      ),
     ),
   );
 }

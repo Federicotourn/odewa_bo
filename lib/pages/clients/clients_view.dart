@@ -13,6 +13,191 @@ import 'models/client_model.dart';
 class ClientsView extends StatelessWidget {
   const ClientsView({super.key});
 
+  Widget _buildMultiSelectClientFilter(ClientController controller) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Chips de clientes seleccionados
+        Obx(() {
+          if (controller.selectedClients.isEmpty) {
+            return const SizedBox.shrink();
+          }
+          return Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children:
+                controller.selectedClients.map((client) {
+                  return Chip(
+                    label: Text(
+                      '${client.firstName} ${client.lastName}',
+                      style: const TextStyle(fontSize: 12),
+                    ),
+                    onDeleted: () => controller.removeSelectedClient(client),
+                    deleteIcon: const Icon(Icons.close, size: 18),
+                    backgroundColor: Colors.blue.shade100,
+                    labelStyle: TextStyle(color: Colors.blue.shade900),
+                  );
+                }).toList(),
+          );
+        }),
+        Obx(() {
+          if (controller.selectedClients.isNotEmpty) {
+            return const SizedBox(height: 8);
+          }
+          return const SizedBox.shrink();
+        }),
+        // Campo de búsqueda con autocompletado
+        Autocomplete<Client>(
+          displayStringForOption:
+              (client) =>
+                  '${client.firstName} ${client.lastName} - ${client.document}',
+          optionsBuilder: (TextEditingValue textEditingValue) {
+            if (textEditingValue.text.isEmpty) {
+              return controller.getFilteredClientsForAutocomplete('');
+            }
+            return controller.getFilteredClientsForAutocomplete(
+              textEditingValue.text,
+            );
+          },
+          onSelected: (Client client) {
+            controller.toggleClientSelection(client);
+            controller.clientSearchText.value = '';
+          },
+          fieldViewBuilder: (
+            BuildContext context,
+            TextEditingController textEditingController,
+            FocusNode focusNode,
+            VoidCallback onFieldSubmitted,
+          ) {
+            // Sincronizar el controlador con el estado reactivo
+            textEditingController.text = controller.clientSearchText.value;
+            textEditingController.addListener(() {
+              controller.clientSearchText.value = textEditingController.text;
+            });
+            return Obx(() {
+              return TextField(
+                controller: textEditingController,
+                focusNode: focusNode,
+                onSubmitted: (String value) {
+                  onFieldSubmitted();
+                },
+                decoration: InputDecoration(
+                  hintText: 'Buscar y seleccionar usuarios...',
+                  prefixIcon: Icon(Icons.search, color: Colors.blue.shade400),
+                  suffixIcon:
+                      controller.clientSearchText.value.isNotEmpty
+                          ? IconButton(
+                            icon: const Icon(Icons.clear),
+                            onPressed: () {
+                              textEditingController.clear();
+                              controller.clientSearchText.value = '';
+                            },
+                          )
+                          : null,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              );
+            });
+          },
+          optionsViewBuilder: (
+            BuildContext context,
+            AutocompleteOnSelected<Client> onSelected,
+            Iterable<Client> options,
+          ) {
+            return Align(
+              alignment: Alignment.topLeft,
+              child: Material(
+                elevation: 4.0,
+                borderRadius: BorderRadius.circular(12),
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxHeight: 300),
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    padding: EdgeInsets.zero,
+                    itemCount: options.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      final Client client = options.elementAt(index);
+                      return Obx(() {
+                        final isSelected = controller.selectedClients.any(
+                          (c) => c.id == client.id,
+                        );
+                        return InkWell(
+                          onTap: () {
+                            controller.toggleClientSelection(client);
+                            controller.clientSearchText.value = '';
+                            // No llamar onSelected(client) para que el dropdown
+                            // permanezca abierto y se pueda seguir seleccionando
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
+                            decoration: BoxDecoration(
+                              color:
+                                  isSelected
+                                      ? Colors.blue.shade50
+                                      : Colors.white,
+                              border: Border(
+                                bottom: BorderSide(
+                                  color: Colors.grey.shade200,
+                                  width: 0.5,
+                                ),
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Checkbox(
+                                  value: isSelected,
+                                  onChanged: (bool? value) {
+                                    controller.toggleClientSelection(client);
+                                    controller.clientSearchText.value = '';
+                                  },
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        '${client.firstName} ${client.lastName}',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.grey.shade800,
+                                        ),
+                                      ),
+                                      if (client.document.isNotEmpty) ...[
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          'Doc: ${client.document}',
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.grey.shade600,
+                                          ),
+                                        ),
+                                      ],
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      });
+                    },
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+      ],
+    );
+  }
+
   Widget _buildClientCard(
     Client client,
     ClientController controller,
@@ -450,25 +635,9 @@ class ClientsView extends StatelessWidget {
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    // Búsqueda general
-                                    TextField(
-                                      onChanged: (value) {
-                                        clientController.searchQuery.value =
-                                            value;
-                                      },
-                                      decoration: InputDecoration(
-                                        hintText:
-                                            'Buscar por nombre, apellido...',
-                                        prefixIcon: Icon(
-                                          Icons.search,
-                                          color: Colors.blue.shade400,
-                                        ),
-                                        border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            12,
-                                          ),
-                                        ),
-                                      ),
+                                    // Búsqueda con selección múltiple
+                                    _buildMultiSelectClientFilter(
+                                      clientController,
                                     ),
                                     const SizedBox(height: 16),
 
@@ -479,11 +648,11 @@ class ClientsView extends StatelessWidget {
                                             TextField(
                                               onChanged:
                                                   clientController
-                                                      .updateDocumentFilter,
+                                                      .updateEmployeeNumberFilter,
                                               decoration: InputDecoration(
-                                                labelText: 'Documento',
+                                                labelText: 'Número de empleado',
                                                 prefixIcon: Icon(
-                                                  Icons.badge,
+                                                  Icons.badge_outlined,
                                                   color: Colors.blue.shade400,
                                                 ),
                                                 border: OutlineInputBorder(
@@ -614,11 +783,12 @@ class ClientsView extends StatelessWidget {
                                                   child: TextField(
                                                     onChanged:
                                                         clientController
-                                                            .updateDocumentFilter,
+                                                            .updateEmployeeNumberFilter,
                                                     decoration: InputDecoration(
-                                                      labelText: 'Documento',
+                                                      labelText:
+                                                          'Número de empleado',
                                                       prefixIcon: Icon(
-                                                        Icons.badge,
+                                                        Icons.badge_outlined,
                                                         color:
                                                             Colors
                                                                 .blue

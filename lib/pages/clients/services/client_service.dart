@@ -21,10 +21,11 @@ class ClientService extends GetxService {
     int page = 1,
     int limit = 25,
     String? search,
-    String? document,
+    String? employeeNumber,
     String? email,
     bool? isActive,
     String? companyId,
+    List<String>? clientIds,
   }) async {
     try {
       final uriString = StringBuffer(
@@ -33,8 +34,10 @@ class ClientService extends GetxService {
       if (search != null && search.isNotEmpty) {
         uriString.write('&search=${Uri.encodeComponent(search)}');
       }
-      if (document != null && document.isNotEmpty) {
-        uriString.write('&document=${Uri.encodeComponent(document)}');
+      if (employeeNumber != null && employeeNumber.isNotEmpty) {
+        uriString.write(
+          '&employeeNumber=${Uri.encodeComponent(employeeNumber)}',
+        );
       }
       if (email != null && email.isNotEmpty) {
         uriString.write('&email=${Uri.encodeComponent(email)}');
@@ -44,6 +47,11 @@ class ClientService extends GetxService {
       }
       if (companyId != null && companyId.isNotEmpty) {
         uriString.write('&companyId=$companyId');
+      }
+      if (clientIds != null && clientIds.isNotEmpty) {
+        // Enviar los IDs a la API para filtrar por esos clientes
+        final idsQuery = clientIds.join(',');
+        uriString.write('&clientIds=${Uri.encodeComponent(idsQuery)}');
       }
       final uri = Uri.parse(uriString.toString());
 

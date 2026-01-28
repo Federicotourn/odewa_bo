@@ -891,6 +891,17 @@ class OverviewPageNew extends StatelessWidget {
                       return BarChartGroupData(
                         x: index,
                         barRods: [
+                          // Barra para promedio (averageCount)
+                          BarChartRodData(
+                            toY: dayData.data.averageCount.toDouble(),
+                            color: Colors.orange.shade400,
+                            width: isSmallScreen ? 16 : 20,
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(4),
+                              topRight: Radius.circular(4),
+                            ),
+                          ),
+
                           // Barra para cantidad (count)
                           BarChartRodData(
                             toY: dayData.data.count.toDouble(),
@@ -901,6 +912,18 @@ class OverviewPageNew extends StatelessWidget {
                               topRight: Radius.circular(4),
                             ),
                           ),
+
+                          // Barra para promedio (averageAmount)
+                          BarChartRodData(
+                            toY: dayData.data.averageAmount.toDouble(),
+                            color: Colors.green.shade400,
+                            width: isSmallScreen ? 16 : 20,
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(4),
+                              topRight: Radius.circular(4),
+                            ),
+                          ),
+
                           // Barra para monto (amount) - normalizada
                           BarChartRodData(
                             toY: normalizedAmount,
@@ -930,13 +953,60 @@ class OverviewPageNew extends StatelessWidget {
                     width: 16,
                     height: 16,
                     decoration: BoxDecoration(
+                      color: Colors.orange.shade400,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Promedio Solicitudes',
+                    style: TextStyle(
+                      fontSize: isSmallScreen ? 12 : 14,
+                      color: Colors.grey.shade700,
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(width: 24),
+
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 16,
+                    height: 16,
+                    decoration: BoxDecoration(
                       color: Colors.blue.shade400,
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    'Cantidad',
+                    'Cantidad de Solicitudes',
+                    style: TextStyle(
+                      fontSize: isSmallScreen ? 12 : 14,
+                      color: Colors.grey.shade700,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(width: 24),
+
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 16,
+                    height: 16,
+                    decoration: BoxDecoration(
+                      color: Colors.green.shade400,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Monto Promedio',
                     style: TextStyle(
                       fontSize: isSmallScreen ? 12 : 14,
                       color: Colors.grey.shade700,
@@ -958,7 +1028,7 @@ class OverviewPageNew extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    'Monto',
+                    'Volumen total',
                     style: TextStyle(
                       fontSize: isSmallScreen ? 12 : 14,
                       color: Colors.grey.shade700,

@@ -288,15 +288,34 @@ class RequestsByDayOfWeek {
 
   factory RequestsByDayOfWeek.fromJson(Map<String, dynamic> json) =>
       RequestsByDayOfWeek(
-        lunes: DayData.fromJson(json["lunes"] ?? {"count": 0, "amount": 0}),
-        martes: DayData.fromJson(json["martes"] ?? {"count": 0, "amount": 0}),
-        miercoles: DayData.fromJson(
-          json["miercoles"] ?? {"count": 0, "amount": 0},
+        lunes: DayData.fromJson(
+          json["lunes"] ??
+              {"count": 0, "amount": 0, "averageCount": 0, "averageAmount": 0},
         ),
-        jueves: DayData.fromJson(json["jueves"] ?? {"count": 0, "amount": 0}),
-        viernes: DayData.fromJson(json["viernes"] ?? {"count": 0, "amount": 0}),
-        sabado: DayData.fromJson(json["sabado"] ?? {"count": 0, "amount": 0}),
-        domingo: DayData.fromJson(json["domingo"] ?? {"count": 0, "amount": 0}),
+        martes: DayData.fromJson(
+          json["martes"] ??
+              {"count": 0, "amount": 0, "averageCount": 0, "averageAmount": 0},
+        ),
+        miercoles: DayData.fromJson(
+          json["miercoles"] ??
+              {"count": 0, "amount": 0, "averageCount": 0, "averageAmount": 0},
+        ),
+        jueves: DayData.fromJson(
+          json["jueves"] ??
+              {"count": 0, "amount": 0, "averageCount": 0, "averageAmount": 0},
+        ),
+        viernes: DayData.fromJson(
+          json["viernes"] ??
+              {"count": 0, "amount": 0, "averageCount": 0, "averageAmount": 0},
+        ),
+        sabado: DayData.fromJson(
+          json["sabado"] ??
+              {"count": 0, "amount": 0, "averageCount": 0, "averageAmount": 0},
+        ),
+        domingo: DayData.fromJson(
+          json["domingo"] ??
+              {"count": 0, "amount": 0, "averageCount": 0, "averageAmount": 0},
+        ),
       );
 
   Map<String, dynamic> toJson() => {
@@ -323,15 +342,29 @@ class RequestsByDayOfWeek {
 class DayData {
   int count;
   double amount;
+  double averageCount;
+  double averageAmount;
 
-  DayData({required this.count, required this.amount});
+  DayData({
+    required this.count,
+    required this.amount,
+    required this.averageCount,
+    required this.averageAmount,
+  });
 
   factory DayData.fromJson(Map<String, dynamic> json) => DayData(
     count: json["count"] ?? 0,
     amount: (json["amount"] ?? 0).toDouble(),
+    averageCount: (json["averageCount"] ?? 0).toDouble(),
+    averageAmount: (json["averageAmount"] ?? 0).toDouble(),
   );
 
-  Map<String, dynamic> toJson() => {"count": count, "amount": amount};
+  Map<String, dynamic> toJson() => {
+    "count": count,
+    "amount": amount,
+    "averageCount": averageCount,
+    "averageAmount": averageAmount,
+  };
 }
 
 class DayDataWithLabel {
