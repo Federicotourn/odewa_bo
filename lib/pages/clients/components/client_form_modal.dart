@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../constants/bank_constants.dart';
 import '../models/client_model.dart';
 import '../controllers/client_controller.dart';
 import '../../companies/models/company_model.dart';
@@ -26,9 +27,15 @@ class _ClientFormModalState extends State<ClientFormModal> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _employeeNumberController =
       TextEditingController();
+  final TextEditingController _accountNumberController =
+      TextEditingController();
+  final TextEditingController _beneficiaryController = TextEditingController();
 
   // Company selection
   String? _selectedCompanyId;
+  // Datos bancarios
+  String? _selectedBank;
+  String? _selectedCurrency;
 
   @override
   void initState() {
@@ -44,6 +51,10 @@ class _ClientFormModalState extends State<ClientFormModal> {
       _passwordController.text = widget.client!.password ?? '';
       _employeeNumberController.text = widget.client!.employeeNumber ?? '';
       _selectedCompanyId = widget.client!.company?.id;
+      _selectedBank = widget.client!.bank;
+      _selectedCurrency = widget.client!.currency;
+      _accountNumberController.text = widget.client!.accountNumber ?? '';
+      _beneficiaryController.text = widget.client!.beneficiary ?? '';
     }
   }
 
@@ -57,6 +68,8 @@ class _ClientFormModalState extends State<ClientFormModal> {
     _monthlyBalanceController.dispose();
     _passwordController.dispose();
     _employeeNumberController.dispose();
+    _accountNumberController.dispose();
+    _beneficiaryController.dispose();
     super.dispose();
   }
 
@@ -75,11 +88,17 @@ class _ClientFormModalState extends State<ClientFormModal> {
         updatedAt: widget.client?.updatedAt ?? DateTime.now(),
         address: widget.client?.address,
         city: widget.client?.city,
-        bank: widget.client?.bank,
-        currency: widget.client?.currency,
-        accountNumber: widget.client?.accountNumber,
+        bank: _selectedBank,
+        currency: _selectedCurrency,
+        accountNumber:
+            _accountNumberController.text.trim().isEmpty
+                ? null
+                : _accountNumberController.text.trim(),
         branch: widget.client?.branch,
-        beneficiary: widget.client?.beneficiary,
+        beneficiary:
+            _beneficiaryController.text.trim().isEmpty
+                ? null
+                : _beneficiaryController.text.trim(),
         monthlyBalance:
             _monthlyBalanceController.text.isEmpty
                 ? null
@@ -337,6 +356,50 @@ class _ClientFormModalState extends State<ClientFormModal> {
 
                       const SizedBox(height: 20),
 
+                      // Datos bancarios (obligatorios)
+                      Row(
+                        children: [
+                          Text(
+                            'Datos bancarios',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.grey.shade700,
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            '*',
+                            style: TextStyle(
+                              color: Colors.red.shade400,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      _buildBankDropdown(),
+                      const SizedBox(height: 20),
+                      _buildCurrencyDropdown(),
+                      const SizedBox(height: 20),
+                      _ModernTextField(
+                        label: 'Número de cuenta',
+                        hint: 'Ej: 1234567890',
+                        controller: _accountNumberController,
+                        icon: Icons.account_balance,
+                        isRequired: true,
+                      ),
+                      const SizedBox(height: 20),
+                      _ModernTextField(
+                        label: 'Beneficiario',
+                        hint: 'Nombre y apellido del beneficiario',
+                        controller: _beneficiaryController,
+                        icon: Icons.person,
+                        isRequired: true,
+                      ),
+
+                      const SizedBox(height: 20),
+
                       // Campo de balance mensual
                       _ModernTextField(
                         label: 'Balance Mensual',
@@ -395,6 +458,16 @@ class _ClientFormModalState extends State<ClientFormModal> {
                                     _emailController.text.trim().isEmpty ||
                                     _selectedCompanyId == null ||
                                     _selectedCompanyId!.isEmpty ||
+                                    _selectedBank == null ||
+                                    _selectedBank!.isEmpty ||
+                                    _selectedCurrency == null ||
+                                    _selectedCurrency!.isEmpty ||
+                                    _accountNumberController.text
+                                        .trim()
+                                        .isEmpty ||
+                                    _beneficiaryController.text
+                                        .trim()
+                                        .isEmpty ||
                                     _monthlyBalanceController.text
                                         .trim()
                                         .isEmpty) {
@@ -507,7 +580,15 @@ class _ClientFormModalState extends State<ClientFormModal> {
                                   _documentController.text.trim().isEmpty ||
                                   _emailController.text.trim().isEmpty ||
                                   _selectedCompanyId == null ||
-                                  _selectedCompanyId!.isEmpty) {
+                                  _selectedCompanyId!.isEmpty ||
+                                  _selectedBank == null ||
+                                  _selectedBank!.isEmpty ||
+                                  _selectedCurrency == null ||
+                                  _selectedCurrency!.isEmpty ||
+                                  _accountNumberController.text
+                                      .trim()
+                                      .isEmpty ||
+                                  _beneficiaryController.text.trim().isEmpty) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                     content: Row(
@@ -697,6 +778,178 @@ class _ClientFormModalState extends State<ClientFormModal> {
           ],
         );
       },
+    );
+  }
+
+  Widget _buildBankDropdown() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(Icons.account_balance, size: 20, color: Colors.blue.shade600),
+            const SizedBox(width: 8),
+            Text(
+              'Banco',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: Colors.grey.shade700,
+              ),
+            ),
+            const SizedBox(width: 4),
+            Text(
+              '*',
+              style: TextStyle(
+                color: Colors.red.shade400,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 10,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: DropdownButtonFormField<String>(
+            value: _selectedBank,
+            decoration: InputDecoration(
+              hintText: 'Selecciona un banco',
+              hintStyle: TextStyle(color: Colors.grey.shade400),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: BorderSide(color: Colors.grey.shade300),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: BorderSide(color: Colors.grey.shade300),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: BorderSide(color: Colors.blue.shade400, width: 2),
+              ),
+              filled: true,
+              fillColor: Colors.white,
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 20,
+                vertical: 16,
+              ),
+            ),
+            items:
+                availableBanks
+                    .map(
+                      (e) => DropdownMenuItem<String>(
+                        value: e.$1,
+                        child: Text(e.$2),
+                      ),
+                    )
+                    .toList(),
+            onChanged: (String? newValue) {
+              setState(() => _selectedBank = newValue);
+            },
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Por favor selecciona un banco';
+              }
+              return null;
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCurrencyDropdown() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(Icons.attach_money, size: 20, color: Colors.blue.shade600),
+            const SizedBox(width: 8),
+            Text(
+              'Moneda',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: Colors.grey.shade700,
+              ),
+            ),
+            const SizedBox(width: 4),
+            Text(
+              '*',
+              style: TextStyle(
+                color: Colors.red.shade400,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 10,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: DropdownButtonFormField<String>(
+            value: _selectedCurrency,
+            decoration: InputDecoration(
+              hintText: 'Selecciona moneda',
+              hintStyle: TextStyle(color: Colors.grey.shade400),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: BorderSide(color: Colors.grey.shade300),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: BorderSide(color: Colors.grey.shade300),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: BorderSide(color: Colors.blue.shade400, width: 2),
+              ),
+              filled: true,
+              fillColor: Colors.white,
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 20,
+                vertical: 16,
+              ),
+            ),
+            items:
+                availableCurrencies
+                    .map(
+                      (e) => DropdownMenuItem<String>(
+                        value: e.$1,
+                        child: Text(e.$2),
+                      ),
+                    )
+                    .toList(),
+            onChanged: (String? newValue) {
+              setState(() => _selectedCurrency = newValue);
+            },
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Por favor selecciona una moneda';
+              }
+              return null;
+            },
+          ),
+        ),
+      ],
     );
   }
 }
