@@ -28,3 +28,4 @@ const List<(String, String)> availableCurrencies = [
   ('Pesos', 'Pesos'),
   ('Dólares', 'Dólares'),
 ];
+

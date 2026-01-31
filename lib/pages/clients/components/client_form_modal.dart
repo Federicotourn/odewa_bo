@@ -20,7 +20,6 @@ class _ClientFormModalState extends State<ClientFormModal> {
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _documentController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _monthlyBalanceController =
       TextEditingController();
@@ -44,7 +43,6 @@ class _ClientFormModalState extends State<ClientFormModal> {
       _firstNameController.text = widget.client!.firstName;
       _lastNameController.text = widget.client!.lastName;
       _documentController.text = widget.client!.document;
-      _emailController.text = widget.client!.email ?? '';
       _phoneController.text = widget.client!.phone ?? '';
       _monthlyBalanceController.text =
           widget.client!.monthlyBalance?.toString() ?? '';
@@ -63,7 +61,6 @@ class _ClientFormModalState extends State<ClientFormModal> {
     _firstNameController.dispose();
     _lastNameController.dispose();
     _documentController.dispose();
-    _emailController.dispose();
     _phoneController.dispose();
     _monthlyBalanceController.dispose();
     _passwordController.dispose();
@@ -81,7 +78,6 @@ class _ClientFormModalState extends State<ClientFormModal> {
         firstName: _firstNameController.text,
         lastName: _lastNameController.text,
         document: _documentController.text,
-        email: _emailController.text,
         phone: _phoneController.text.isEmpty ? null : _phoneController.text,
         isActive: widget.client?.isActive ?? true,
         createdAt: widget.client?.createdAt ?? DateTime.now(),
@@ -329,17 +325,6 @@ class _ClientFormModalState extends State<ClientFormModal> {
 
                       const SizedBox(height: 20),
 
-                      // Campo de email
-                      _ModernTextField(
-                        label: 'Email',
-                        hint: 'Ej: federico@ejemplo.com',
-                        controller: _emailController,
-                        icon: Icons.email,
-                        isRequired: true,
-                      ),
-
-                      const SizedBox(height: 20),
-
                       // Campo de teléfono
                       _ModernTextField(
                         label: 'Teléfono',
@@ -455,7 +440,6 @@ class _ClientFormModalState extends State<ClientFormModal> {
                                 if (_firstNameController.text.trim().isEmpty ||
                                     _lastNameController.text.trim().isEmpty ||
                                     _documentController.text.trim().isEmpty ||
-                                    _emailController.text.trim().isEmpty ||
                                     _selectedCompanyId == null ||
                                     _selectedCompanyId!.isEmpty ||
                                     _selectedBank == null ||
@@ -483,31 +467,6 @@ class _ClientFormModalState extends State<ClientFormModal> {
                                           const Text(
                                             'Completa todos los campos obligatorios',
                                           ),
-                                        ],
-                                      ),
-                                      backgroundColor: Colors.orange,
-                                      behavior: SnackBarBehavior.floating,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                    ),
-                                  );
-                                  return;
-                                }
-
-                                if (!GetUtils.isEmail(
-                                  _emailController.text.trim(),
-                                )) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Row(
-                                        children: [
-                                          Icon(
-                                            Icons.warning,
-                                            color: Colors.white,
-                                          ),
-                                          const SizedBox(width: 8),
-                                          const Text('Ingresa un email válido'),
                                         ],
                                       ),
                                       backgroundColor: Colors.orange,
@@ -578,7 +537,6 @@ class _ClientFormModalState extends State<ClientFormModal> {
                               if (_firstNameController.text.trim().isEmpty ||
                                   _lastNameController.text.trim().isEmpty ||
                                   _documentController.text.trim().isEmpty ||
-                                  _emailController.text.trim().isEmpty ||
                                   _selectedCompanyId == null ||
                                   _selectedCompanyId!.isEmpty ||
                                   _selectedBank == null ||
@@ -601,31 +559,6 @@ class _ClientFormModalState extends State<ClientFormModal> {
                                         const Text(
                                           'Completa todos los campos obligatorios',
                                         ),
-                                      ],
-                                    ),
-                                    backgroundColor: Colors.orange,
-                                    behavior: SnackBarBehavior.floating,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                  ),
-                                );
-                                return;
-                              }
-
-                              if (!GetUtils.isEmail(
-                                _emailController.text.trim(),
-                              )) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Row(
-                                      children: [
-                                        Icon(
-                                          Icons.warning,
-                                          color: Colors.white,
-                                        ),
-                                        const SizedBox(width: 8),
-                                        const Text('Ingresa un email válido'),
                                       ],
                                     ),
                                     backgroundColor: Colors.orange,
