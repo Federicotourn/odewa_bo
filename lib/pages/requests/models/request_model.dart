@@ -76,6 +76,7 @@ class OdewaRequest {
   String clientId;
   RequestClient? client;
   String? receiptUrl;
+  String? invoiceUrl;
 
   OdewaRequest({
     required this.id,
@@ -92,6 +93,7 @@ class OdewaRequest {
     required this.clientId,
     this.client,
     this.receiptUrl,
+    this.invoiceUrl,
   });
 
   factory OdewaRequest.fromJson(Map<String, dynamic> json) => OdewaRequest(
@@ -115,6 +117,7 @@ class OdewaRequest {
             ? RequestClient.fromJson(json["client"])
             : null,
     receiptUrl: json["receiptUrl"],
+    invoiceUrl: json["invoiceUrl"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -132,6 +135,7 @@ class OdewaRequest {
     "clientId": clientId,
     if (client != null) "client": client!.toJson(),
     if (receiptUrl != null) "receiptUrl": receiptUrl,
+    if (invoiceUrl != null) "invoiceUrl": invoiceUrl,
   };
 
   // Método copyWith para facilitar la actualización
@@ -150,6 +154,7 @@ class OdewaRequest {
     String? clientId,
     RequestClient? client,
     String? receiptUrl,
+    String? invoiceUrl,
   }) {
     return OdewaRequest(
       id: id ?? this.id,
@@ -166,6 +171,7 @@ class OdewaRequest {
       clientId: clientId ?? this.clientId,
       client: client ?? this.client,
       receiptUrl: receiptUrl ?? this.receiptUrl,
+      invoiceUrl: invoiceUrl ?? this.invoiceUrl,
     );
   }
 
